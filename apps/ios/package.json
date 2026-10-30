@@ -1,0 +1,18 @@
+
+{
+  "name": "naijajobs-ios",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare-web": "node ../copy-web.js ./www",
+    "setup": "npm run prepare-web && npx cap add ios && npx cap sync ios",
+    "sync": "npm run prepare-web && npx cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/ios": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}

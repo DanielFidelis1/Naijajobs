@@ -51,3 +51,43 @@ jobs:
             apps/desktop/dist/*.exe
             apps/desktop/dist/*.dmg
             apps/desktop/dist/*.AppImage
+  
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies and create iOS project
+        working-directory: apps/ios
+        run: |
+          npm install
+          npm run setup
+
+      - name: Build iOS application
+        working-directory: apps/ios
+        run: |
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Package unsigned iOS IPA
+        working-directory: apps/ios
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -r NaijaJobs-unsigned.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NaijaJobs-iOS-unsigned-IPA
+          path: apps/ios/NaijaJobs-unsigned.ipa
