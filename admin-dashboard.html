@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="NaijaJobs administration.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Admin | NaijaJobs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="admin">
+    <main id="admin-dashboard" class="admin-page" hidden>
+        
+<header class="admin-header">
+    <div>
+        <a href="admin-dashboard.html" class="logo">Naija<span>Jobs</span></a>
+        <p>Admin dashboard</p>
+    </div>
+
+    <div class="admin-header-actions">
+        <a href="admin-dashboard.html"
+           class="admin-icon-link"
+           aria-label="Admin dashboard"
+           title="Admin dashboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+                <rect x="14" y="11" width="7" height="10" rx="1.5"/>
+                <rect x="3" y="14" width="8" height="7" rx="1.5"/>
+            </svg>
+        </a>
+
+        <a href="admin-users.html"
+        class="admin-icon-link"
+        aria-label="Manage users"
+        title="Manage users">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="10" cy="7" r="4"/>
+            <path d="M20 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        </a>
+
+        <a href="admin-announcements.html"
+           class="admin-icon-link"
+           aria-label="Manage announcements"
+           title="Manage announcements">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 11v2a2 2 0 0 0 2 2h2l9 5V4l-9 5H5a2 2 0 0 0-2 2Z"/>
+                <path d="M7 15l2 6h4l-3-4"/>
+                <path d="M19 9a5 5 0 0 1 0 6"/>
+            </svg>
+        </a>
+
+        <a href="admin-support.html"
+           class="admin-icon-link"
+           aria-label="Support inbox"
+           title="Support inbox">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 13v-2a8 8 0 0 1 16 0v2"/>
+                <path d="M4 13H3v4h4v-6H4"/>
+                <path d="M20 13h1v4h-4v-6h3"/>
+                <path d="M17 19a5 5 0 0 1-5 2"/>
+            </svg>
+        </a>
+
+        <button id="admin-logout"
+                class="admin-button"
+                type="button">Log out</button>
+    </div>
+</header>
+
+
+        <p id="admin-message" role="status">Verifying administrator access...</p>
+
+        <section class="admin-grid">
+            <article class="admin-card">
+                <h2>Registered users</h2>
+                <p class="admin-number" id="admin-user-count">&ndash;</p>
+            </article>
+            <article class="admin-card">
+                <h2>Job listings</h2>
+                <p class="admin-number" id="admin-job-count">&ndash;</p>
+            </article>
+            <article class="admin-card">
+                <h2>Access</h2>
+                <p class="muted">Restricted to authorised administrators.</p>
+            </article>
+        </section>
+
+        <section class="admin-card">
+            <header>
+                <div>
+                    <h2>Users</h2>
+                    <p>NaijaJobs accounts and profile information.</p>
+                </div>
+                <button type="button" id="refresh-users" class="admin-button">Refresh</button>
+            </header>
+            <p id="users-message" role="status">Loading users...</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Name</th><th>Account type</th><th>Location</th><th>Skills</th><th>Status</th><th>Actions</th><th>Employer approval</th></tr></thead>
+                    <tbody id="admin-users-list"><tr><td colspan="7">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+        <section class="admin-card">
+            <header>
+                <div>
+                    <h2>Jobs</h2>
+                    <p>Job listings posted on NaijaJobs.</p>
+                </div>
+                <button type="button" id="refresh-jobs" class="admin-button">Refresh</button>
+            </header>
+            <p id="jobs-message" role="status">Loading job listings...</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Job title</th><th>Category</th><th>Location</th><th>Actions</th></tr></thead>
+                    <tbody id="admin-jobs-list"><tr><td colspan="4">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+        <section class="admin-card">
+            <header>
+                <div>
+                    <h2>Activity log</h2>
+                    <p>Administrative actions on NaijaJobs.</p>
+                </div>
+                <button type="button" id="refresh-activity" class="admin-button">Refresh</button>
+            </header>
+            <p id="activity-message" role="status">Loading activity...</p>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Date</th><th>Action</th><th>Target</th><th>Details</th></tr></thead>
+                    <tbody id="admin-activity-list"><tr><td colspan="4">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/app.js"></script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Review the people who applied for your job.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Applicants | NaijaJobs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="app">
+    <main class="main" id="main">
+        <div class="page">
+            <a href="my-jobs.html" class="back">&larr; Back to my jobs</a>
+
+            <header class="page-head">
+                <div>
+                    <h1>Applicants</h1>
+                    <p class="sub">Read each application, then accept or reject.</p>
+                </div>
+            </header>
+
+            <section id="applicants-container" class="applicants-container" aria-live="polite">
+                <div class="nj-applicants-loading"><span class="nj-loading-spinner"></span><p>Loading applicants...</p></div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

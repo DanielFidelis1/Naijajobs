@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Find small jobs, freelance gigs and local opportunities in Nigeria with NaijaJobs. Post a task or discover work that matches your skills.">
+    <meta name="theme-color" content="#0e3b2c">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/naijajobs-192.png">
+    <title>NaijaJobs | Find small jobs and gigs in Nigeria</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container bar">
+            <a href="index.html" class="logo" aria-label="NaijaJobs home">Naija<span>Jobs</span></a>
+            <nav aria-label="Main navigation">
+                <a href="login.html" class="hide-sm">Log in</a>
+                <a href="signup.html" class="btn btn-sm">Sign up</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div>
+                    <h1>Small jobs. Real pay.</h1>
+                    <p class="lead">
+                        Find gigs that fit your skills and apply in a minute.
+                        Or post a task and let the right person come to you.
+                    </p>
+                    <div class="actions">
+                        <a href="signup.html" class="btn btn-yellow">Find a job</a>
+                        <a href="signup.html" class="btn btn-ghost">Post a job</a>
+                    </div>
+                    <p class="fineprint">Free to join. You agree payment directly with the other person.</p>
+                </div>
+
+                <div class="board" aria-label="Example gigs">
+                    <div class="board-band">Example gigs, not live listings</div>
+                    <div class="board-rows">
+                        <div class="board-row">
+                            <div><h3>Design a birthday flyer</h3><p>Design &middot; Remote</p></div>
+                            <b>&#8358;5,000</b>
+                        </div>
+                        <div class="board-row">
+                            <div><h3>Fix a slow laptop</h3><p>Tech support &middot; On-site</p></div>
+                            <b>&#8358;8,000</b>
+                        </div>
+                        <div class="board-row">
+                            <div><h3>Write 10 product descriptions</h3><p>Writing &middot; Remote</p></div>
+                            <b>&#8358;3,500</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" style="padding-top:8px">
+            <div class="container">
+                <div class="section-head">
+                    <h2>How it works</h2>
+                    <p>Three steps, whether you want to earn or get something done.</p>
+                </div>
+                <div class="steps">
+                    <div class="step">
+                        <div class="num">1</div>
+                        <h3>Create a free account</h3>
+                        <p>Tell us if you want to find work or hire. It takes about a minute.</p>
+                    </div>
+                    <div class="step">
+                        <div class="num">2</div>
+                        <h3>Apply or post a job</h3>
+                        <p>Workers apply with a short message. Clients post a task and review applicants.</p>
+                    </div>
+                    <div class="step">
+                        <div class="num">3</div>
+                        <h3>Get it done</h3>
+                        <p>Chat, agree the details, and arrange payment directly. Mark the job complete when finished.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" style="padding-top:8px">
+            <div class="container split">
+                <div class="panel">
+                    <h3>I want to earn</h3>
+                    <ul>
+                        <li>Browse gigs by category</li>
+                        <li>Apply with a short message</li>
+                        <li>Build a profile that shows your skills</li>
+                    </ul>
+                    <a href="signup.html" class="btn">Find work</a>
+                </div>
+                <div class="panel panel-dark">
+                    <h3>I need work done</h3>
+                    <ul>
+                        <li>Post a task with your budget</li>
+                        <li>Review who applied</li>
+                        <li>Message and pick the right person</li>
+                    </ul>
+                    <a href="signup.html" class="btn btn-yellow">Post a job</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-band">
+            <div class="container">
+                <h2>Your next opportunity could start here.</h2>
+                <a href="signup.html" class="btn btn-yellow">Create free account</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 NaijaJobs</p>
+            <p>Connecting Nigerian workers with opportunities.</p>
+        </div>
+    </footer>
+    
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+       navigator.serviceWorker.register("/sw.js")
+            .catch((error) => {
+                console.error("NaijaJobs service worker registration failed:", error);
+            });
+    });
+}
+</script>
+
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

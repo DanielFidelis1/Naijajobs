@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Read important announcements and updates from NaijaJobs.">
+    <meta name="theme-color" content="#0e3b2c">
+
+    <title>Announcements | NaijaJobs</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+
+    <style>
+        .announcement-list {
+            display: grid;
+            gap: 18px;
+            margin-top: 24px;
+        }
+
+        .announcement-card {
+            padding: 22px;
+            background: #fff;
+            border: 1px solid #e5e9e6;
+            border-radius: 16px;
+            overflow-wrap: anywhere;
+        }
+
+        .announcement-card h2 {
+            margin: 0 0 10px;
+            font-size: 1.2rem;
+            line-height: 1.4;
+        }
+
+        .announcement-date {
+            margin: 0 0 16px;
+            color: #647067;
+            font-size: 0.85rem;
+        }
+
+        .announcement-body {
+            line-height: 1.75;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .announcement-notice {
+            padding: 15px 18px;
+            margin-top: 20px;
+            border-radius: 12px;
+            background: #edf5ef;
+            color: #24533b;
+            line-height: 1.6;
+        }
+
+        .announcement-state {
+            padding: 22px;
+            color: #647067;
+            background: #fff;
+            border: 1px solid #e5e9e6;
+            border-radius: 14px;
+            line-height: 1.6;
+        }
+
+        .announcement-refresh {
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 9px;
+            background: #0e3b2c;
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .announcement-refresh:focus-visible {
+            outline: 3px solid #d6ad36;
+            outline-offset: 3px;
+        }
+
+        @media (max-width: 600px) {
+            .announcement-card {
+                padding: 17px;
+            }
+        }
+    </style>
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body class="app">
+    <main class="main" id="main">
+        <div class="page">
+            <header class="page-head">
+                <div>
+                    <h1>Announcements</h1>
+                    <p class="sub">Important updates and news from NaijaJobs.</p>
+                </div>
+            </header>
+
+            <div class="announcement-notice">
+                <strong>Stay informed.</strong>
+                New announcements from the NaijaJobs team will appear here.
+                This page is read-only, so users cannot reply to announcements.
+            </div>
+
+            <section
+                id="announcements-list"
+                class="announcement-list"
+                aria-live="polite"
+                aria-label="Published announcements"
+            >
+                <p class="announcement-state">Loading announcements...</p>
+            </section>
+
+            <p>
+                <button
+                    type="button"
+                    id="refresh-announcements"
+                    class="announcement-refresh"
+                >
+                    Refresh announcements
+                </button>
+            </p>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var container = document.getElementById("announcements-list");
+            var refreshButton = document.getElementById("refresh-announcements");
+
+            function showMessage(message) {
+                container.replaceChildren();
+
+                var paragraph = document.createElement("p");
+                paragraph.className = "announcement-state";
+                paragraph.textContent = message;
+
+                container.appendChild(paragraph);
+            }
+
+            function formatDate(value) {
+                var date = new Date(value);
+
+                if (Number.isNaN(date.getTime())) {
+                    return "";
+                }
+
+                return date.toLocaleString(undefined, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit"
+                });
+            }
+
+            async function loadAnnouncements() {
+                showMessage("Loading announcements...");
+                refreshButton.disabled = true;
+
+                try {
+                    if (
+                        typeof supabaseClient === "undefined" ||
+                        !supabaseClient
+                    ) {
+                        throw new Error("Supabase is not available.");
+                    }
+
+                    var result = await supabaseClient
+                        .from("announcements")
+                        .select("id, title, body, created_at, updated_at")
+                        .eq("published", true)
+                        .order("created_at", { ascending: false });
+
+                    if (result.error) {
+                        throw result.error;
+                    }
+
+                    var announcements = result.data || [];
+
+                    if (announcements.length === 0) {
+                        showMessage(
+                            "There are no published announcements yet. Please check back later."
+                        );
+                        return;
+                    }
+
+                    container.replaceChildren();
+
+                    announcements.forEach(function (announcement) {
+                        var article = document.createElement("article");
+                        article.className = "announcement-card";
+
+                        var heading = document.createElement("h2");
+                        heading.textContent = announcement.title;
+
+                        var date = document.createElement("p");
+                        date.className = "announcement-date";
+                        date.textContent =
+                            "Published " + formatDate(announcement.created_at);
+
+                        var body = document.createElement("div");
+                        body.className = "announcement-body";
+                        body.textContent = announcement.body;
+
+                        article.appendChild(heading);
+                        article.appendChild(date);
+                        article.appendChild(body);
+
+                        container.appendChild(article);
+                    });
+                } catch (error) {
+                    console.error("Unable to load announcements:", error);
+
+                    showMessage(
+                        "We couldn't load announcements. Please check your connection and try again. If the problem continues, contact support."
+                    );
+                } finally {
+                    refreshButton.disabled = false;
+                }
+            }
+
+            refreshButton.addEventListener("click", loadAnnouncements);
+
+            loadAnnouncements();
+        })();
+    </script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

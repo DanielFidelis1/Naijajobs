@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Search open gigs and small jobs posted by clients across Nigeria.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Find jobs | NaijaJobs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="app" data-public>
+    <main class="main" id="main">
+        <div class="page">
+            <header class="page-head">
+                <div>
+                    <h1>Find jobs</h1>
+                    <p class="sub">Open gigs posted by clients.</p>
+                </div>
+                <a href="post-job.html" class="btn btn-ghost btn-sm">Post a job</a>
+            </header>
+
+            <form class="filters" id="job-filters" role="search">
+                <div class="f-wide">
+                    <label for="job-search">Search</label>
+                    <input type="search" id="job-search" placeholder="e.g. graphic design, writing">
+                </div>
+                <div>
+                    <label for="category-filter">Category</label>
+                    <select id="category-filter">
+                        <option value="">All categories</option>
+                        <option value="Graphic Design">Graphic Design</option>
+                            <option value="Writing">Writing</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Photography">Photography</option>
+                            <option value="Video Editing">Video Editing</option>
+                            <option value="Tutoring">Tutoring</option>
+                            <option value="Tech Support">Tech Support</option>
+                            <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="location-filter">Location</label>
+                    <input type="text" id="location-filter" list="location-options" placeholder="e.g. Lagos" autocomplete="off">
+                </div>
+                <div class="f-extra">
+                    <label for="type-filter">Job type</label>
+                    <select id="type-filter">
+                        <option value="">Any type</option>
+                        <option value="remote">Remote</option>
+                        <option value="onsite">On-site</option>
+                        <option value="hybrid">Hybrid</option>
+                    </select>
+                </div>
+                <div class="f-extra">
+                    <label for="budget-min">Min budget (&#8358;)</label>
+                    <input type="number" id="budget-min" min="0" step="500" inputmode="numeric" placeholder="0">
+                </div>
+                <div class="f-extra">
+                    <label for="budget-max">Max budget (&#8358;)</label>
+                    <input type="number" id="budget-max" min="0" step="500" inputmode="numeric" placeholder="Any">
+                </div>
+                <div class="f-extra">
+                    <label for="sort-filter">Sort by</label>
+                    <select id="sort-filter">
+                        <option value="newest">Newest first</option>
+                        <option value="budget_high">Highest budget</option>
+                        <option value="deadline">Closing soon</option>
+                    </select>
+                </div>
+                <div class="f-actions">
+                    <button type="button" id="toggle-filters" class="btn btn-ghost btn-sm filters-toggle" aria-expanded="false" aria-controls="job-filters">More filters</button>
+                    <button type="button" id="clear-filters" class="btn btn-ghost btn-sm">Clear filters</button>
+                </div>
+            </form>
+            <datalist id="location-options">
+                <option value="Remote">
+                <option value="Abia">
+                <option value="Adamawa">
+                <option value="Akwa Ibom">
+                <option value="Anambra">
+                <option value="Bauchi">
+                <option value="Bayelsa">
+                <option value="Benue">
+                <option value="Borno">
+                <option value="Cross River">
+                <option value="Delta">
+                <option value="Ebonyi">
+                <option value="Edo">
+                <option value="Ekiti">
+                <option value="Enugu">
+                <option value="FCT Abuja">
+                <option value="Gombe">
+                <option value="Imo">
+                <option value="Jigawa">
+                <option value="Kaduna">
+                <option value="Kano">
+                <option value="Katsina">
+                <option value="Kebbi">
+                <option value="Kogi">
+                <option value="Kwara">
+                <option value="Lagos">
+                <option value="Nasarawa">
+                <option value="Niger">
+                <option value="Ogun">
+                <option value="Ondo">
+                <option value="Osun">
+                <option value="Oyo">
+                <option value="Plateau">
+                <option value="Rivers">
+                <option value="Sokoto">
+                <option value="Taraba">
+                <option value="Yobe">
+                <option value="Zamfara">
+            </datalist>
+
+            <p id="jobs-count" class="muted jobs-count" role="status" aria-live="polite"></p>
+
+            <div id="jobs-container" class="jobs-grid" aria-live="polite">
+                <div class="loading"><span class="nj-loading-spinner"></span><p>Loading jobs...</p></div>
+            </div>
+
+            <div class="load-more-wrap">
+                <button type="button" id="load-more" class="btn btn-ghost" hidden>Load more jobs</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

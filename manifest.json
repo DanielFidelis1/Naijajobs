@@ -1,0 +1,27 @@
+{
+  "id": "/",
+  "name": "NaijaJobs",
+  "short_name": "NaijaJobs",
+  "description": "Find jobs, hire workers, and manage your work with NaijaJobs.",
+  "lang": "en-NG",
+  "dir": "ltr",
+  "start_url": "/index.html",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "any",
+  "background_color": "#f3f5f1",
+  "theme_color": "#0e3b2c",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "/icons/naijajobs-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/naijajobs-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/naijajobs-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/naijajobs-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Find jobs", "short_name": "Jobs", "url": "/browse.html", "icons": [{ "src": "/icons/naijajobs-96.png", "sizes": "96x96" }] },
+    { "name": "Post a job", "short_name": "Post", "url": "/post-job.html", "icons": [{ "src": "/icons/naijajobs-96.png", "sizes": "96x96" }] },
+    { "name": "Messages", "short_name": "Messages", "url": "/messages.html", "icons": [{ "src": "/icons/naijajobs-96.png", "sizes": "96x96" }] }
+  ]
+}

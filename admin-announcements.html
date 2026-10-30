@@ -1,0 +1,604 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Manage NaijaJobs announcements.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Manage Announcements | NaijaJobs</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+
+    <style>
+        .admin-announcements {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 22px;
+            margin-top: 24px;
+        }
+
+        .admin-panel {
+            min-width: 0;
+            padding: 22px;
+            background: #fff;
+            border: 1px solid #e5e9e6;
+            border-radius: 15px;
+        }
+
+        .admin-panel h2 {
+            margin-top: 0;
+        }
+
+        .admin-form label {
+            display: block;
+            margin: 15px 0 7px;
+            font-weight: 700;
+        }
+
+        .admin-form input,
+        .admin-form textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cfd8d1;
+            border-radius: 9px;
+            font: inherit;
+        }
+
+        .admin-form textarea {
+            min-height: 170px;
+            resize: vertical;
+        }
+
+        .admin-button {
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 8px;
+            background: #0e3b2c;
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .admin-button.secondary {
+            background: #eaf0eb;
+            color: #183d2c;
+        }
+
+        .admin-button.danger {
+            background: #9b2929;
+            color: #fff;
+        }
+
+        .admin-button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .admin-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .admin-notice {
+            padding: 13px 15px;
+            border-radius: 9px;
+            background: #f2f5f2;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .admin-notice.error {
+            background: #fff0f0;
+            color: #8a2222;
+        }
+
+        .announcement-item {
+            padding: 16px 0;
+            border-bottom: 1px solid #e5e9e6;
+            overflow-wrap: anywhere;
+        }
+
+        .announcement-item:first-child {
+            padding-top: 0;
+        }
+
+        .announcement-item h3 {
+            margin: 0 0 8px;
+            font-size: 1.05rem;
+        }
+
+        .announcement-item p {
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .announcement-status {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            background: #f2f5f2;
+            font-size: 0.82rem;
+        }
+
+        .announcement-status.published {
+            background: #e6f2e9;
+            color: #24533b;
+        }
+
+        @media (max-width: 850px) {
+            .admin-announcements {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .admin-panel {
+                padding: 16px;
+            }
+        }
+    </style>
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body class="admin">
+    <main id="admin-announcement-page" class="admin-page" hidden>
+            
+<header class="admin-header">
+    <div>
+        <a href="admin-dashboard.html" class="logo">Naija<span>Jobs</span></a>
+        <p>Manage announcements</p>
+    </div>
+
+    <div class="admin-header-actions">
+        <a href="admin-dashboard.html"
+           class="admin-icon-link"
+           aria-label="Admin dashboard"
+           title="Admin dashboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+                <rect x="14" y="11" width="7" height="10" rx="1.5"/>
+                <rect x="3" y="14" width="8" height="7" rx="1.5"/>
+            </svg>
+        </a>
+
+        <a href="admin-users.html"
+        class="admin-icon-link"
+        aria-label="Manage users"
+        title="Manage users">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="10" cy="7" r="4"/>
+            <path d="M20 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        </a>
+
+        <a href="admin-announcements.html"
+           class="admin-icon-link"
+           aria-label="Manage announcements"
+           title="Manage announcements">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 11v2a2 2 0 0 0 2 2h2l9 5V4l-9 5H5a2 2 0 0 0-2 2Z"/>
+                <path d="M7 15l2 6h4l-3-4"/>
+                <path d="M19 9a5 5 0 0 1 0 6"/>
+            </svg>
+        </a>
+
+        <a href="admin-support.html"
+           class="admin-icon-link"
+           aria-label="Support inbox"
+           title="Support inbox">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 13v-2a8 8 0 0 1 16 0v2"/>
+                <path d="M4 13H3v4h4v-6H4"/>
+                <path d="M20 13h1v4h-4v-6h3"/>
+                <path d="M17 19a5 5 0 0 1-5 2"/>
+            </svg>
+        </a>
+
+        <button id="admin-logout" class="admin-button" type="button">
+            Log out
+        </button>
+    </div>
+</header>
+
+
+            <p id="admin-status" class="admin-notice" role="status">
+                Checking administrator access...
+            </p>
+
+            <div id="admin-content" class="admin-announcements" hidden>
+                <section class="admin-panel">
+                    <h2 id="editor-heading">Create announcement</h2>
+                    <p>Unpublished announcements remain hidden from ordinary users.</p>
+
+                    <form id="announcement-form" class="admin-form">
+                        <label for="announcement-title">Title</label>
+                        <input
+                            id="announcement-title"
+                            type="text"
+                            maxlength="200"
+                            required
+                            placeholder="Enter announcement title"
+                        >
+
+                        <label for="announcement-body">Announcement message</label>
+                        <textarea
+                            id="announcement-body"
+                            maxlength="20000"
+                            required
+                            placeholder="Write the announcement..."
+                        ></textarea>
+
+                        <label>
+                            <input id="announcement-published" type="checkbox">
+                            Publish immediately
+                        </label>
+
+                        <div class="admin-actions">
+                            <button id="save-announcement" class="admin-button" type="submit">
+                                Save announcement
+                            </button>
+                            <button id="cancel-edit" class="admin-button secondary" type="button" hidden>
+                                Cancel edit
+                            </button>
+                        </div>
+                    </form>
+
+                    <p id="form-status" class="admin-notice" role="status" hidden></p>
+                </section>
+
+                <section class="admin-panel">
+                    <h2>Existing announcements</h2>
+                    <button id="refresh-announcements" class="admin-button secondary" type="button">
+                        Refresh list
+                    </button>
+                    <div id="admin-announcement-list" style="margin-top: 20px;" aria-live="polite">
+                        <p class="admin-notice">Loading announcements...</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var client = typeof supabaseClient !== "undefined"
+                ? supabaseClient
+                : null;
+
+            var statusBox = document.getElementById("admin-status");
+            var content = document.getElementById("admin-content");
+            var form = document.getElementById("announcement-form");
+            var formStatus = document.getElementById("form-status");
+            var list = document.getElementById("admin-announcement-list");
+            var saveButton = document.getElementById("save-announcement");
+            var cancelButton = document.getElementById("cancel-edit");
+
+            var currentUser = null;
+            var editingId = null;
+            var announcements = [];
+
+            function showStatus(element, message, isError) {
+                element.textContent = message;
+                element.hidden = !message;
+                element.classList.toggle("error", Boolean(isError));
+            }
+
+            function formatDate(value) {
+                var date = new Date(value);
+                return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
+            }
+
+            function resetEditor() {
+                editingId = null;
+                form.reset();
+                document.getElementById("editor-heading").textContent =
+                    "Create announcement";
+                saveButton.textContent = "Save announcement";
+                cancelButton.hidden = true;
+                showStatus(formStatus, "");
+            }
+
+            function startEditing(item) {
+                editingId = item.id;
+                document.getElementById("announcement-title").value = item.title;
+                document.getElementById("announcement-body").value = item.body;
+                document.getElementById("announcement-published").checked = item.published;
+                document.getElementById("editor-heading").textContent =
+                    "Edit announcement";
+                saveButton.textContent = "Save changes";
+                cancelButton.hidden = false;
+                showStatus(formStatus, "");
+                document.getElementById("announcement-title").focus();
+            }
+
+            function makeButton(label, className, callback) {
+                var button = document.createElement("button");
+                button.type = "button";
+                button.className = "admin-button " + className;
+                button.textContent = label;
+                button.addEventListener("click", callback);
+                return button;
+            }
+
+            function renderAnnouncements() {
+                list.replaceChildren();
+
+                if (announcements.length === 0) {
+                    var empty = document.createElement("p");
+                    empty.className = "admin-notice";
+                    empty.textContent = "No announcements have been created yet.";
+                    list.appendChild(empty);
+                    return;
+                }
+
+                announcements.forEach(function (item) {
+                    var article = document.createElement("article");
+                    article.className = "announcement-item";
+
+                    var heading = document.createElement("h3");
+                    heading.textContent = item.title;
+
+                    var status = document.createElement("span");
+                    status.className = "announcement-status" +
+                        (item.published ? " published" : "");
+                    status.textContent = item.published ? "Published" : "Unpublished";
+
+                    var date = document.createElement("p");
+                    date.textContent = "Last updated: " + formatDate(item.updated_at);
+
+                    var body = document.createElement("p");
+                    body.textContent = item.body.length > 250
+                        ? item.body.slice(0, 250) + "..."
+                        : item.body;
+
+                    var actions = document.createElement("div");
+                    actions.className = "admin-actions";
+
+                    actions.appendChild(makeButton("Edit", "secondary", function () {
+                        startEditing(item);
+                    }));
+
+                    actions.appendChild(makeButton(
+                        item.published ? "Unpublish" : "Publish",
+                        "secondary",
+                        function () {
+                            changePublishedStatus(item);
+                        }
+                    ));
+
+                    actions.appendChild(makeButton("Delete", "danger", function () {
+                        deleteAnnouncement(item);
+                    }));
+
+                    article.appendChild(heading);
+                    article.appendChild(status);
+                    article.appendChild(date);
+                    article.appendChild(body);
+                    article.appendChild(actions);
+                    list.appendChild(article);
+                });
+            }
+
+            async function loadAnnouncements() {
+                list.textContent = "Loading announcements...";
+
+                var result = await client
+                    .from("announcements")
+                    .select("id, title, body, published, created_at, updated_at, created_by")
+                    .order("created_at", { ascending: false });
+
+                if (result.error) throw result.error;
+
+                announcements = result.data || [];
+                renderAnnouncements();
+            }
+
+            async function changePublishedStatus(item) {
+                var newValue = !item.published;
+                var question = newValue
+                    ? "Publish this announcement so users can see it?"
+                    : "Unpublish this announcement so it is hidden from users?";
+
+                if (!window.confirm(question)) return;
+
+                try {
+                    var result = await client
+                        .from("announcements")
+                        .update({
+                            published: newValue,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq("id", item.id);
+
+                    if (result.error) throw result.error;
+
+                    showStatus(formStatus, "Announcement status updated.");
+                    await loadAnnouncements();
+                } catch (error) {
+                    console.error("Announcement status update failed:", error);
+                    showStatus(formStatus, "Unable to update the announcement.", true);
+                }
+            }
+
+            async function deleteAnnouncement(item) {
+                if (!window.confirm(
+                    'Permanently delete "' + item.title + '"? This cannot be undone.'
+                )) return;
+
+                try {
+                    var result = await client
+                        .from("announcements")
+                        .delete()
+                        .eq("id", item.id);
+
+                    if (result.error) throw result.error;
+
+                    if (editingId === item.id) resetEditor();
+
+                    showStatus(formStatus, "Announcement deleted.");
+                    await loadAnnouncements();
+                } catch (error) {
+                    console.error("Announcement deletion failed:", error);
+                    showStatus(formStatus, "Unable to delete the announcement.", true);
+                }
+            }
+
+            form.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                var title = document.getElementById("announcement-title").value.trim();
+                var body = document.getElementById("announcement-body").value.trim();
+                var published = document.getElementById("announcement-published").checked;
+
+                if (!title || !body || !currentUser) {
+                    showStatus(formStatus, "Enter a title and message.", true);
+                    return;
+                }
+
+                saveButton.disabled = true;
+                showStatus(formStatus, "");
+
+                try {
+                    var result;
+
+                    if (editingId) {
+                        result = await client
+                            .from("announcements")
+                            .update({
+                                title: title,
+                                body: body,
+                                published: published,
+                                updated_at: new Date().toISOString()
+                            })
+                            .eq("id", editingId);
+                    } else {
+                        result = await client
+                            .from("announcements")
+                            .insert({
+                                title: title,
+                                body: body,
+                                published: published,
+                                created_by: currentUser.id
+                            });
+                    }
+
+                    if (result.error) throw result.error;
+
+                    resetEditor();
+                    showStatus(formStatus, "Announcement saved successfully.");
+                    await loadAnnouncements();
+                } catch (error) {
+                    console.error("Announcement save failed:", error);
+                    showStatus(
+                        formStatus,
+                        "Unable to save the announcement. Check your admin access and Supabase policies.",
+                        true
+                    );
+                } finally {
+                    saveButton.disabled = false;
+                }
+            });
+
+            cancelButton.addEventListener("click", resetEditor);
+
+            document.getElementById("refresh-announcements")
+                .addEventListener("click", async function () {
+                    try {
+                        await loadAnnouncements();
+                    } catch (error) {
+                        console.error("Refresh failed:", error);
+                        list.textContent = "Unable to refresh announcements.";
+                    }
+                });
+                
+document.getElementById("admin-logout").addEventListener("click", async function () {
+    var button = this;
+    button.disabled = true;
+
+    try {
+        var result = await client.auth.signOut();
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Admin logout failed:", error);
+        showStatus(statusBox, "Unable to log out. Please try again.", true);
+        button.disabled = false;
+    }
+});
+
+
+            async function initialize() {
+                if (!client) {
+                    showStatus(
+                        statusBox,
+                        "Supabase client unavailable. Check that js/app.js loads correctly.",
+                        true
+                    );
+                    return;
+                }
+
+                try {
+                    var authResult = await client.auth.getUser();
+
+                    if (authResult.error || !authResult.data.user) {
+                        showStatus(statusBox, "Please sign in with an administrator account.", true);
+                        return;
+                    }
+
+                    currentUser = authResult.data.user;
+
+                    var adminResult = await client
+                        .from("admin_users")
+                        .select("user_id")
+                        .eq("user_id", currentUser.id)
+                        .maybeSingle();
+
+                    if (adminResult.error) throw adminResult.error;
+
+                    if (!adminResult.data) {
+                        showStatus(statusBox, "Access denied. This page is for administrators only.", true);
+                        return;
+                    }
+
+                    showStatus(statusBox, "Administrator access verified.");
+                    
+                    document.getElementById("admin-announcement-page").hidden = false;
+                    content.hidden = false;
+                    
+                    await loadAnnouncements();
+                } catch (error) {
+                    console.error("Admin announcements initialization failed:", error);
+                    showStatus(
+                        statusBox,
+                        "Unable to verify administrator access or load announcements. Check the browser console for details.",
+                        true
+                    );
+                }
+            }
+
+            initialize();
+        })();
+    </script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Manage your NaijaJobs account, discover gigs and track your applications.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Dashboard | NaijaJobs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="app">
+    <main class="main" id="main">
+        <div class="page">
+            <header class="page-head">
+                <div>
+                    <h1>Welcome back</h1>
+                    <p class="sub">What would you like to do today?</p>
+                </div>
+            </header>
+                        
+<!-- BROWSER PUSH NOTIFICATION SETTINGS -->
+<section class="push-notification-section" id="push-notification-section">
+    <div class="push-notification-content">
+        <h3>Stay updated</h3>
+        <p id="push-notification-status" role="status" aria-live="polite">
+            Enable browser notifications to hear about new messages and important account updates.
+        </p>
+    </div>
+
+    <button
+        type="button"
+        id="enable-push-notifications"
+        class="push-notification-button">
+        Enable notifications
+    </button>
+</section>
+
+
+            <div class="duo">
+                <a href="browse.html" class="tile tile-forest">
+                    <h2>Find a job</h2>
+                    <p>Browse open gigs and apply in a minute.</p>
+                    <span class="tile-go">Browse jobs &rarr;</span>
+                </a>
+                <a href="post-job.html" class="tile tile-yellow">
+                    <h2>Post a job</h2>
+                    <p>Describe the task, set a budget and review applicants.</p>
+                    <span class="tile-go">Post a job &rarr;</span>
+                </a>
+            </div>
+
+            <h2 class="section-title">Your workspace</h2>
+
+            <!-- CLIENT SUBSCRIPTION BADGE -->
+<div id="client-account-plan" class="client-account-plan" hidden>
+    <span>Account plan:</span>
+    <strong id="client-account-plan-badge">Free</strong>
+</div>
+<!-- WORKER PREMIUM BADGE -->
+<div id="worker-account-plan" class="client-account-plan" hidden>
+    <span>Worker plan:</span>
+    <strong id="worker-account-plan-badge">Free</strong>
+</div>
+            
+<!-- CLIENT SUBSCRIPTION PLANS -->
+<section class="client-plans-section" id="client-plans-section" hidden>
+
+    <div class="client-plans-heading">
+        <span class="client-plans-eyebrow">NAIJAJOBS FOR CLIENTS</span>
+        <h2>Choose a plan for your hiring needs</h2>
+        <p>
+            Post jobs, reach workers and promote your opportunities
+            with a plan that fits your business.
+        </p>
+    </div>
+
+    <div class="client-plan-status" id="client-plan-status" role="status">
+        Loading your subscription information...
+    </div>
+
+    <div class="client-plans-grid">
+
+        <!-- FREE PLAN -->
+        <article class="client-plan-card">
+            <span class="client-plan-label">Get started</span>
+            <h3>Free</h3>
+            <p class="client-plan-price">₦0</p>
+            <p class="client-plan-period">No monthly fee</p>
+
+            <ul class="client-plan-features">
+                <li>2 job posts per calendar month</li>
+                <li>Standard job visibility</li>
+                <li>0 featured-job credits</li>
+            </ul>
+
+            <button type="button"
+                    class="client-plan-button client-plan-button-light"
+                    data-client-plan="free">
+                Free plan
+            </button>
+        </article>
+
+        <!-- STARTER PLAN -->
+        <article class="client-plan-card">
+            <span class="client-plan-label">For growing clients</span>
+            <h3>Starter</h3>
+            <p class="client-plan-price">₦5,000</p>
+            <p class="client-plan-period">per month</p>
+
+            <ul class="client-plan-features">
+                <li>20 job posts per calendar month</li>
+                <li>2 featured-job credits per subscription month</li>
+                <li>Unused featured credits do not roll over</li>
+            </ul>
+
+            <button type="button"
+                    class="client-plan-button"
+                    data-client-plan="starter">
+                Choose Starter
+            </button>
+        </article>
+
+        <!-- BUSINESS PLAN -->
+        <article class="client-plan-card client-plan-card-featured">
+            <span class="client-plan-label">For high-volume hiring</span>
+            <h3>Business</h3>
+            <p class="client-plan-price">₦15,000</p>
+            <p class="client-plan-period">per month</p>
+
+            <ul class="client-plan-features">
+                <li>Unlimited job posts, subject to fair use</li>
+                <li>5 featured-job credits per subscription month</li>
+                <li>Unused featured credits do not roll over</li>
+            </ul>
+
+            <button type="button"
+                    class="client-plan-button"
+                    data-client-plan="business">
+                Choose Business
+            </button>
+        </article>
+
+    </div>
+
+    <p class="client-plan-note">
+    Your subscription activates after successful payment verification.
+    Your current plan and expiry date will appear above. If your paid
+    subscription expires, your account returns to the Free posting
+    allowance. Existing jobs remain on NaijaJobs.
+</p>
+
+    <p id="client-plan-message" class="form-message" role="status"
+       aria-live="polite"></p>
+
+</section>
+
+<section class="worker-premium-section" id="worker-premium-section" hidden>
+    <div class="worker-premium-heading">
+        <span class="worker-premium-eyebrow">NAIJAJOBS PREMIUM</span>
+        <h2>Invest in your next opportunity</h2>
+        <p>Stand out with a Premium badge, showcase your skills with an enhanced profile, track your applications, get greater profile visibility, and receive priority support.</p>
+    </div>
+
+    <div class="worker-premium-plans">
+        <article class="worker-premium-card">
+            <h3>Monthly</h3>
+            <p class="worker-premium-price">₦1,500 <span>/ month</span></p>
+            <p>Premium access for one month.</p>
+            <button type="button" class="worker-premium-button" data-premium-plan="monthly">
+                Choose Monthly
+            </button>
+        </article>
+
+        <article class="worker-premium-card worker-premium-card-featured">
+            <span class="worker-premium-popular">SAVE ₦3,000</span>
+            <h3>Yearly</h3>
+            <p class="worker-premium-price">₦15,000 <span>/ year</span></p>
+            <p>Premium access for twelve months.</p>
+            <button type="button" class="worker-premium-button" data-premium-plan="yearly">
+                Choose Yearly
+            </button>
+        </article>
+
+        <article class="worker-premium-card">
+            <h3>Lifetime</h3>
+            <p class="worker-premium-price">₦40,000 <span>/ once</span></p>
+            <p>One payment with no subscription expiry.</p>
+            <button type="button" class="worker-premium-button" data-premium-plan="lifetime">
+                Choose Lifetime
+            </button>
+        </article>
+    </div>
+
+    <p class="worker-premium-note">
+        Browsing jobs and applying remain free. Premium checkout will be available once setup is complete.
+    </p>
+</section>
+            <nav class="linklist" aria-label="Workspace shortcuts">
+                <a href="applications.html"><strong>My applications</strong><span>Track jobs you have applied for</span></a>
+                <a href="my-jobs.html"><strong>My jobs</strong><span>Manage jobs you have posted</span></a>
+                <a href="messages.html"><strong>Messages</strong><span>Chat with clients and workers</span></a>
+                <a href="profile.html"><strong>Profile</strong><span>Keep your skills up to date</span></a>
+            </nav>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/push-notifications.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "name": "naijajobs-desktop",
+  "version": "1.0.0",
+  "description": "NaijaJobs desktop app",
+  "main": "main.js",
+  "author": "NaijaJobs",
+  "license": "UNLICENSED",
+  "scripts": {
+    "prepare-web": "node ../copy-web.js ./web",
+    "start": "npm run prepare-web && electron .",
+    "dist": "npm run prepare-web && electron-builder",
+    "dist:win": "npm run prepare-web && electron-builder --win",
+    "dist:mac": "npm run prepare-web && electron-builder --mac",
+    "dist:linux": "npm run prepare-web && electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "ng.naijajobs.desktop",
+    "productName": "NaijaJobs",
+    "files": ["main.js", "server.js", "web/**/*", "build/icon.png"],
+    "directories": { "output": "dist", "buildResources": "build" },
+    "win": { "target": ["nsis"], "icon": "build/icon.png" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true },
+    "mac": { "target": ["dmg"], "category": "public.app-category.business", "icon": "build/icon.png" },
+    "linux": { "target": ["AppImage"], "category": "Office", "icon": "build/icon.png" }
+  }
+}

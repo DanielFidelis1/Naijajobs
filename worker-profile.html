@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="See a person's skills, rating and reviews on NaijaJobs.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Profile | NaijaJobs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="app">
+    <main class="main" id="main">
+        <div class="page">
+            <a href="javascript:history.back()" class="back">&larr; Back</a>
+
+            <div id="worker-profile" class="worker-profile" aria-live="polite">
+                <div class="loading"><span class="nj-loading-spinner"></span><p>Loading profile...</p></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

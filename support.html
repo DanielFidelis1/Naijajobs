@@ -1,0 +1,672 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Contact NaijaJobs support privately and track your support requests.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Contact Support | NaijaJobs</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+
+    <style>
+        .support-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+            gap: 22px;
+            margin-top: 24px;
+        }
+
+        .support-card {
+            min-width: 0;
+            padding: 22px;
+            background: #fff;
+            border: 1px solid #e5e9e6;
+            border-radius: 16px;
+        }
+
+        .support-card h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+        }
+
+        .support-form label {
+            display: block;
+            margin: 16px 0 7px;
+            font-weight: 700;
+        }
+
+        .support-form input,
+        .support-form select,
+        .support-form textarea,
+        .reply-form textarea {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cfd8d1;
+            border-radius: 9px;
+            font: inherit;
+            background: #fff;
+            color: #17231c;
+        }
+
+        .support-form textarea,
+        .reply-form textarea {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        .support-button {
+            margin-top: 16px;
+            padding: 12px 17px;
+            border: 0;
+            border-radius: 9px;
+            background: #0e3b2c;
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .support-button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .support-state {
+            padding: 14px;
+            border-radius: 10px;
+            background: #f4f7f4;
+            color: #536157;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .ticket-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .ticket-button {
+            width: 100%;
+            padding: 14px;
+            text-align: left;
+            border: 1px solid #dce4de;
+            border-radius: 10px;
+            background: #fff;
+            font: inherit;
+            cursor: pointer;
+            overflow-wrap: anywhere;
+        }
+
+        .ticket-button.selected {
+            border-color: #0e3b2c;
+            background: #edf5ef;
+        }
+
+        .ticket-button strong,
+        .ticket-button span {
+            display: block;
+        }
+
+        .ticket-button span {
+            margin-top: 6px;
+            color: #647067;
+            font-size: 0.88rem;
+        }
+
+        .ticket-status {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 4px 9px;
+            border-radius: 20px;
+            background: #edf5ef;
+            color: #24533b;
+            font-size: 0.82rem;
+        }
+
+        .support-conversation {
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1px solid #e5e9e6;
+        }
+
+        .support-messages {
+            display: grid;
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 15px;
+        }
+
+        .support-message {
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: #f2f5f2;
+            overflow-wrap: anywhere;
+        }
+
+        .support-message.mine {
+            background: #e6f2e9;
+        }
+
+        .support-message strong,
+        .support-message time {
+            display: block;
+            font-size: 0.82rem;
+        }
+
+        .support-message time {
+            margin-top: 4px;
+            color: #647067;
+        }
+
+        .support-message p {
+            margin-bottom: 0;
+            line-height: 1.65;
+            white-space: pre-wrap;
+        }
+
+        .reply-form {
+            margin-top: 16px;
+        }
+
+        .reply-form label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: 700;
+        }
+
+        .support-notice {
+            margin-top: 16px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #edf5ef;
+            color: #24533b;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 800px) {
+            .support-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .support-card {
+                padding: 16px;
+            }
+        }
+    </style>
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body class="app">
+    <main class="main" id="main">
+        <div class="page">
+            <header class="page-head">
+                <div>
+                    <h1>Contact Support</h1>
+                    <p class="sub">Get help with your NaijaJobs account or report a problem.</p>
+                </div>
+            </header>
+
+            <div class="support-notice">
+                <strong>Private support:</strong> Only you and authorised
+                administrators can access your support ticket and its messages.
+                For your safety, don't share your password.
+            </div>
+
+            <div class="support-layout">
+                <section class="support-card">
+                    <h2>Create a support ticket</h2>
+                    <p>Tell us what you need help with.</p>
+
+                    <form id="support-ticket-form" class="support-form">
+                        <label for="support-subject">Subject</label>
+                        <input
+                            id="support-subject"
+                            name="subject"
+                            type="text"
+                            maxlength="150"
+                            required
+                            placeholder="Briefly describe the problem"
+                        >
+
+                        <label for="support-category">Category</label>
+                        <select id="support-category" name="category" required>
+                            <option value="general">General enquiry</option>
+                            <option value="account">Account or login</option>
+                            <option value="jobs">Jobs or applications</option>
+                            <option value="payments">Payments</option>
+                            <option value="safety">Report a problem or user</option>
+                            <option value="technical">Technical issue</option>
+                        </select>
+
+                        <label for="support-first-message">Your message</label>
+                        <textarea
+                            id="support-first-message"
+                            name="message"
+                            maxlength="5000"
+                            required
+                            placeholder="Explain the issue and any steps you have tried."
+                        ></textarea>
+
+                        <button
+                            type="submit"
+                            id="create-ticket-button"
+                            class="support-button"
+                        >
+                            Submit ticket
+                        </button>
+                    </form>
+
+                    <p id="support-form-status" class="support-state" role="status" hidden></p>
+                </section>
+
+                <section class="support-card">
+                    <h2>Your support tickets</h2>
+                    <p>Select a ticket to read its messages or send a reply.</p>
+
+                    <button
+                        type="button"
+                        id="refresh-tickets-button"
+                        class="support-button"
+                    >
+                        Refresh tickets
+                    </button>
+
+                    <div id="support-ticket-list" class="ticket-list" aria-live="polite">
+                        <p class="support-state">Loading your tickets...</p>
+                    </div>
+
+                    <div id="support-conversation" class="support-conversation" hidden>
+                        <h2 id="selected-ticket-subject"></h2>
+                        <p id="selected-ticket-status" class="support-state"></p>
+
+                        <div id="support-message-list" class="support-messages" aria-live="polite"></div>
+
+                        <form id="support-reply-form" class="reply-form">
+                            <label for="support-reply">Your reply</label>
+                            <textarea
+                                id="support-reply"
+                                maxlength="5000"
+                                required
+                                placeholder="Write a message to support..."
+                            ></textarea>
+                            <button
+                                type="submit"
+                                id="send-support-reply"
+                                class="support-button"
+                            >
+                                Send reply
+                            </button>
+                        </form>
+
+                        <p id="support-reply-status" class="support-state" role="status" hidden></p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var client = typeof supabaseClient !== "undefined"
+            ? supabaseClient
+            : null;
+            var ticketForm = document.getElementById("support-ticket-form");
+            var formStatus = document.getElementById("support-form-status");
+            var ticketList = document.getElementById("support-ticket-list");
+            var refreshButton = document.getElementById("refresh-tickets-button");
+            var conversationPanel = document.getElementById("support-conversation");
+            var messageList = document.getElementById("support-message-list");
+            var replyForm = document.getElementById("support-reply-form");
+            var replyStatus = document.getElementById("support-reply-status");
+
+            var currentUser = null;
+            var tickets = [];
+            var selectedTicket = null;
+
+            function setStatus(element, message) {
+                element.textContent = message;
+                element.hidden = !message;
+            }
+
+            function formatDate(value) {
+                var date = new Date(value);
+                if (Number.isNaN(date.getTime())) return "";
+                return date.toLocaleString();
+            }
+
+            function makeMessage(message, isMine) {
+                var article = document.createElement("article");
+                article.className = "support-message" + (isMine ? " mine" : "");
+
+                var sender = document.createElement("strong");
+                sender.textContent = isMine ? "You" : "NaijaJobs Support";
+
+                var time = document.createElement("time");
+                time.dateTime = message.created_at;
+                time.textContent = formatDate(message.created_at);
+
+                var body = document.createElement("p");
+                body.textContent = message.content;
+
+                article.appendChild(sender);
+                article.appendChild(time);
+                article.appendChild(body);
+
+                return article;
+            }
+
+            function renderTickets() {
+                ticketList.replaceChildren();
+
+                if (tickets.length === 0) {
+                    var empty = document.createElement("p");
+                    empty.className = "support-state";
+                    empty.textContent = "You haven't created any support tickets yet.";
+                    ticketList.appendChild(empty);
+                    conversationPanel.hidden = true;
+                    return;
+                }
+
+                tickets.forEach(function (ticket) {
+                    var button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "ticket-button" +
+                        (selectedTicket && selectedTicket.id === ticket.id ? " selected" : "");
+
+                    var title = document.createElement("strong");
+                    title.textContent = ticket.subject;
+
+                    var date = document.createElement("span");
+                    date.textContent = "Created " + formatDate(ticket.created_at);
+
+                    var status = document.createElement("span");
+                    status.className = "ticket-status";
+                    status.textContent = "Status: " + ticket.status.replace(/_/g, " ");
+
+                    button.appendChild(title);
+                    button.appendChild(date);
+                    button.appendChild(status);
+
+                    button.addEventListener("click", function () {
+                        openTicket(ticket.id);
+                    });
+
+                    ticketList.appendChild(button);
+                });
+            }
+
+            async function loadTickets() {
+                var result = await client
+                    .from("support_tickets")
+                    .select("id, subject, category, status, created_at, updated_at")
+                    .eq("user_id", currentUser.id)
+                    .order("updated_at", { ascending: false });
+
+                if (result.error) throw result.error;
+
+                tickets = result.data || [];
+                renderTickets();
+
+                if (selectedTicket) {
+                    var stillExists = tickets.find(function (ticket) {
+                        return ticket.id === selectedTicket.id;
+                    });
+
+                    if (stillExists) {
+                        selectedTicket = stillExists;
+                        await loadTicketMessages();
+                    } else {
+                        selectedTicket = null;
+                        conversationPanel.hidden = true;
+                    }
+                }
+            }
+
+            async function loadTicketMessages() {
+                if (!selectedTicket) return;
+
+                var result = await client
+                    .from("support_messages")
+                    .select("id, ticket_id, sender_id, content, created_at")
+                    .eq("ticket_id", selectedTicket.id)
+                    .order("created_at", { ascending: true });
+
+                if (result.error) throw result.error;
+
+                messageList.replaceChildren();
+
+                (result.data || []).forEach(function (message) {
+                    messageList.appendChild(
+                        makeMessage(message, message.sender_id === currentUser.id)
+                    );
+                });
+
+                document.getElementById("selected-ticket-subject").textContent =
+                    selectedTicket.subject;
+
+                document.getElementById("selected-ticket-status").textContent =
+                    "Status: " + selectedTicket.status.replace(/_/g, " ");
+
+                replyForm.hidden = selectedTicket.status === "closed";
+                conversationPanel.hidden = false;
+            }
+
+            async function openTicket(ticketId) {
+                selectedTicket = tickets.find(function (ticket) {
+                    return ticket.id === ticketId;
+                });
+
+                if (!selectedTicket) return;
+
+                renderTickets();
+                conversationPanel.hidden = false;
+                messageList.replaceChildren();
+
+                var loading = document.createElement("p");
+                loading.className = "support-state";
+                loading.textContent = "Loading messages...";
+                messageList.appendChild(loading);
+
+                try {
+                    await loadTicketMessages();
+                } catch (error) {
+                    console.error("Unable to load support messages:", error);
+                    messageList.replaceChildren();
+
+                    var failure = document.createElement("p");
+                    failure.className = "support-state";
+                    failure.textContent = "Unable to load this ticket's messages. Please try again.";
+                    messageList.appendChild(failure);
+                }
+            }
+
+            ticketForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                if (!currentUser) {
+                    setStatus(formStatus, "Please sign in before creating a support ticket.");
+                    return;
+                }
+
+                var subject = document.getElementById("support-subject").value.trim();
+                var category = document.getElementById("support-category").value;
+                var content = document.getElementById("support-first-message").value.trim();
+                var submitButton = document.getElementById("create-ticket-button");
+
+                if (!subject || !content) {
+                    setStatus(formStatus, "Please enter a subject and message.");
+                    return;
+                }
+
+                submitButton.disabled = true;
+                setStatus(formStatus, "");
+
+                try {
+                    var ticketResult = await client
+                        .from("support_tickets")
+                        .insert({
+                            user_id: currentUser.id,
+                            subject: subject,
+                            category: category
+                        })
+                        .select("id, subject, category, status, created_at, updated_at")
+                        .single();
+
+                    if (ticketResult.error) throw ticketResult.error;
+
+                    var messageResult = await client
+                        .from("support_messages")
+                        .insert({
+                            ticket_id: ticketResult.data.id,
+                            sender_id: currentUser.id,
+                            content: content
+                        });
+
+                    if (messageResult.error) {
+                        console.error("Ticket created, but initial message failed:", messageResult.error);
+                        setStatus(
+                            formStatus,
+                            "Your ticket was created, but the first message could not be saved. Select the ticket and try sending your message again."
+                        );
+                    } else {
+                        setStatus(formStatus, "Your support ticket has been submitted successfully.");
+                        ticketForm.reset();
+                    }
+
+                    selectedTicket = ticketResult.data;
+                    await loadTickets();
+                    await openTicket(selectedTicket.id);
+                } catch (error) {
+                    console.error("Unable to create support ticket:", error);
+                    setStatus(
+                        formStatus,
+                        "We couldn't create your ticket. Please check your connection and try again."
+                    );
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+
+            replyForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                if (!currentUser || !selectedTicket) return;
+
+                if (selectedTicket.status === "closed") {
+                    setStatus(replyStatus, "This ticket is closed and cannot receive replies.");
+                    return;
+                }
+
+                var input = document.getElementById("support-reply");
+                var content = input.value.trim();
+                var sendButton = document.getElementById("send-support-reply");
+
+                if (!content) {
+                    setStatus(replyStatus, "Please enter a message.");
+                    return;
+                }
+
+                sendButton.disabled = true;
+                setStatus(replyStatus, "");
+
+                try {
+                    var result = await client
+                        .from("support_messages")
+                        .insert({
+                            ticket_id: selectedTicket.id,
+                            sender_id: currentUser.id,
+                            content: content
+                        });
+
+                    if (result.error) throw result.error;
+
+                    input.value = "";
+                    await loadTicketMessages();
+                    await loadTickets();
+                    setStatus(replyStatus, "Your reply has been sent.");
+                } catch (error) {
+                    console.error("Unable to send support reply:", error);
+                    setStatus(
+                        replyStatus,
+                        "Your reply could not be sent. Please try again."
+                    );
+                } finally {
+                    sendButton.disabled = false;
+                }
+            });
+
+            refreshButton.addEventListener("click", async function () {
+                refreshButton.disabled = true;
+
+                try {
+                    await loadTickets();
+                } catch (error) {
+                    console.error("Unable to refresh tickets:", error);
+                    ticketList.replaceChildren();
+
+                    var failure = document.createElement("p");
+                    failure.className = "support-state";
+                    failure.textContent = "Unable to load tickets. Please try again.";
+                    ticketList.appendChild(failure);
+                } finally {
+                    refreshButton.disabled = false;
+                }
+            });
+
+            async function initializeSupport() {
+                if (!client) {
+                    setStatus(formStatus, "The support page could not connect to Supabase.");
+                    ticketList.textContent = "Please refresh the page and try again.";
+                    return;
+                }
+
+                var authResult = await client.auth.getUser();
+
+                if (authResult.error || !authResult.data.user) {
+                    setStatus(formStatus, "Please sign in to use support.");
+                    ticketList.textContent = "You must be signed in to view your tickets.";
+                    ticketForm.querySelector("button[type='submit']").disabled = true;
+                    return;
+                }
+
+                currentUser = authResult.data.user;
+
+                try {
+                    await loadTickets();
+                } catch (error) {
+                    console.error("Unable to initialize support:", error);
+                    ticketList.textContent =
+                        "Unable to load your support tickets. Please refresh the page.";
+                }
+            }
+
+            initializeSupport().catch(function (error) {
+                console.error("Support initialization failed:", error);
+                setStatus(formStatus, "Support could not be initialized. Please refresh the page.");
+            });
+        })();
+    </script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,742 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Manage private NaijaJobs support tickets.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Support Inbox | NaijaJobs</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+
+    <style>
+        .support-admin-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .support-admin-panel {
+            min-width: 0;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #e5e9e6;
+            border-radius: 15px;
+        }
+
+        .support-admin-panel h2 {
+            margin-top: 0;
+        }
+
+        .support-admin-notice {
+            padding: 13px 15px;
+            border-radius: 9px;
+            background: #f2f5f2;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .support-admin-notice.error {
+            background: #fff0f0;
+            color: #8a2222;
+        }
+
+        .support-admin-button {
+            padding: 10px 14px;
+            border: 0;
+            border-radius: 8px;
+            background: #0e3b2c;
+            color: #fff;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .support-admin-button.secondary {
+            background: #eaf0eb;
+            color: #183d2c;
+        }
+
+        .support-admin-button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        .support-admin-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .support-admin-filters select {
+            min-width: 0;
+            max-width: 100%;
+            padding: 10px;
+            border: 1px solid #cfd8d1;
+            border-radius: 8px;
+            background: #fff;
+            font: inherit;
+        }
+
+        .admin-ticket-list {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .admin-ticket-button {
+            width: 100%;
+            padding: 14px;
+            text-align: left;
+            border: 1px solid #dce4de;
+            border-radius: 10px;
+            background: #fff;
+            font: inherit;
+            cursor: pointer;
+            overflow-wrap: anywhere;
+        }
+
+        .admin-ticket-button.selected {
+            border-color: #0e3b2c;
+            background: #edf5ef;
+        }
+
+        .admin-ticket-button strong,
+        .admin-ticket-button span {
+            display: block;
+        }
+
+        .admin-ticket-button span {
+            margin-top: 6px;
+            color: #647067;
+            font-size: 0.86rem;
+        }
+
+        .admin-ticket-status {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 4px 9px;
+            border-radius: 20px;
+            background: #edf5ef;
+            color: #24533b;
+            font-size: 0.82rem;
+        }
+
+        .admin-ticket-meta {
+            margin: 12px 0;
+            color: #647067;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        .admin-message-list {
+            display: grid;
+            gap: 12px;
+            max-height: 440px;
+            overflow-y: auto;
+            margin-top: 18px;
+        }
+
+        .admin-message {
+            padding: 13px;
+            border-radius: 11px;
+            background: #f2f5f2;
+            overflow-wrap: anywhere;
+        }
+
+        .admin-message.from-admin {
+            background: #e6f2e9;
+        }
+
+        .admin-message strong,
+        .admin-message time {
+            display: block;
+            font-size: 0.82rem;
+        }
+
+        .admin-message time {
+            margin-top: 4px;
+            color: #647067;
+        }
+
+        .admin-message p {
+            margin-bottom: 0;
+            line-height: 1.65;
+            white-space: pre-wrap;
+        }
+
+        .admin-reply-form {
+            margin-top: 18px;
+        }
+
+        .admin-reply-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .admin-reply-form textarea {
+            box-sizing: border-box;
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 1px solid #cfd8d1;
+            border-radius: 9px;
+            font: inherit;
+            resize: vertical;
+        }
+
+        @media (max-width: 850px) {
+            .support-admin-layout {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .support-admin-panel {
+                padding: 15px;
+            }
+        }
+    </style>
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body class="admin">
+    <main id="admin-support-page" class="admin-page" hidden>
+
+
+    <header class="admin-header">
+    <div>
+        <a href="dashboard.html" class="logo">Naija<span>Jobs</span></a>
+        <p>Support inbox</p>
+    </div>
+
+    <div class="admin-header-actions">
+        <a href="admin-dashboard.html"
+           class="admin-icon-link"
+           aria-label="Admin dashboard"
+           title="Admin dashboard">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="8" height="8" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.5"/>
+                <rect x="14" y="11" width="7" height="10" rx="1.5"/>
+                <rect x="3" y="14" width="8" height="7" rx="1.5"/>
+            </svg>
+        </a>
+
+        <a href="admin-users.html"
+        class="admin-icon-link"
+        aria-label="Manage users"
+        title="Manage users">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="10" cy="7" r="4"/>
+            <path d="M20 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+        </a>
+
+        <a href="admin-announcements.html"
+           class="admin-icon-link"
+           aria-label="Manage announcements"
+           title="Manage announcements">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M3 11v2a2 2 0 0 0 2 2h2l9 5V4l-9 5H5a2 2 0 0 0-2 2Z"/>
+                <path d="M7 15l2 6h4l-3-4"/>
+                <path d="M19 9a5 5 0 0 1 0 6"/>
+            </svg>
+        </a>
+
+        <a href="admin-support.html"
+           class="admin-icon-link"
+           aria-label="Support inbox"
+           title="Support inbox">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 13v-2a8 8 0 0 1 16 0v2"/>
+                <path d="M4 13H3v4h4v-6H4"/>
+                <path d="M20 13h1v4h-4v-6h3"/>
+                <path d="M17 19a5 5 0 0 1-5 2"/>
+            </svg>
+        </a>
+
+        <button id="admin-logout" class="admin-button" type="button">
+            Log out
+        </button>
+    </div>
+    </header>
+    <p id="admin-access-status" class="support-admin-notice" role="status">
+        Checking administrator access...
+    </p>
+
+        <div id="admin-support-content" hidden>
+            <div class="support-admin-layout">
+                    <section class="support-admin-panel">
+                        <h2>Support tickets</h2>
+
+                        <button
+                            type="button"
+                            id="refresh-support-tickets"
+                            class="support-admin-button secondary"
+                        >
+                            Refresh tickets
+                        </button>
+
+                        <div class="support-admin-filters">
+                            <label for="ticket-status-filter">Filter:</label>
+                            <select id="ticket-status-filter">
+                                <option value="all">All tickets</option>
+                                <option value="open">Open</option>
+                                <option value="closed">Closed</option>
+                            </select>
+                        </div>
+
+                        <div id="admin-ticket-list" class="admin-ticket-list" aria-live="polite">
+                            <p class="support-admin-notice">Loading tickets...</p>
+                        </div>
+                    </section>
+
+                    <section class="support-admin-panel">
+                        <h2 id="selected-ticket-title">Ticket conversation</h2>
+
+                        <p id="selected-ticket-meta" class="admin-ticket-meta">
+                            Select a ticket to view its messages.
+                        </p>
+
+                        <div id="ticket-actions" class="admin-actions" hidden>
+                            <button
+                                type="button"
+                                id="toggle-ticket-status"
+                                class="support-admin-button secondary"
+                            >
+                                Close ticket
+                            </button>
+                        </div>
+
+                        <div id="admin-message-list" class="admin-message-list" aria-live="polite"></div>
+
+                        <form id="admin-reply-form" class="admin-reply-form" hidden>
+                            <label for="admin-reply-message">Reply to user</label>
+                            <textarea
+                                id="admin-reply-message"
+                                maxlength="5000"
+                                required
+                                placeholder="Write your private support reply..."
+                            ></textarea>
+
+                            <button
+                                type="submit"
+                                id="admin-send-reply"
+                                class="support-admin-button"
+                            >
+                                Send reply
+                            </button>
+                        </form>
+
+                        <p id="admin-reply-status" class="support-admin-notice" role="status" hidden></p>
+                    </section>
+            </div>
+
+            <section class="support-admin-panel" style="margin-top: 20px;">
+                <h2>Reported jobs and users <span id="admin-report-count" class="muted"></span></h2>
+                <p class="support-admin-notice">Review reports submitted by members. Only administrators can resolve or dismiss reports.</p>
+                <button type="button" id="refresh-reports" class="support-admin-button secondary">Refresh reports</button>
+                <p id="reports-message" class="support-admin-notice" role="status" aria-live="polite">Loading reports...</p>
+                <div style="overflow-x:auto; margin-top: 12px;">
+                    <table style="width:100%; border-collapse:collapse; min-width:760px;">
+                        <thead><tr><th>Date</th><th>Type</th><th>Target</th><th>Reason</th><th>Details</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="admin-reports-list"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/app.js"></script>
+
+    <script>
+        (function () {
+            "use strict";
+
+            var client = typeof supabaseClient !== "undefined"
+                ? supabaseClient
+                : null;
+
+            var accessStatus = document.getElementById("admin-access-status");
+            var content = document.getElementById("admin-support-content");
+            var ticketList = document.getElementById("admin-ticket-list");
+            var messageList = document.getElementById("admin-message-list");
+            var replyForm = document.getElementById("admin-reply-form");
+            var replyStatus = document.getElementById("admin-reply-status");
+            var ticketActions = document.getElementById("ticket-actions");
+
+            var currentUser = null;
+            var tickets = [];
+            var selectedTicket = null;
+
+            function showStatus(element, message, isError) {
+                element.textContent = message;
+                element.hidden = !message;
+                element.classList.toggle("error", Boolean(isError));
+            }
+
+            function formatDate(value) {
+                var date = new Date(value);
+                return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
+            }
+
+            function makeButton(label, callback) {
+                var button = document.createElement("button");
+                button.type = "button";
+                button.className = "support-admin-button secondary";
+                button.textContent = label;
+                button.addEventListener("click", callback);
+                return button;
+            }
+
+            function renderTickets() {
+                ticketList.replaceChildren();
+
+                var filter = document.getElementById("ticket-status-filter").value;
+                var filtered = tickets.filter(function (ticket) {
+                    return filter === "all" || ticket.status === filter;
+                });
+
+                if (filtered.length === 0) {
+                    var empty = document.createElement("p");
+                    empty.className = "support-admin-notice";
+                    empty.textContent = "No tickets match this filter.";
+                    ticketList.appendChild(empty);
+                    return;
+                }
+
+                filtered.forEach(function (ticket) {
+                    var button = document.createElement("button");
+                    button.type = "button";
+                    button.className = "admin-ticket-button" +
+                        (selectedTicket && selectedTicket.id === ticket.id ? " selected" : "");
+
+                    var title = document.createElement("strong");
+                    title.textContent = ticket.subject;
+
+                    var category = document.createElement("span");
+                    category.textContent = "Category: " + ticket.category;
+
+                    var created = document.createElement("span");
+                    created.textContent = "Created: " + formatDate(ticket.created_at);
+
+                    var status = document.createElement("span");
+                    status.className = "admin-ticket-status";
+                    status.textContent = "Status: " + ticket.status.replace(/_/g, " ");
+
+                    button.appendChild(title);
+                    button.appendChild(category);
+                    button.appendChild(created);
+                    button.appendChild(status);
+
+                    button.addEventListener("click", function () {
+                        openTicket(ticket.id);
+                    });
+
+                    ticketList.appendChild(button);
+                });
+            }
+
+            async function loadTickets() {
+                var result = await client
+                    .from("support_tickets")
+                    .select("id, user_id, subject, category, status, created_at, updated_at")
+                    .order("updated_at", { ascending: false });
+
+                if (result.error) throw result.error;
+
+                tickets = result.data || [];
+                renderTickets();
+
+                if (selectedTicket) {
+                    var latest = tickets.find(function (ticket) {
+                        return ticket.id === selectedTicket.id;
+                    });
+
+                    if (latest) {
+                        selectedTicket = latest;
+                        await loadMessages();
+                    } else {
+                        selectedTicket = null;
+                        resetConversation();
+                    }
+                }
+            }
+
+            function resetConversation() {
+                document.getElementById("selected-ticket-title").textContent =
+                    "Ticket conversation";
+                document.getElementById("selected-ticket-meta").textContent =
+                    "Select a ticket to view its messages.";
+                messageList.replaceChildren();
+                ticketActions.hidden = true;
+                replyForm.hidden = true;
+            }
+
+            async function loadMessages() {
+                if (!selectedTicket) return;
+
+                var result = await client
+                    .from("support_messages")
+                    .select("id, ticket_id, sender_id, content, created_at")
+                    .eq("ticket_id", selectedTicket.id)
+                    .order("created_at", { ascending: true });
+
+                if (result.error) throw result.error;
+
+                messageList.replaceChildren();
+
+                (result.data || []).forEach(function (message) {
+                    var article = document.createElement("article");
+                    article.className = "admin-message" +
+                        (message.sender_id === currentUser.id ? " from-admin" : "");
+
+                    var sender = document.createElement("strong");
+                    sender.textContent = message.sender_id === currentUser.id
+                        ? "You (Support)"
+                        : "User";
+
+                    var time = document.createElement("time");
+                    time.dateTime = message.created_at;
+                    time.textContent = formatDate(message.created_at);
+
+                    var body = document.createElement("p");
+                    body.textContent = message.content;
+
+                    article.appendChild(sender);
+                    article.appendChild(time);
+                    article.appendChild(body);
+                    messageList.appendChild(article);
+                });
+
+                document.getElementById("selected-ticket-title").textContent =
+                    selectedTicket.subject;
+
+                document.getElementById("selected-ticket-meta").textContent =
+                    "Category: " + selectedTicket.category +
+                    " | Status: " + selectedTicket.status.replace(/_/g, " ") +
+                    " | Created: " + formatDate(selectedTicket.created_at);
+
+                ticketActions.hidden = false;
+                replyForm.hidden = selectedTicket.status === "closed";
+
+                document.getElementById("toggle-ticket-status").textContent =
+                    selectedTicket.status === "closed" ? "Reopen ticket" : "Close ticket";
+            }
+
+            async function openTicket(ticketId) {
+                selectedTicket = tickets.find(function (ticket) {
+                    return ticket.id === ticketId;
+                });
+
+                if (!selectedTicket) return;
+
+                renderTickets();
+                messageList.textContent = "Loading messages...";
+
+                try {
+                    await loadMessages();
+                } catch (error) {
+                    console.error("Unable to load ticket messages:", error);
+                    messageList.textContent = "Unable to load messages. Please refresh and try again.";
+                }
+            }
+
+            document.getElementById("ticket-status-filter")
+                .addEventListener("change", renderTickets);
+
+            document.getElementById("refresh-support-tickets")
+                .addEventListener("click", async function () {
+                    var button = this;
+                    button.disabled = true;
+
+                    try {
+                        await loadTickets();
+                    } catch (error) {
+                        console.error("Unable to refresh support tickets:", error);
+                        showStatus(
+                            accessStatus,
+                            "Unable to refresh support tickets. Check the connection and RLS policies.",
+                            true
+                        );
+                    } finally {
+                        button.disabled = false;
+                    }
+                });
+
+            document.getElementById("toggle-ticket-status")
+                .addEventListener("click", async function () {
+                    if (!selectedTicket) return;
+
+                    var newStatus = selectedTicket.status === "closed" ? "open" : "closed";
+                    var prompt = newStatus === "closed"
+                        ? "Close this support ticket?"
+                        : "Reopen this support ticket?";
+
+                    if (!window.confirm(prompt)) return;
+
+                    this.disabled = true;
+
+                    try {
+                        var result = await client
+                            .from("support_tickets")
+                            .update({
+                                status: newStatus,
+                                updated_at: new Date().toISOString()
+                            })
+                            .eq("id", selectedTicket.id);
+
+                        if (result.error) throw result.error;
+
+                        selectedTicket.status = newStatus;
+                        await loadTickets();
+                        showStatus(replyStatus, "Ticket status updated.");
+                    } catch (error) {
+                        console.error("Unable to update ticket status:", error);
+                        showStatus(
+                            replyStatus,
+                            "Unable to change ticket status. Check the permitted status values in Supabase.",
+                            true
+                        );
+                    } finally {
+                        this.disabled = false;
+                    }
+                });
+
+            replyForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                if (!currentUser || !selectedTicket) return;
+
+                if (selectedTicket.status === "closed") {
+                    showStatus(replyStatus, "Reopen this ticket before replying.", true);
+                    return;
+                }
+
+                var input = document.getElementById("admin-reply-message");
+                var message = input.value.trim();
+                var sendButton = document.getElementById("admin-send-reply");
+
+                if (!message) {
+                    showStatus(replyStatus, "Enter a reply before sending.", true);
+                    return;
+                }
+
+                sendButton.disabled = true;
+                showStatus(replyStatus, "");
+
+                try {
+                    var result = await client
+                        .from("support_messages")
+                        .insert({
+                            ticket_id: selectedTicket.id,
+                            sender_id: currentUser.id,
+                            content: message
+                        });
+
+                    if (result.error) throw result.error;
+
+                    input.value = "";
+                    await loadMessages();
+                    await loadTickets();
+                    showStatus(replyStatus, "Your reply has been sent.");
+                } catch (error) {
+                    console.error("Unable to send support reply:", error);
+                    showStatus(
+                        replyStatus,
+                        "Unable to send your reply. Check your admin access and support-message policies.",
+                        true
+                    );
+                } finally {
+                    sendButton.disabled = false;
+                }
+            });
+            
+document.getElementById("admin-logout").addEventListener("click", async function () {
+    var button = this;
+    button.disabled = true;
+
+    try {
+        var result = await client.auth.signOut();
+
+        if (result.error) {
+            throw result.error;
+        }
+
+        window.location.href = "index.html";
+    } catch (error) {
+        console.error("Admin logout failed:", error);
+        showStatus(accessStatus, "Unable to log out. Please try again.", true);
+        button.disabled = false;
+    }
+});
+
+
+            async function initialize() {
+                if (!client) {
+                    showStatus(accessStatus, "Supabase client is unavailable.", true);
+                    return;
+                }
+
+                try {
+                    var auth = await client.auth.getUser();
+
+                    if (auth.error || !auth.data.user) {
+                        showStatus(accessStatus, "Please sign in with an administrator account.", true);
+                        return;
+                    }
+
+                    currentUser = auth.data.user;
+
+                    var admin = await client
+                        .from("admin_users")
+                        .select("user_id")
+                        .eq("user_id", currentUser.id)
+                        .maybeSingle();
+
+                    if (admin.error) throw admin.error;
+
+                    if (!admin.data) {
+                        showStatus(
+                            accessStatus,
+                            "Access denied. This page is for administrators only.",
+                            true
+                        );
+                        return;
+                    }
+
+                    showStatus(accessStatus, "Administrator access verified.");
+
+                    document.getElementById("admin-support-page").hidden = false;
+                    content.hidden = false;
+                    
+                    await loadTickets();
+                } catch (error) {
+                    console.error("Support inbox initialization failed:", error);
+                    showStatus(
+                        accessStatus,
+                        "Unable to verify administrator access or load tickets. Check the browser console.",
+                        true
+                    );
+                }
+            }
+
+            initialize();
+        })();
+    </script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

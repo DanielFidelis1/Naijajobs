@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Post a job on NaijaJobs, set your budget and connect with people ready to work.">
+    <meta name="theme-color" content="#0e3b2c">
+    <title>Post a job | NaijaJobs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+<link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+<body class="app">
+    <main class="main" id="main">
+        <div class="page">
+            <header class="page-head">
+                <div>
+                    <h1>Post a job</h1>
+                    <p class="sub">Describe the work, set a budget and publish it.</p>
+                </div>
+            </header>
+
+            <div id="employer-approval-notice" class="notice" role="status" aria-live="polite"></div>
+
+            <div class="form-card">
+                <form id="post-job-form" class="post-job-form">
+                    <div class="field">
+                        <label for="job-title">Job title</label>
+                        <input type="text" id="job-title" placeholder="e.g. Design a birthday flyer" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="job-description">Description</label>
+                        <textarea id="job-description" rows="6" placeholder="Describe the work, requirements and the result you expect" required></textarea>
+                    </div>
+
+                    <div class="row2">
+                        <div class="field">
+                            <label for="job-category">Category</label>
+                            <select id="job-category" required>
+                                <option value="">Select a category</option>
+                                <option value="Graphic Design">Graphic Design</option>
+                            <option value="Writing">Writing</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="Photography">Photography</option>
+                            <option value="Video Editing">Video Editing</option>
+                            <option value="Tutoring">Tutoring</option>
+                            <option value="Tech Support">Tech Support</option>
+                            <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="job-budget">Budget</label>
+                            <div class="money">
+                                <span>&#8358;</span>
+                                <input type="number" id="job-budget" placeholder="5000" min="1" step="1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row2">
+                        <div class="field">
+                            <label for="job-location">Location</label>
+                            <input type="text" id="job-location" list="location-options" placeholder="e.g. Abuja or Remote" autocomplete="off" required>
+                            <datalist id="location-options">
+                                    <option value="Remote">
+                                    <option value="Abia">
+                                    <option value="Adamawa">
+                                    <option value="Akwa Ibom">
+                                    <option value="Anambra">
+                                    <option value="Bauchi">
+                                    <option value="Bayelsa">
+                                    <option value="Benue">
+                                    <option value="Borno">
+                                    <option value="Cross River">
+                                    <option value="Delta">
+                                    <option value="Ebonyi">
+                                    <option value="Edo">
+                                    <option value="Ekiti">
+                                    <option value="Enugu">
+                                    <option value="FCT Abuja">
+                                    <option value="Gombe">
+                                    <option value="Imo">
+                                    <option value="Jigawa">
+                                    <option value="Kaduna">
+                                    <option value="Kano">
+                                    <option value="Katsina">
+                                    <option value="Kebbi">
+                                    <option value="Kogi">
+                                    <option value="Kwara">
+                                    <option value="Lagos">
+                                    <option value="Nasarawa">
+                                    <option value="Niger">
+                                    <option value="Ogun">
+                                    <option value="Ondo">
+                                    <option value="Osun">
+                                    <option value="Oyo">
+                                    <option value="Plateau">
+                                    <option value="Rivers">
+                                    <option value="Sokoto">
+                                    <option value="Taraba">
+                                    <option value="Yobe">
+                                    <option value="Zamfara">
+                                </datalist>
+                        </div>
+                        <div class="field">
+                            <label for="job-type">Job type</label>
+                            <select id="job-type" required>
+                                <option value="">Select type</option>
+                                <option value="remote">Remote</option>
+                                <option value="onsite">On-site</option>
+                                <option value="hybrid">Hybrid</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="job-deadline">Application deadline</label>
+                        <input type="date" id="job-deadline" required>
+                        <small>The last day people can apply.</small>
+                    </div>
+
+                    <button type="submit" class="btn post-job-submit-button">Publish job</button>
+                    <p id="post-job-message" class="form-message" role="status" aria-live="polite"></p>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>
