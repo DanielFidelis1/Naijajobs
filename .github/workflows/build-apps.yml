@@ -1,4 +1,3 @@
-
 # Builds the Android APK and the Windows / Mac / Linux apps in the cloud (free on GitHub).
 # Run it from the "Actions" tab -> "Build NaijaJobs apps" -> "Run workflow".
 # Download the results from the "Artifacts" section of the finished run.
@@ -37,6 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        with: { node-version: 20 }
       - name: Build desktop app
         working-directory: apps/desktop
         run: |
