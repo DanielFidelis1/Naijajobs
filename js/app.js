@@ -7789,16 +7789,6 @@ if (workerAccountPlan && workerAccountPlanBadge) {
 
     
 function displayPlan(plan, subscription = null) {
-    if (
-        profile.account_type !== "client" ||
-        profile.is_suspended
-    ) {
-        if (badgeContainer) {
-            badgeContainer.hidden = true;
-        }
-
-        return;
-    }
 
     const planName =
         plan === "business" ? "Business" :

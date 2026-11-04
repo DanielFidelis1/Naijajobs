@@ -736,7 +736,10 @@ body.admin { padding: 0; }
     .hero { padding: 36px 0 48px; }
     .section { padding: 48px 0; }
     .site-header nav { gap: 14px; }
-    .site-header nav .hide-sm { display: none; }
+    .site-header nav .hide-sm {
+    display: inline-flex;
+    align-items: center;
+}
     .nj-chat-bubble { max-width: 88%; }
 }
 
