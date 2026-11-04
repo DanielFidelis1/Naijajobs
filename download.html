@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0e3b2c">
+    <meta name="description" content="Download the official NaijaJobs app for Android, Windows, macOS and Linux.">
+    <title>Download NaijaJobs | Official Apps</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+    <link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+
+    <style>
+        .download-page {
+            min-height: 100vh;
+            background: #f5f8f5;
+        }
+
+        .download-hero {
+            padding: 68px 20px 42px;
+            text-align: center;
+        }
+
+        .download-eyebrow {
+            display: inline-block;
+            padding: 7px 14px;
+            border-radius: 30px;
+            background: #e4eee7;
+            color: #0e3b2c;
+            font-size: .85rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .download-hero h1 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            line-height: 1.08;
+            color: #0e3b2c;
+            margin-bottom: 16px;
+        }
+
+        .download-hero p {
+            max-width: 620px;
+            margin: 0 auto;
+            color: #64736a;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .download-container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 10px 20px 65px;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .download-card {
+            background: #fff;
+            border: 1px solid #e0e9e2;
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 8px 25px rgba(14, 59, 44, .045);
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .download-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 32px rgba(14, 59, 44, .10);
+        }
+
+        .download-icon {
+            width: 58px;
+            height: 58px;
+            display: grid;
+            place-items: center;
+            border-radius: 17px;
+            background: #eaf2ec;
+            font-size: 30px;
+            margin-bottom: 20px;
+        }
+
+        .download-card h2 {
+            color: #0e3b2c;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1.45rem;
+            margin-bottom: 8px;
+        }
+
+        .download-card p {
+            color: #64736a;
+            line-height: 1.65;
+            min-height: 52px;
+            margin-bottom: 18px;
+        }
+
+        .download-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            color: #718078;
+            font-size: .82rem;
+            margin-bottom: 20px;
+        }
+
+        .download-card .btn {
+            width: 100%;
+            justify-content: center;
+            min-height: 46px;
+            text-decoration: none;
+        }
+
+        .download-note {
+            margin-top: 32px;
+            padding: 20px 22px;
+            background: #eaf2ec;
+            border: 1px solid #d7e6da;
+            border-radius: 16px;
+            color: #345744;
+            line-height: 1.7;
+        }
+
+        .download-note strong {
+            color: #0e3b2c;
+        }
+
+        .download-footer {
+            text-align: center;
+            padding: 25px 20px;
+            border-top: 1px solid #e0e9e2;
+            color: #718078;
+            font-size: .9rem;
+        }
+
+        .download-footer a {
+            color: #0e3b2c;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        @media (max-width: 650px) {
+            .download-hero {
+                padding: 48px 18px 30px;
+            }
+
+            .download-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .download-card {
+                padding: 23px;
+            }
+
+            .download-card p {
+                min-height: auto;
+            }
+
+            .download-container {
+                padding-bottom: 40px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .download-card {
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div class="download-page">
+
+    <header class="site-header">
+        <div class="container bar">
+            <a href="index.html" class="logo" aria-label="NaijaJobs home">
+                Naija<span>Jobs</span>
+            </a>
+
+            <nav aria-label="Main navigation">
+                <a href="index.html">Home</a>
+                <a href="login.html" class="hide-sm">Log in</a>
+                <a href="signup.html" class="btn btn-sm">Sign up</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="download-hero">
+            <span class="download-eyebrow">NaijaJobs v1.0.0</span>
+            <h1>Take NaijaJobs<br>Anywhere.</h1>
+            <p>
+                Get the NaijaJobs app on your favourite device.
+                Find opportunities, connect with people and manage
+                your work wherever you are.
+            </p>
+        </section>
+
+        <section class="download-container">
+            <div class="download-grid">
+
+                <!-- Android -->
+                <article class="download-card">
+                    <div class="download-icon">📱</div>
+                    <h2>Android</h2>
+                    <p>
+                        Install NaijaJobs on your Android phone or tablet
+                        using our official APK installer.
+                    </p>
+                    <div class="download-meta">
+                        <span>APK installer</span>
+                        <span>Version 1.0.0 release</span>
+                    </div>
+                    <a class="btn btn-yellow"
+                       href="https://github.com/DanielFidelis1/Naijajobs/releases/download/v1.0.0/app-release.apk">
+                        Download for Android
+                    </a>
+                </article>
+
+                <!-- Windows -->
+                <article class="download-card">
+                    <div class="download-icon">💻</div>
+                    <h2>Windows</h2>
+                    <p>
+                        Get the NaijaJobs desktop application
+                        on your Windows computer.
+                    </p>
+                    <div class="download-meta">
+                        <span>Windows installer (.exe)</span>
+                        <span>Version 1.0.0</span>
+                    </div>
+                    <a class="btn btn-yellow"
+                       href="https://github.com/DanielFidelis1/Naijajobs/releases/download/v1.0.0/NaijaJobs.Setup.1.0.0.exe">
+                        Download for Windows
+                    </a>
+                </article>
+
+                <!-- macOS -->
+                <article class="download-card">
+                    <div class="download-icon">🍎</div>
+                    <h2>macOS</h2>
+                    <p>
+                        Install NaijaJobs on supported Apple Silicon
+                        Mac computers.
+                    </p>
+                    <div class="download-meta">
+                        <span>DMG installer</span>
+                        <span>Apple Silicon (ARM64)</span>
+                    </div>
+                    <a class="btn btn-yellow"
+                       href="https://github.com/DanielFidelis1/Naijajobs/releases/download/v1.0.0/NaijaJobs-1.0.0-arm64.dmg">
+                        Download for Mac
+                    </a>
+                </article>
+
+                <!-- Linux -->
+                <article class="download-card">
+                    <div class="download-icon">🐧</div>
+                    <h2>Ubuntu / Linux</h2>
+                    <p>
+                        Run NaijaJobs on a compatible Linux desktop
+                        using the AppImage package.
+                    </p>
+                    <div class="download-meta">
+                        <span>AppImage installer</span>
+                        <span>Version 1.0.0</span>
+                    </div>
+                    <a class="btn btn-yellow"
+                       href="https://github.com/DanielFidelis1/Naijajobs/releases/download/v1.0.0/NaijaJobs-1.0.0.AppImage">
+                        Download for Linux
+                    </a>
+                </article>
+
+            </div>
+
+            <div class="download-note">
+                <strong>Before you download:</strong>
+                Choose the installer that matches your device.
+                The macOS version currently supports Apple Silicon Macs
+                only (M1, M2, M3 and M4). iOS is not included yet.
+                Android users may need to allow installation from
+                their browser when installing the APK.
+            </div>
+        </section>
+    </main>
+
+    <footer class="download-footer">
+        © 2026 NaijaJobs. All rights reserved.
+        <br>
+        <a href="index.html">Back to NaijaJobs</a>
+        ·
+        <a href="https://github.com/DanielFidelis1/Naijajobs/releases/tag/v1.0.0"
+           target="_blank" rel="noopener noreferrer">
+            View release
+        </a>
+    </footer>
+
+</div>
+</body>
+</html>
