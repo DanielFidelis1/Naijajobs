@@ -1,0 +1,51 @@
+﻿
+# Private secrets and environment files
+.env
+.env.*
+!.env.example
+PUSH_WEBHOOK_SECRET.txt
+PUSH_WEBHOOK_SECRET.env
+PUSH_WEBHOOK_SECRET.*
+*firebase-adminsdk*.json
+**/google-services.json
+*.jks
+*.keystore
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Supabase temporary files
+supabase/.temp/
+**/supabase/.temp/
+
+# Android generated files and local settings
+apps/android/android/.gradle/
+apps/android/android/local.properties
+apps/android/android/**/build/
+apps/android/android/app/src/main/assets/public/
+apps/android/android/app/src/main/assets/capacitor.config.json
+apps/android/android/app/src/main/assets/capacitor.plugins.json
+
+# iOS generated files and local settings
+apps/ios/ios/Pods/
+apps/ios/ios/App/Pods/
+apps/ios/ios/build/
+apps/ios/ios/App/App/public/
+apps/ios/ios/App/App/capacitor.config.json
+apps/ios/ios/App/App/capacitor.plugins.json
+apps/ios/ios/App/App.xcodeproj/xcuserdata/
+apps/ios/ios/App/App.xcworkspace/xcuserdata/
+
+# Generated web copies
+apps/android/www/
+apps/ios/www/
+apps/desktop/web/
+
+# Desktop build output
+apps/desktop/dist/
+
+# General generated files
+.DS_Store
+Thumbs.db
+*.log

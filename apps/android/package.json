@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "prepare-web": "node ../copy-web.js ./www",
+    "build-native-push": "esbuild ./native-push-entry.js --bundle --platform=browser --format=iife --outfile=./www/js/native-push.bundle.js",
+    "prepare-web": "node ../copy-web.js ./www && npm run build-native-push",
     "setup": "npm run prepare-web && npx cap add android && npx cap sync android",
     "sync": "npm run prepare-web && npx cap sync android",
     "open": "npx cap open android",
@@ -11,9 +12,14 @@
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
-    "@capacitor/core": "^6.1.2"
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/push-notifications": "^6.0.3"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.1.2"
+    "@capacitor/cli": "^6.1.2",
+    "esbuild": "^0.28.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
   }
 }

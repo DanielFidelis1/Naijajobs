@@ -66,6 +66,45 @@ document.addEventListener("DOMContentLoaded", function () {
     const status = document.getElementById("push-notification-status");
 
     if (!button || !status) return;
+        /* ===== NATIVE ANDROID / IOS PUSH ===== */
+
+    if (window.NaijaJobsNativePush?.isNative) {
+
+        if (!window.supabaseClient) {
+            status.textContent =
+                "Notifications are temporarily unavailable. Please refresh the page.";
+            button.disabled = true;
+            return;
+        }
+
+        button.addEventListener("click", async function () {
+            button.disabled = true;
+            status.textContent = "Setting up mobile notifications...";
+
+            try {
+                await window.NaijaJobsNativePush.enable(
+                    window.supabaseClient
+                );
+
+                status.textContent =
+                    "Mobile notifications have been enabled.";
+
+                button.hidden = true;
+
+            } catch (error) {
+                console.error("Mobile notification setup failed:", error);
+
+                status.textContent =
+                    error.message ||
+                    "Could not enable mobile notifications. Please try again.";
+
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        return;
+    }
 
     if (!("PushManager" in window) || !("Notification" in window)) {
         status.textContent =
