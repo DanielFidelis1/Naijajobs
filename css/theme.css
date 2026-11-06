@@ -1,0 +1,506 @@
+﻿/* NaijaJobs - shared theme colours */
+
+/* Light theme */
+:root,
+html[data-theme="light"] {
+    color-scheme: light;
+
+    --paper: #f3f5f1;
+    --card: #ffffff;
+    --ink: #0f1f18;
+    --muted: #55655c;
+    --line: #dce3dc;
+
+    --forest: #0e3b2c;
+    --forest-hover: #165240;
+    --leaf: #e3eee6;
+
+    --yellow: #ffc400;
+    --yellow-hover: #ffd23d;
+    --yellow-soft: #fff3c4;
+
+    --green: #14744d;
+    --green-soft: #dff2e7;
+
+    --red: #b3261e;
+    --red-soft: #fbe7e5;
+
+    --amber-soft: #fff0c2;
+    --amber-ink: #6d4b00;
+}
+
+/* Dark theme */
+html[data-theme="dark"] {
+    color-scheme: dark;
+
+    --paper: #101713;
+    --card: #19241e;
+    --ink: #e8f0ea;
+    --muted: #a8b8ad;
+    --line: #34463a;
+
+    --forest: #174d37;
+    --forest-hover: #216448;
+    --leaf: #223b2d;
+
+    --yellow: #ffc928;
+    --yellow-hover: #ffda58;
+    --yellow-soft: #4a3b12;
+
+    --green: #65c995;
+    --green-soft: #193c2b;
+
+    --red: #ff8e86;
+    --red-soft: #472522;
+
+    --amber-soft: #493b19;
+    --amber-ink: #ffdc82;
+}
+
+/* Main page surfaces */
+html[data-theme="dark"] body {
+    background-color: var(--paper);
+    color: var(--ink);
+}
+
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .form-card,
+html[data-theme="dark"] .stat,
+html[data-theme="dark"] .linklist,
+html[data-theme="dark"] .filters,
+html[data-theme="dark"] .auth-form,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .job-details-card,
+html[data-theme="dark"] .settings-section,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .dropdown-menu,
+html[data-theme="dark"] .notification-card,
+html[data-theme="dark"] .conversation-card {
+    background-color: var(--card);
+    color: var(--ink);
+    border-color: var(--line);
+}
+
+/* Text */
+html[data-theme="dark"] h1,
+html[data-theme="dark"] h2,
+html[data-theme="dark"] h3,
+html[data-theme="dark"] h4,
+html[data-theme="dark"] p,
+html[data-theme="dark"] label,
+html[data-theme="dark"] strong,
+html[data-theme="dark"] span {
+    border-color: inherit;
+}
+
+html[data-theme="dark"] .muted,
+html[data-theme="dark"] small,
+html[data-theme="dark"] .settings-intro,
+html[data-theme="dark"] .settings-section > p {
+    color: var(--muted);
+}
+
+/* Form controls */
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background-color: #111b15;
+    color: var(--ink);
+    border-color: var(--line);
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #91a397;
+}
+
+html[data-theme="dark"] input:focus,
+html[data-theme="dark"] select:focus,
+html[data-theme="dark"] textarea:focus {
+    border-color: #65c995;
+}
+
+/* Tables and separators */
+html[data-theme="dark"] table,
+html[data-theme="dark"] th,
+html[data-theme="dark"] td {
+    border-color: var(--line);
+}
+
+html[data-theme="dark"] hr {
+    border-color: var(--line);
+}
+
+/* Shared navigation */
+html[data-theme="dark"] .nj-sidebar,
+html[data-theme="dark"] .nj-mobile-header,
+html[data-theme="dark"] .nj-bottom-nav,
+html[data-theme="dark"] .nj-mobile-nav {
+    background-color: var(--card);
+    border-color: var(--line);
+    color: var(--ink);
+}
+
+/* Links */
+html[data-theme="dark"] a:not(.btn):not(.button) {
+    color: #8bd8ad;
+}
+
+/* Keep yellow and green brand buttons readable */
+html[data-theme="dark"] .btn,
+html[data-theme="dark"] button {
+    border-color: transparent;
+}
+
+/* Settings theme selector */
+.theme-setting-select {
+    width: 100%;
+    max-width: 320px;
+    min-height: 46px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--card);
+    color: var(--ink);
+    font: inherit;
+}
+
+html[data-theme="dark"] .theme-setting-select {
+    background: #111b15;
+    color: var(--ink);
+    border-color: var(--line);
+}
+
+/* =========================================
+   NaijaJobs - Appearance selector styling
+========================================= */
+
+.theme-setting-select {
+    display: block;
+    width: 100%;
+    max-width: 380px;
+    min-height: 54px;
+    margin-top: 12px;
+    padding: 12px 46px 12px 16px;
+
+    appearance: none;
+    -webkit-appearance: none;
+
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+
+    background-color: var(--card);
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+        calc(100% - 21px) 23px,
+        calc(100% - 15px) 23px;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.theme-setting-select:hover {
+    border-color: var(--green);
+}
+
+.theme-setting-select:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 0 4px rgba(20, 116, 77, 0.14);
+}
+
+.theme-setting-select option {
+    background-color: var(--card);
+    color: var(--ink);
+    padding: 12px;
+}
+
+html[data-theme="dark"] .theme-setting-select {
+    background-color: #111b15;
+    color: #e8f0ea;
+    border-color: #46594c;
+}
+
+html[data-theme="dark"] .theme-setting-select:hover,
+html[data-theme="dark"] .theme-setting-select:focus {
+    border-color: #65c995;
+}
+
+html[data-theme="dark"] .theme-setting-select:focus {
+    box-shadow: 0 0 0 4px rgba(101, 201, 149, 0.16);
+}
+
+html[data-theme="dark"] .theme-setting-select option {
+    background-color: #19241e;
+    color: #e8f0ea;
+}
+
+
+/* NaijaJobs appearance choice cards */
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+    max-width: 620px;
+}
+
+.theme-choice {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
+    min-height: 145px;
+    padding: 16px;
+    border: 1.5px solid var(--line) !important;
+    border-radius: 14px;
+    background: var(--card) !important;
+    color: var(--ink) !important;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+}
+
+.theme-choice:hover {
+    border-color: var(--green) !important;
+    transform: translateY(-2px);
+}
+
+.theme-choice:focus-visible {
+    outline: 3px solid var(--green);
+    outline-offset: 3px;
+}
+
+.theme-choice[aria-pressed="true"] {
+    border: 2px solid var(--green) !important;
+    background: var(--green-soft) !important;
+}
+
+.theme-choice-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: var(--leaf);
+    color: var(--forest);
+    font-size: 24px;
+    line-height: 1;
+}
+
+.theme-choice strong {
+    font-size: 15px;
+    color: var(--ink);
+}
+
+.theme-choice small {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.theme-choice-check {
+    display: none;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--green);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.theme-choice[aria-pressed="true"] .theme-choice-check {
+    display: grid;
+}
+
+@media (max-width: 480px) {
+    .theme-options {
+        gap: 8px;
+    }
+
+    .theme-choice {
+        min-height: 132px;
+        padding: 11px 9px;
+        gap: 7px;
+    }
+
+    .theme-choice strong {
+        font-size: 13px;
+    }
+
+    .theme-choice small {
+        font-size: 10px;
+    }
+
+    .theme-choice-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 21px;
+    }
+}
+
+
+/* ==========================================
+   NaijaJobs - complete navigation theme fix
+========================================== */
+
+/* Desktop sidebar */
+html[data-theme="light"] .sidebar {
+    background: #0e3b2c;
+    color: #e6f1ea;
+}
+
+html[data-theme="dark"] .sidebar {
+    background: #101b15;
+    color: #e8f0ea;
+    border-right: 1px solid var(--line);
+}
+
+html[data-theme="dark"] .sidebar .logo {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .sidebar .nav-link {
+    color: #d5e5da;
+}
+
+html[data-theme="dark"] .sidebar .nav-link:hover {
+    background: #263b2e;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .sidebar .nav-link[aria-current="page"] {
+    background: #294737;
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .sidebar .nav-label {
+    color: #91b9a0;
+}
+
+html[data-theme="dark"] .sidebar-bottom {
+    border-color: var(--line);
+}
+
+/* Mobile header - retain the NaijaJobs green brand */
+html[data-theme="dark"] .nj-appbar {
+    background: linear-gradient(160deg, #174d37 0%, #102f23 100%);
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .nj-brand,
+html[data-theme="dark"] .nj-brand-text b {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .nj-avatar-btn {
+    background: #294737;
+    color: #e8f0ea;
+    border-color: #a8b8ad;
+}
+
+/* Mobile profile menu */
+html[data-theme="light"] .nj-profile-menu {
+    background: #ffffff;
+    color: #0f1f18;
+}
+
+html[data-theme="dark"] .nj-profile-menu {
+    background: #19241e;
+    color: #e8f0ea;
+    border: 1px solid var(--line);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .4);
+}
+
+html[data-theme="dark"] .nj-pm-head,
+html[data-theme="dark"] .nj-pm-item {
+    color: #e8f0ea;
+}
+
+html[data-theme="dark"] .nj-pm-item:hover,
+html[data-theme="dark"] .nj-pm-head:hover,
+html[data-theme="dark"] .nj-pm-item:active,
+html[data-theme="dark"] .nj-pm-head:active {
+    background: #294737;
+}
+
+html[data-theme="dark"] .nj-pm-head {
+    border-color: var(--line);
+}
+
+html[data-theme="dark"] .nj-pm-who small {
+    color: #a8b8ad;
+}
+
+html[data-theme="dark"] .nj-pm-avatar {
+    background: #294737;
+    color: #e8f0ea;
+}
+
+html[data-theme="dark"] .nj-pm-logout {
+    color: #ff8e86;
+    border-color: var(--line);
+}
+
+/* Floating mobile bottom navigation */
+html[data-theme="light"] .nj-tabbar {
+    background: rgba(255, 255, 255, .97);
+}
+
+html[data-theme="dark"] .nj-tabbar {
+    background: rgba(25, 36, 30, .97);
+    border: 1px solid #34463a;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, .4);
+}
+
+html[data-theme="dark"] .nj-tab {
+    color: #a8b8ad;
+}
+
+html[data-theme="dark"] .nj-tab.is-active {
+    color: #ffffff;
+}
+
+html[data-theme="dark"] .nj-pill {
+    background: #294737;
+}
+
+/* Mobile menu background overlay */
+html[data-theme="dark"] .nj-menu-scrim {
+    background: rgba(0, 0, 0, .65);
+}
+
+/* Public website header */
+html[data-theme="dark"] .site-header {
+    background: rgba(16, 23, 19, .94);
+    border-color: var(--line);
+}
+
+html[data-theme="dark"] .site-header nav a:not(.btn) {
+    color: #e8f0ea;
+}
+
+/* Preserve navigation icon visibility */
+html[data-theme="dark"] .nj-tab svg,
+html[data-theme="dark"] .nj-profile-menu svg {
+    color: inherit;
+}

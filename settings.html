@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="js/theme.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="Manage your NaijaJobs account settings.">
     <meta name="theme-color" content="#0e3b2c">
@@ -60,6 +61,7 @@
             }
         }
     </style>
+    <link rel="stylesheet" href="css/theme.css">
 </head>
 
 <body class="app">
@@ -96,6 +98,34 @@
                         role="status"
                         aria-live="polite"
                     ></p>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <h2>Appearance</h2>
+                <p>Choose how NaijaJobs looks on your device.</p>
+
+                <div class="theme-options" id="theme-options" role="group" aria-label="Choose appearance">
+                    <button type="button" class="theme-choice" data-theme-choice="light" aria-pressed="false">
+                        <span class="theme-choice-icon" aria-hidden="true">&#9728;</span>
+                        <strong>Light</strong>
+                        <small>Bright and clear</small>
+                        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+                    </button>
+
+                    <button type="button" class="theme-choice" data-theme-choice="dark" aria-pressed="false">
+                        <span class="theme-choice-icon" aria-hidden="true">&#9790;</span>
+                        <strong>Dark</strong>
+                        <small>Easy on the eyes</small>
+                        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+                    </button>
+
+                    <button type="button" class="theme-choice" data-theme-choice="system" aria-pressed="false">
+                        <span class="theme-choice-icon" aria-hidden="true">&#9633;</span>
+                        <strong>System</strong>
+                        <small>Follow device settings</small>
+                        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+                    </button>
                 </div>
             </section>
 
