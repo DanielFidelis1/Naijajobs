@@ -51,3 +51,5 @@ apps/desktop/dist/
 .DS_Store
 Thumbs.db
 *.log
+
+/dist-pages/
