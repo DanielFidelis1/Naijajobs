@@ -20,11 +20,43 @@
   "build": {
     "appId": "ng.naijajobs.desktop",
     "productName": "NaijaJobs",
-    "files": ["main.js", "server.js", "web/**/*", "build/icon.png"],
-    "directories": { "output": "dist", "buildResources": "build" },
-    "win": { "target": ["nsis"], "icon": "build/icon.png" },
-    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true },
-    "mac": { "target": ["dmg"], "category": "public.app-category.business", "icon": "build/icon.png" },
-    "linux": { "target": ["AppImage"], "category": "Office", "icon": "build/icon.png" }
+    "files": [
+      "main.js",
+      "server.js",
+      "web/**/*",
+      "build/icon.png"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "category": "public.app-category.business",
+      "icon": "build/icon.png"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Office",
+      "icon": "build/icon.png"
+    }
+  },
+  "allowScripts": {
+    "electron@33.4.11": true
   }
 }

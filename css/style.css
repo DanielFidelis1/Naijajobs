@@ -1793,3 +1793,131 @@ body.public-view .main { padding-top: 28px; }
         width: 100%;
     }
 }
+
+/* =========================================
+   DASHBOARD RECENT ACTIVITY TABLE
+========================================= */
+
+.dashboard-activity-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-top: 12px;
+}
+
+.dashboard-activity-table {
+    width: 100%;
+    min-width: 420px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.dashboard-activity-table th {
+    padding: 15px 18px;
+    background: var(--paper);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.dashboard-activity-table td {
+    padding: 16px 18px;
+    border-top: 1px solid var(--line);
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.dashboard-activity-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.dashboard-activity-table tbody tr:hover {
+    background: var(--paper);
+}
+
+.dashboard-activity-job {
+    font-weight: 650;
+    min-width: 150px;
+}
+
+.dashboard-activity-date {
+    color: var(--muted);
+    white-space: nowrap;
+    font-size: 0.82rem !important;
+}
+
+.dashboard-activity-table .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dashboard-activity-empty {
+    padding: 16px;
+    color: var(--muted);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+@media (max-width: 600px) {
+    .dashboard-activity-table th,
+    .dashboard-activity-table td {
+        padding: 13px 12px;
+    }
+
+    .dashboard-activity-table {
+        min-width: 400px;
+    }
+}
+/* =========================================
+   CLIENT ACTIVE MEMBERSHIP PANEL
+========================================= */
+
+.client-active-membership {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px;
+    margin: 18px 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+.client-active-membership h3 {
+    margin: 8px 0;
+    color: var(--text);
+    font-size: 1.35rem;
+}
+
+.client-active-membership p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+.client-active-membership .client-plan-button {
+    flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+    .client-active-membership {
+        align-items: stretch;
+        flex-direction: column;
+        padding: 18px;
+    }
+
+    .client-active-membership .client-plan-button {
+        width: 100%;
+    }
+}

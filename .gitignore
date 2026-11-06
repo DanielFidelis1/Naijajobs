@@ -36,6 +36,8 @@ apps/ios/ios/App/App/capacitor.config.json
 apps/ios/ios/App/App/capacitor.plugins.json
 apps/ios/ios/App/App.xcodeproj/xcuserdata/
 apps/ios/ios/App/App.xcworkspace/xcuserdata/
+apps/ios/ios/App/App/GoogleService-Info.plist
+apps/ios/ios/App/App.xcodeproj/project.pbxproj.backup
 
 # Generated web copies
 apps/android/www/

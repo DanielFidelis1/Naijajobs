@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-  "build-native-push": "esbuild ./native-push-entry.js --bundle --platform=browser --format=iife --outfile=./www/js/native-push.bundle.js",
-  "prepare-web": "node ../copy-web.js ./www && npm run build-native-push",
-  "setup": "npm run prepare-web && npx cap add ios && npx cap sync ios",
-  "sync": "npm run prepare-web && npx cap sync ios"
-},
+    "build-native-push": "esbuild ./native-push-entry.js --bundle --platform=browser --format=iife --outfile=./www/js/native-push.bundle.js",
+    "prepare-web": "node ../copy-web.js ./www && npm run build-native-push",
+    "setup": "npm run prepare-web && npx cap add ios && npx cap sync ios",
+    "sync": "npm run prepare-web && npx cap sync ios"
+  },
   "dependencies": {
+    "@capacitor-community/fcm": "^6.0.1",
     "@capacitor/core": "^6.1.2",
     "@capacitor/ios": "^6.1.2",
     "@capacitor/push-notifications": "^6.0.3"

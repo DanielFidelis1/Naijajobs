@@ -33,13 +33,27 @@
         </div>
 
         <div class="profile-photo-controls">
-            <label for="profile-picture-input">Profile picture</label>
+            
+<div class="profile-file-picker">
+    <label
+        for="profile-picture-input"
+        class="profile-file-picker-label"
+    >
+        <span class="profile-file-picker-icon">📷</span>
+        <span class="profile-file-picker-title">Choose a profile photo</span>
+        <span class="profile-file-picker-hint">
+            Select a JPG, PNG or WebP image
+        </span>
+        <span class="profile-file-picker-action">Browse Photos</span>
+    </label>
 
-            <input
-                type="file"
-                id="profile-picture-input"
-                accept="image/jpeg,image/png,image/webp"
-            >
+    <input
+        type="file"
+        id="profile-picture-input"
+        accept="image/jpeg,image/png,image/webp"
+    >
+</div>
+
 
             <small>JPG, PNG, or WebP. Maximum size: 2 MB.</small>
 
@@ -118,17 +132,6 @@
             <p class="profile-public-link">
                 <a class="text-link" id="view-public-profile" href="worker-profile.html">See how others view your profile</a>
             </p>
-
-            <div class="form-card email-card" id="email-alerts-card">
-                <label class="check-row" for="email-alerts">
-                    <input type="checkbox" id="email-alerts" checked>
-                    <span>
-                        <strong>Email me about new activity</strong>
-                        <small>New applicants, acceptances, messages and reviews.</small>
-                    </span>
-                </label>
-                <p id="email-alerts-message" class="form-message" role="status" aria-live="polite"></p>
-            </div>
 
             <h2 class="section-title">Reviews you have received</h2>
             <div id="profile-reviews" class="profile-reviews" aria-live="polite">

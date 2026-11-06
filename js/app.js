@@ -1178,17 +1178,35 @@ applyButton.addEventListener(
         Maximum size: 25 MB per file.
     </p>
 
+    
+<div class="application-file-picker">
+    <label for="application-files" class="application-file-picker-label">
+        <span class="application-file-picker-icon">＋</span>
+        <span class="application-file-picker-title">Add attachments</span>
+        <span class="application-file-picker-hint">
+            Choose documents, photos or videos
+        </span>
+        <span class="application-file-picker-action">Browse files</span>
+    </label>
+
     <input
         type="file"
         id="application-files"
         multiple
         accept=".pdf,.doc,.docx,.xls,.xlsx,.txt,image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime"
     />
+</div>
 
-    <p
-        id="application-files-message"
-        class="form-message"
-    ></p>
+<div
+    id="application-selected-files"
+    class="application-selected-files"
+    aria-live="polite"
+></div>
+
+<p
+    id="application-files-message"
+    class="form-message"
+></p>
 
 </div>
 
@@ -1211,6 +1229,51 @@ applyButton.addEventListener(
         document
             .querySelector(".job-action")
             .appendChild(applicationForm);
+
+            // Display selected application attachments
+const attachmentPickerInput =
+    document.getElementById("application-files");
+
+const selectedFilesContainer =
+    document.getElementById("application-selected-files");
+
+if (attachmentPickerInput && selectedFilesContainer) {
+    attachmentPickerInput.addEventListener("change", function () {
+        const files = Array.from(this.files || []);
+
+        selectedFilesContainer.replaceChildren();
+
+        if (files.length === 0) {
+            return;
+        }
+
+        const heading = document.createElement("p");
+        heading.className = "application-selected-files-heading";
+        heading.textContent =
+            `${files.length} file${files.length === 1 ? "" : "s"} selected`;
+
+        const list = document.createElement("ul");
+        list.className = "application-selected-files-list";
+
+        files.forEach((file) => {
+            const item = document.createElement("li");
+
+            const name = document.createElement("span");
+            name.className = "application-selected-file-name";
+            name.textContent = file.name;
+
+            const size = document.createElement("span");
+            size.className = "application-selected-file-size";
+            size.textContent =
+                `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+
+            item.append(name, size);
+            list.appendChild(item);
+        });
+
+        selectedFilesContainer.append(heading, list);
+    });
+}
 
 
         const submitApplication =
@@ -2007,134 +2070,243 @@ if (messageButton) {
 
                         attachmentSection.innerHTML = "";
 
-                        const heading =
-                            document.createElement("strong");
+const heading = document.createElement("h3");
+heading.className = "seeker-attachments-heading";
+heading.textContent = "My Submitted Attachments";
 
-                        heading.textContent =
-                            "My Submitted Attachments";
+attachmentSection.appendChild(heading);
 
-                        attachmentSection.appendChild(heading);
+if (!attachments || attachments.length === 0) {
+    const emptyMessage = document.createElement("p");
+    emptyMessage.className = "seeker-attachments-empty";
+    emptyMessage.textContent = "No attachments were submitted.";
 
-                        if (!attachments || attachments.length === 0) {
+    attachmentSection.appendChild(emptyMessage);
+    return;
+}
 
-                            const emptyMessage =
-                                document.createElement("p");
+const tableWrapper = document.createElement("div");
+tableWrapper.className = "seeker-attachments-table-wrap";
 
-                            emptyMessage.textContent =
-                                "No attachments were submitted.";
+const table = document.createElement("table");
+table.className = "seeker-attachments-table";
 
-                            attachmentSection.appendChild(
-                                emptyMessage
-                            );
+table.innerHTML = `
+    <thead>
+        <tr>
+            <th>Attachment</th>
+            <th>File size</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+`;
 
-                            return;
-                        }
+const tableBody = table.querySelector("tbody");
 
-                        const fileList =
-                            document.createElement("ul");
+for (const attachment of attachments) {
+    const row = document.createElement("tr");
 
-                        for (const attachment of attachments) {
+    const nameCell = document.createElement("td");
+    nameCell.className = "seeker-attachment-name";
+    nameCell.textContent = attachment.original_filename;
 
-                            const item =
-                                document.createElement("li");
+    const sizeCell = document.createElement("td");
+    sizeCell.className = "seeker-attachment-size";
+    sizeCell.textContent =
+        (attachment.file_size / 1024).toFixed(1) + " KB";
 
-                            const link =
-                                document.createElement("a");
+    const actionCell = document.createElement("td");
 
-                            link.href = "#";
+    const actionButtons = document.createElement("div");
+    actionButtons.className = "seeker-attachment-actions";
 
-                            link.textContent =
-                                attachment.original_filename;
+    // VIEW BUTTON
+    const viewLink = document.createElement("a");
+    viewLink.href = "#";
+    viewLink.className = "seeker-attachment-view";
+    viewLink.textContent = "View";
 
-                            link.addEventListener(
-                                "click",
-                                async function (event) {
+    viewLink.addEventListener("click", async function (event) {
+    event.preventDefault();
 
-                                    event.preventDefault();
+    viewLink.textContent = "Opening...";
+    viewLink.style.pointerEvents = "none";
 
-                                    link.textContent =
-                                        "Preparing secure link...";
+    try {
+        const { data, error } = await supabaseClient
+            .storage
+            .from("application-attachments")
+            .createSignedUrl(
+                attachment.storage_path,
+                300
+            );
 
-                                    try {
+        if (error || !data?.signedUrl) {
+            throw error || new Error("Preview link unavailable.");
+        }
 
-                                        const {
-                                            data,
-                                            error: linkError
-                                        } = await supabaseClient
-                                            .storage
-                                            .from("application-attachments")
-                                            .createSignedUrl(
-                                                attachment.storage_path,
-                                                300,
-                                                {
-                                                    download:
-                                                        attachment.original_filename
-                                                }
-                                            );
+        // Detect the attachment type
+        const extension = attachment.original_filename
+            .split(".")
+            .pop()
+            .toLowerCase();
 
-                                        if (linkError || !data?.signedUrl) {
-                                            throw linkError ||
-                                                new Error("Secure link unavailable.");
-                                        }
+        const isImage = [
+            "jpg", "jpeg", "png", "webp", "gif"
+        ].includes(extension);
 
-                                        const downloadLink =
-                                            document.createElement("a");
+        const isVideo = [
+            "mp4", "webm", "mov"
+        ].includes(extension);
 
-                                        downloadLink.href =
-                                            data.signedUrl;
+        const isPDF = extension === "pdf";
 
-                                        downloadLink.target = "_blank";
+        // Create the preview overlay
+        const overlay = document.createElement("div");
+        overlay.className = "nj-file-preview-overlay";
 
-                                        downloadLink.rel =
-                                            "noopener noreferrer";
+        const previewCard = document.createElement("div");
+        previewCard.className = "nj-file-preview-card";
 
-                                        downloadLink.download =
-                                            attachment.original_filename;
+        const header = document.createElement("div");
+        header.className = "nj-file-preview-header";
 
-                                        document.body.appendChild(
-                                            downloadLink
-                                        );
+        const title = document.createElement("h3");
+        title.textContent = attachment.original_filename;
 
-                                        downloadLink.click();
+        const closeButton = document.createElement("button");
+        closeButton.type = "button";
+        closeButton.className = "nj-file-preview-close";
+        closeButton.textContent = "×";
+        closeButton.setAttribute("aria-label", "Close preview");
 
-                                        downloadLink.remove();
+        header.append(title, closeButton);
 
-                                    } catch (error) {
+        const content = document.createElement("div");
+        content.className = "nj-file-preview-content";
 
-                                        console.error(
-                                            "Could not open attachment:",
-                                            error
-                                        );
+        if (isImage) {
+            const image = document.createElement("img");
+            image.src = data.signedUrl;
+            image.alt = attachment.original_filename;
+            content.appendChild(image);
 
-                                        alert(
-                                            "Could not open this attachment. Please try again."
-                                        );
+        } else if (isVideo) {
+            const video = document.createElement("video");
+            video.src = data.signedUrl;
+            video.controls = true;
+            video.playsInline = true;
+            content.appendChild(video);
 
-                                    } finally {
+        } else if (isPDF) {
+            const frame = document.createElement("iframe");
+            frame.src = data.signedUrl;
+            frame.title = attachment.original_filename;
+            content.appendChild(frame);
 
-                                        link.textContent =
-                                            attachment.original_filename;
+        } else {
+            const message = document.createElement("p");
+            message.textContent =
+                "This file type cannot be previewed here. Please use Download to open it.";
+            content.appendChild(message);
+        }
 
-                                    }
+        previewCard.append(header, content);
+        overlay.appendChild(previewCard);
+        document.body.appendChild(overlay);
 
-                                }
-                            );
+        // Close preview
+        function closePreview() {
+            overlay.remove();
+            document.removeEventListener("keydown", handleEscape);
+        }
 
-                            const size =
-                                document.createElement("span");
+        function handleEscape(event) {
+            if (event.key === "Escape") {
+                closePreview();
+            }
+        }
 
-                            size.textContent =
-                                " (" +
-                                (attachment.file_size / 1024).toFixed(1) +
-                                " KB)";
+        closeButton.addEventListener("click", closePreview);
 
-                            item.appendChild(link);
-                            item.appendChild(size);
+        overlay.addEventListener("click", function (event) {
+            if (event.target === overlay) {
+                closePreview();
+            }
+        });
 
-                            fileList.appendChild(item);
-                        }
+        document.addEventListener("keydown", handleEscape);
 
-                        attachmentSection.appendChild(fileList);
+    } catch (error) {
+        console.error("Could not preview attachment:", error);
+
+        alert("Could not preview this attachment. Please try again.");
+
+    } finally {
+        viewLink.textContent = "View";
+        viewLink.style.pointerEvents = "";
+    }
+});
+
+    // DOWNLOAD BUTTON
+    const downloadLink = document.createElement("a");
+    downloadLink.href = "#";
+    downloadLink.className = "seeker-attachment-download";
+    downloadLink.textContent = "Download";
+
+    downloadLink.addEventListener("click", async function (event) {
+        event.preventDefault();
+
+        downloadLink.textContent = "Preparing...";
+        downloadLink.style.pointerEvents = "none";
+
+        try {
+            const { data, error } = await supabaseClient
+                .storage
+                .from("application-attachments")
+                .createSignedUrl(
+                    attachment.storage_path,
+                    300,
+                    {
+                        download: attachment.original_filename
+                    }
+                );
+
+            if (error || !data?.signedUrl) {
+                throw error || new Error("Download link unavailable.");
+            }
+
+            const temporaryLink = document.createElement("a");
+            temporaryLink.href = data.signedUrl;
+            temporaryLink.target = "_blank";
+            temporaryLink.rel = "noopener noreferrer";
+            temporaryLink.download = attachment.original_filename;
+
+            document.body.appendChild(temporaryLink);
+            temporaryLink.click();
+            temporaryLink.remove();
+
+        } catch (error) {
+            console.error("Could not download attachment:", error);
+            alert("Could not download this attachment. Please try again.");
+
+        } finally {
+            downloadLink.textContent = "Download";
+            downloadLink.style.pointerEvents = "";
+        }
+    });
+
+    actionButtons.append(viewLink, downloadLink);
+    actionCell.appendChild(actionButtons);
+
+    row.append(nameCell, sizeCell, actionCell);
+    tableBody.appendChild(row);
+}
+
+tableWrapper.appendChild(table);
+attachmentSection.appendChild(tableWrapper);
+attachmentSection.appendChild(tableWrapper);
 
                     } catch (error) {
 
@@ -3061,115 +3233,266 @@ async function loadApplicants() {
                         return;
                     }
 
-                    const attachmentList =
-                        document.createElement("ul");
+                    // CREATE MODERN ATTACHMENT CARD
+attachmentsContainer.innerHTML = "";
+attachmentsContainer.classList.add(
+    "application-attachments-modern"
+);
 
-                    attachmentList.className =
-                        "application-attachment-list";
+const attachmentsHeading = document.createElement("h3");
+attachmentsHeading.className =
+    "application-attachments-heading";
+attachmentsHeading.textContent = "Applicant Attachments";
 
-                    for (const attachment of attachments) {
+attachmentsContainer.appendChild(attachmentsHeading);
 
-                        const listItem =
-                            document.createElement("li");
+// CREATE TABLE
+const tableWrapper = document.createElement("div");
+tableWrapper.className =
+    "application-attachments-table-wrap";
 
-                        const fileLink =
-                            document.createElement("a");
+const table = document.createElement("table");
+table.className = "application-attachments-table";
 
-                        fileLink.textContent =
-                            attachment.original_filename;
+table.innerHTML = `
+    <thead>
+        <tr>
+            <th>Attachment</th>
+            <th>File size</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+`;
 
-                        fileLink.href = "#";
-                        fileLink.className =
-                            "application-attachment-link";
+const tableBody = table.querySelector("tbody");
 
-                        fileLink.addEventListener(
-                            "click",
-                            async function (event) {
+for (const attachment of attachments) {
+    const row = document.createElement("tr");
 
-                                event.preventDefault();
+    const nameCell = document.createElement("td");
+    nameCell.className = "application-attachment-name";
+    nameCell.textContent = attachment.original_filename;
 
-                                fileLink.textContent =
-                                    "Preparing secure link...";
+    const sizeCell = document.createElement("td");
+    sizeCell.className = "application-attachment-size";
+    sizeCell.textContent =
+        (attachment.file_size / 1024).toFixed(1) + " KB";
 
-                                fileLink.style.pointerEvents =
-                                    "none";
+    const actionCell = document.createElement("td");
 
-                                const {
-                                    data: signedFile,
-                                    error: signedUrlError
-                                } = await supabaseClient.storage
-                                    .from("application-attachments")
-                                    .createSignedUrl(
-                                        attachment.storage_path,
-                                        300,
-                                        {
-                                            download:
-                                                attachment.original_filename
-                                        }
-                                    );
+    const actions = document.createElement("div");
+    actions.className = "application-attachment-actions";
 
-                                if (signedUrlError || !signedFile?.signedUrl) {
+    // VIEW BUTTON
+    const viewLink = document.createElement("a");
+    viewLink.href = "#";
+    viewLink.className = "application-attachment-view";
+    viewLink.textContent = "View";
 
-                                    console.error(
-                                        "Signed URL error:",
-                                        signedUrlError
-                                    );
+    viewLink.addEventListener("click", async function(event) {
+        event.preventDefault();
 
-                                    fileLink.textContent =
-                                        attachment.original_filename +
-                                        " (could not open file)";
+        viewLink.textContent = "Opening...";
+        viewLink.style.pointerEvents = "none";
 
-                                    fileLink.style.pointerEvents =
-                                        "auto";
+        try {
+            const { data, error } = await supabaseClient
+                .storage
+                .from("application-attachments")
+                .createSignedUrl(
+                    attachment.storage_path,
+                    300
+                );
 
-                                    return;
-                                }
+            if (error || !data?.signedUrl) {
+                throw error ||
+                    new Error("Preview link unavailable.");
+            }
 
-                                window.open(
-                                    signedFile.signedUrl,
-                                    "_blank",
-                                    "noopener,noreferrer"
-                                );
+            const extension = attachment.original_filename
+                .split(".")
+                .pop()
+                .toLowerCase();
 
-                                fileLink.textContent =
-                                    attachment.original_filename;
+            const isImage = [
+                "jpg", "jpeg", "png", "webp", "gif"
+            ].includes(extension);
 
-                                fileLink.style.pointerEvents =
-                                    "auto";
-                            }
-                        );
+            const isVideo = [
+                "mp4", "webm", "mov"
+            ].includes(extension);
 
-                        const fileDetails =
-                            document.createElement("span");
+            const isPDF = extension === "pdf";
 
-                        const fileSizeKB =
-                            (attachment.file_size / 1024)
-                                .toFixed(1);
+            const overlay = document.createElement("div");
+            overlay.className = "nj-file-preview-overlay";
 
-                        fileDetails.textContent =
-                            " (" + fileSizeKB + " KB)";
+            const previewCard = document.createElement("div");
+            previewCard.className = "nj-file-preview-card";
 
-                        listItem.appendChild(fileLink);
-                        listItem.appendChild(fileDetails);
+            const header = document.createElement("div");
+            header.className = "nj-file-preview-header";
 
-                        attachmentList.appendChild(listItem);
+            const title = document.createElement("h3");
+            title.textContent = attachment.original_filename;
+
+            const closeButton = document.createElement("button");
+            closeButton.type = "button";
+            closeButton.className = "nj-file-preview-close";
+            closeButton.textContent = "×";
+            closeButton.setAttribute(
+                "aria-label",
+                "Close preview"
+            );
+
+            header.append(title, closeButton);
+
+            const content = document.createElement("div");
+            content.className = "nj-file-preview-content";
+
+            if (isImage) {
+                const image = document.createElement("img");
+                image.src = data.signedUrl;
+                image.alt = attachment.original_filename;
+                content.appendChild(image);
+
+            } else if (isVideo) {
+                const video = document.createElement("video");
+                video.src = data.signedUrl;
+                video.controls = true;
+                video.playsInline = true;
+                content.appendChild(video);
+
+            } else if (isPDF) {
+                const frame = document.createElement("iframe");
+                frame.src = data.signedUrl;
+                frame.title = attachment.original_filename;
+                content.appendChild(frame);
+
+            } else {
+                const message = document.createElement("p");
+                message.textContent =
+                    "This file type cannot be previewed here. Please use Download to open it.";
+                content.appendChild(message);
+            }
+
+            previewCard.append(header, content);
+            overlay.appendChild(previewCard);
+            document.body.appendChild(overlay);
+
+            function closePreview() {
+                overlay.remove();
+                document.removeEventListener(
+                    "keydown",
+                    handleEscape
+                );
+            }
+
+            function handleEscape(event) {
+                if (event.key === "Escape") {
+                    closePreview();
+                }
+            }
+
+            closeButton.addEventListener(
+                "click",
+                closePreview
+            );
+
+            overlay.addEventListener("click", function(event) {
+                if (event.target === overlay) {
+                    closePreview();
+                }
+            });
+
+            document.addEventListener(
+                "keydown",
+                handleEscape
+            );
+
+        } catch (error) {
+            console.error(
+                "Could not preview applicant attachment:",
+                error
+            );
+
+            alert(
+                "Could not preview this attachment. Please try again."
+            );
+
+        } finally {
+            viewLink.textContent = "View";
+            viewLink.style.pointerEvents = "";
+        }
+    });
+
+    // DOWNLOAD BUTTON
+    const downloadLink = document.createElement("a");
+    downloadLink.href = "#";
+    downloadLink.className =
+        "application-attachment-download";
+    downloadLink.textContent = "Download";
+
+    downloadLink.addEventListener("click", async function(event) {
+        event.preventDefault();
+
+        downloadLink.textContent = "Preparing...";
+        downloadLink.style.pointerEvents = "none";
+
+        try {
+            const { data, error } = await supabaseClient
+                .storage
+                .from("application-attachments")
+                .createSignedUrl(
+                    attachment.storage_path,
+                    300,
+                    {
+                        download: attachment.original_filename
                     }
+                );
 
-                    attachmentsContainer.innerHTML = "";
+            if (error || !data?.signedUrl) {
+                throw error ||
+                    new Error("Download link unavailable.");
+            }
 
-                    const attachmentsHeading =
-                        document.createElement("strong");
+            const temporaryLink = document.createElement("a");
+            temporaryLink.href = data.signedUrl;
+            temporaryLink.target = "_blank";
+            temporaryLink.rel = "noopener noreferrer";
+            temporaryLink.download =
+                attachment.original_filename;
 
-                    attachmentsHeading.textContent =
-                        "Attachments";
+            document.body.appendChild(temporaryLink);
+            temporaryLink.click();
+            temporaryLink.remove();
 
-                    attachmentsContainer.appendChild(
-                        attachmentsHeading
-                    );
+        } catch (error) {
+            console.error(
+                "Could not download applicant attachment:",
+                error
+            );
 
-                    attachmentsContainer.appendChild(
-                        attachmentList
-                    );
+            alert(
+                "Could not download this attachment. Please try again."
+            );
+
+        } finally {
+            downloadLink.textContent = "Download";
+            downloadLink.style.pointerEvents = "";
+        }
+    });
+
+    actions.append(viewLink, downloadLink);
+    actionCell.appendChild(actions);
+
+    row.append(nameCell, sizeCell, actionCell);
+    tableBody.appendChild(row);
+}
+
+tableWrapper.appendChild(table);
+attachmentsContainer.appendChild(tableWrapper);
 
                 })().catch(function (error) {
 
@@ -5586,87 +5909,102 @@ if (!conversations || conversations.length === 0) {
         return;
     }
 
-    const otherUserIds = [
-        ...new Set(
-            conversations.map(conversation =>
-                conversation.participant_one === user.id
-                    ? conversation.participant_two
-                    : conversation.participant_one
-            )
-        )
-    ];
-
-   
+    // Load conversation profiles and messages in parallel.
 const profileMap = new Map();
 
-for (const conversation of conversations) {
-    const otherUserId =
-        conversation.participant_one === user.id
-            ? conversation.participant_two
-            : conversation.participant_one;
+const conversationIds = conversations.map(item => item.id);
 
-    const { data: profileData, error: profileError } =
-        await supabaseClient.rpc("get_chat_partner_profile", {
-            p_conversation_id: conversation.id
-        });
+const profileLoadPromise = Promise.all(
+    conversations.map(async conversation => {
+        const otherUserId =
+            conversation.participant_one === user.id
+                ? conversation.participant_two
+                : conversation.participant_one;
 
-    if (profileError) {
-        console.error(
-            "Error loading inbox chat partner profile:",
-            profileError
-        );
-        continue;
-    }
+        try {
+            const { data: profileData, error: profileError } =
+                await supabaseClient.rpc("get_chat_partner_profile", {
+                    p_conversation_id: conversation.id
+                });
 
-    const profile = Array.isArray(profileData)
-        ? profileData[0]
-        : profileData;
-
-    
-if (profile) {
-    let profilePictureUrl = null;
-
-    if (profile.profile_picture_path) {
-        const { data: pictureData, error: pictureError } =
-            await supabaseClient
-                .storage
-                .from("profile-pictures")
-                .createSignedUrl(
-                    profile.profile_picture_path,
-                    3600
+            if (profileError) {
+                console.error(
+                    "Error loading inbox chat partner profile:",
+                    profileError
                 );
+                return null;
+            }
 
-        if (pictureError) {
+            const profile = Array.isArray(profileData)
+                ? profileData[0]
+                : profileData;
+
+            if (!profile) return null;
+
+            let profilePictureUrl = null;
+
+            if (profile.profile_picture_path) {
+                const { data: pictureData, error: pictureError } =
+                    await supabaseClient
+                        .storage
+                        .from("profile-pictures")
+                        .createSignedUrl(
+                            profile.profile_picture_path,
+                            3600
+                        );
+
+                if (pictureError) {
+                    console.error(
+                        "Error loading inbox profile picture:",
+                        pictureError
+                    );
+                } else {
+                    profilePictureUrl =
+                        pictureData?.signedUrl || null;
+                }
+            }
+
+            return {
+                otherUserId,
+                profile: {
+                    ...profile,
+                    account_type: null,
+                    profile_picture_url: profilePictureUrl
+                }
+            };
+        } catch (profileError) {
             console.error(
-                "Error loading inbox profile picture:",
-                pictureError
+                "Unexpected inbox profile error:",
+                profileError
             );
-        } else {
-            profilePictureUrl = pictureData?.signedUrl || null;
+            return null;
         }
-    }
+    })
+);
 
-    profileMap.set(otherUserId, {
-        ...profile,
-        account_type: null,
-        profile_picture_url: profilePictureUrl
-    });
-}
-
-}
-
-
-    const conversationIds = conversations.map(item => item.id);
-
-    
-const { data: messages, error: messagesError } = await supabaseClient
+const messagesLoadPromise = supabaseClient
     .from("messages")
     .select("conversation_id, content, sender_id, created_at, read_at")
     .in("conversation_id", conversationIds)
     .order("created_at", { ascending: false });
 
+const [profileResults, messagesResult] = await Promise.all([
+    profileLoadPromise,
+    messagesLoadPromise
+]);
 
-    if (messagesError) throw messagesError;
+profileResults.forEach(result => {
+    if (result) {
+        profileMap.set(
+            result.otherUserId,
+            result.profile
+        );
+    }
+});
+
+const { data: messages, error: messagesError } = messagesResult;
+
+if (messagesError) throw messagesError;
 
     const latestMessageMap = new Map();
 
@@ -6225,29 +6563,36 @@ if (profile?.profile_picture_path && chatProfilePicture) {
             );
 
     if (pictureError) {
-        console.error(
-            "Could not load chat profile picture:",
-            pictureError
-        );
-    } else if (pictureData?.signedUrl) {
-        chatProfilePicture.onload = function () {
-            chatProfilePicture.hidden = false;
+    console.error(
+        "Could not load chat profile picture:",
+        pictureError.message,
+        pictureError
+    );
+} else if (pictureData?.signedUrl) {
+    console.log("Chat profile picture URL generated successfully.");
 
-            if (chatAvatarLetter) {
-                chatAvatarLetter.hidden = true;
-            }
-        };
+    chatProfilePicture.onload = function () {
+        console.log("Chat profile picture loaded successfully.");
+        chatProfilePicture.hidden = false;
 
-        chatProfilePicture.onerror = function () {
-            chatProfilePicture.hidden = true;
+        if (chatAvatarLetter) {
+            chatAvatarLetter.hidden = true;
+        }
+    };
 
-            if (chatAvatarLetter) {
-                chatAvatarLetter.hidden = false;
-            }
-        };
+    chatProfilePicture.onerror = function () {
+        console.error("Chat profile picture image failed to load.");
+        chatProfilePicture.hidden = true;
 
-        chatProfilePicture.src = pictureData.signedUrl;
-    }
+        if (chatAvatarLetter) {
+            chatAvatarLetter.hidden = false;
+        }
+    };
+
+    chatProfilePicture.loading = "eager";
+    chatProfilePicture.src = pictureData.signedUrl;
+    console.log("Chat image state:", chatProfilePicture.complete, chatProfilePicture.naturalWidth);
+}
 }
 
 await loadChatMessages();
@@ -7755,6 +8100,11 @@ if (workerAccountPlan && workerAccountPlanBadge) {
     const badgeContainer = document.getElementById("client-account-plan");
     const badge = document.getElementById("client-account-plan-badge");
     const buttons = section.querySelectorAll("[data-client-plan]");
+    const plansGrid = section.querySelector(".client-plans-grid");
+    const activeMembership = document.getElementById("client-active-membership");
+    const activePlanName = document.getElementById("client-active-plan-name");
+    const activePlanDetails = document.getElementById("client-active-plan-details");
+    const upgradeButton = document.getElementById("client-upgrade-button");
 
     section.hidden = true;
 
@@ -7787,8 +8137,10 @@ if (workerAccountPlan && workerAccountPlanBadge) {
         });
     }
 
-    
 function displayPlan(plan, subscription = null) {
+    const isPaidMember =
+        subscription &&
+        ["starter", "business"].includes(plan);
 
     const planName =
         plan === "business" ? "Business" :
@@ -7803,8 +8155,45 @@ function displayPlan(plan, subscription = null) {
 
     section.hidden = false;
 
-    if (statusMessage) {
-        statusMessage.textContent = "Loading your subscription...";
+    if (plansGrid) {
+        plansGrid.hidden = isPaidMember;
+    }
+
+    if (activeMembership) {
+        activeMembership.hidden = !isPaidMember;
+    }
+
+    if (isPaidMember) {
+        if (activePlanName) {
+            activePlanName.textContent = `${planName} Membership`;
+        }
+
+        if (activePlanDetails) {
+            activePlanDetails.textContent =
+                `Active until ${formatDate(subscription.expires_at)} · ` +
+                `${subscription.featured_credits_remaining} featured-job credits remaining.`;
+        }
+
+        if (upgradeButton) {
+            const canUpgrade = plan === "starter";
+
+            upgradeButton.hidden = !canUpgrade;
+            upgradeButton.textContent = "Upgrade to Business";
+        }
+
+        if (statusMessage) {
+            statusMessage.textContent =
+                `Your ${planName} subscription is active.`;
+        }
+    } else {
+        if (upgradeButton) {
+            upgradeButton.hidden = true;
+        }
+
+        if (statusMessage) {
+            statusMessage.textContent =
+                "Choose the plan that best fits your hiring needs.";
+        }
     }
 }
 
@@ -7832,7 +8221,7 @@ function displayPlan(plan, subscription = null) {
                 true
             );
 
-            return null;
+            return { lookupFailed: true };
         }
 
         if (
@@ -7950,57 +8339,90 @@ function displayPlan(plan, subscription = null) {
 
                 window.history.replaceState({}, "", cleanUrl);
             }
+            setButtonsDisabled(false);
         }
 
         // Always load the current database subscription.
-        const subscription = await loadSubscription(user.id);
+const subscription = await loadSubscription(user.id);
 
-        if (subscription) {
-            displayPlan(subscription.plan_type, subscription);
-        } else {
-            displayPlan("free");
-        }
+if (subscription?.lookupFailed) {
+    section.hidden = false;
+
+    if (plansGrid) {
+        plansGrid.hidden = true;
+    }
+
+    if (activeMembership) {
+        activeMembership.hidden = true;
+    }
+
+    if (badgeContainer) {
+        badgeContainer.hidden = true;
+    }
+
+    setButtonsDisabled(true);
+} else if (subscription) {
+    displayPlan(subscription.plan_type, subscription);
+} else {
+    displayPlan("free");
+}
 
         // Register checkout handlers after loading the current plan.
-        buttons.forEach(button => {
+        
+        // Handle Client plan selection and secure Paystack checkout.
+        buttons.forEach((button) => {
             button.addEventListener("click", async function () {
                 const selectedPlan = button.dataset.clientPlan;
 
                 if (selectedPlan === "free") {
                     showMessage(
-                        "The Free plan allows 2 job posts per calendar month. No payment is required."
+                        "You are already on the Free plan. Choose a paid plan to upgrade."
                     );
                     return;
                 }
 
-                if (
-                    selectedPlan !== "starter" &&
-                    selectedPlan !== "business"
-                ) {
-                    showMessage("Please choose a valid plan.", true);
-                    return;
-                }
-
-                // Do not start another checkout if a paid plan is active.
-                const currentSubscription = await loadSubscription(user.id);
-
-                if (currentSubscription) {
-                    displayPlan(
-                        currentSubscription.plan_type,
-                        currentSubscription
-                    );
-
-                    showMessage(
-                        "You already have an active paid subscription. You cannot purchase another plan until it expires.",
-                        true
-                    );
+                if (!["starter", "business"].includes(selectedPlan)) {
+                    showMessage("Please choose a valid subscription plan.", true);
                     return;
                 }
 
                 setButtonsDisabled(true);
-                showMessage("Connecting securely to Paystack...");
+                showMessage("Preparing your secure checkout...");
 
                 try {
+                    // Recheck the subscription before starting payment.
+                    const currentSubscription = await loadSubscription(user.id);
+
+                    if (currentSubscription?.lookupFailed) {
+                        showMessage(
+                            "We couldn't verify your current subscription. Please try again later.",
+                            true
+                        );
+                        return;
+                    }
+
+                    if (currentSubscription) {
+                        displayPlan(
+                            currentSubscription.plan_type,
+                            currentSubscription
+                        );
+
+                        const canUpgrade =
+                            currentSubscription.plan_type === "starter" &&
+                            selectedPlan === "business";
+
+                        if (!canUpgrade) {
+                            showMessage(
+                                currentSubscription.plan_type === "starter"
+                                    ? "You already have Starter. Choose Business to upgrade."
+                                    : "You already have an active Business subscription. You cannot purchase another Business plan or downgrade while it is active.",
+                                true
+                            );
+                            return;
+                        }
+                    }
+
+                    // Request checkout from the existing Edge Function.
                     const { data, error } =
                         await supabaseClient.functions.invoke(
                             "initialize-client-subscription-payment",
@@ -8009,54 +8431,115 @@ function displayPlan(plan, subscription = null) {
                             }
                         );
 
-                    if (
-                        error ||
-                        !data?.authorization_url ||
-                        !data?.reference
-                    ) {
-                        console.error("Checkout initialization response:", {
-                            error,
-                            data
-                        });
+                    if (error) {
+                        let serverMessage = data?.error;
+
+                        // Read the Edge Function's error response when available.
+                        if (
+                            !serverMessage &&
+                            error.context &&
+                            typeof error.context.clone === "function"
+                        ) {
+                            try {
+                                const errorBody =
+                                    await error.context.clone().json();
+
+                                serverMessage = errorBody?.error;
+
+                                // A missing previous checkout was safely closed.
+                                if (errorBody?.previousPaymentClosed === true) {
+                                    showMessage(
+                                        serverMessage ||
+                                        "Your previous checkout was closed safely. You can now try again."
+                                    );
+                                    return;
+                                }
+
+                                // A previous successful payment was recovered.
+                                if (errorBody?.recovered === true) {
+                                    const updatedSubscription =
+                                        await loadSubscription(user.id);
+
+                                    if (
+                                        updatedSubscription &&
+                                        !updatedSubscription.lookupFailed
+                                    ) {
+                                        displayPlan(
+                                            updatedSubscription.plan_type,
+                                            updatedSubscription
+                                        );
+                                    }
+
+                                    showMessage(
+                                        serverMessage ||
+                                        "Your previous payment was recovered. Your membership has been updated."
+                                    );
+                                    return;
+                                }
+                            } catch (readError) {
+                                console.warn(
+                                    "Could not read payment error response:",
+                                    readError
+                                );
+                            }
+                        }
 
                         showMessage(
-                            data?.error ||
-                            "We couldn't start checkout. Please try again later.",
+                            serverMessage ||
+                            "We couldn't start checkout. Please try again.",
                             true
                         );
-
-                        setButtonsDisabled(false);
                         return;
                     }
 
-                    const checkoutUrl = new URL(data.authorization_url);
+                    const checkoutUrl = data?.authorization_url;
 
-                    if (
-                        checkoutUrl.protocol !== "https:" ||
-                        checkoutUrl.hostname !== "checkout.paystack.com"
-                    ) {
-                        showMessage(
-                            "The checkout address could not be validated. Please contact support.",
-                            true
-                        );
+                    let parsedUrl;
 
-                        setButtonsDisabled(false);
-                        return;
+                    try {
+                        parsedUrl = new URL(checkoutUrl);
+                    } catch {
+                        throw new Error("Paystack returned an invalid checkout link.");
                     }
 
-                    window.location.assign(checkoutUrl.href);
+                    if (
+                        parsedUrl.protocol !== "https:" ||
+                        parsedUrl.hostname !== "checkout.paystack.com"
+                    ) {
+                        throw new Error("The checkout link could not be verified.");
+                    }
+
+                    window.location.assign(parsedUrl.href);
+
                 } catch (checkoutError) {
-                    console.error("Client checkout error:", checkoutError);
-
-                    showMessage(
-                        "Something went wrong while starting checkout. Please try again.",
-                        true
+                    console.error(
+                        "Client subscription checkout failed:",
+                        checkoutError
                     );
 
+                    showMessage(
+                        checkoutError.message ||
+                        "An unexpected checkout error occurred. Please try again.",
+                        true
+                    );
+                } finally {
                     setButtonsDisabled(false);
                 }
             });
         });
+
+        // Connect the active Starter membership upgrade button.
+if (upgradeButton) {
+    upgradeButton.addEventListener("click", function () {
+        const businessButton = section.querySelector(
+            '[data-client-plan="business"]'
+        );
+
+        if (businessButton) {
+            businessButton.click();
+        }
+    });
+}
     } catch (error) {
         console.error(
             "Client subscription dashboard initialization failed:",
@@ -8064,5 +8547,400 @@ function displayPlan(plan, subscription = null) {
         );
 
         section.hidden = true;
+    }
+})();
+
+
+/* =========================================
+   NAIJAJOBS - LIVE DASHBOARD OVERVIEW
+   Separate initializer; preserves existing code
+========================================= */
+
+(async function initializeLiveDashboardOverview() {
+    const workerSection = document.getElementById(
+        "worker-dashboard-overview"
+    );
+
+    const clientSection = document.getElementById(
+        "client-dashboard-overview"
+    );
+
+    // Run only on the main dashboard.
+    if (
+        (!workerSection && !clientSection) ||
+        typeof supabaseClient === "undefined"
+    ) {
+        return;
+    }
+
+    const workerActivity = document.getElementById(
+        "worker-dashboard-activity"
+    );
+
+    const clientActivity = document.getElementById(
+        "client-dashboard-activity"
+    );
+
+    function setText(id, value) {
+        const element = document.getElementById(id);
+
+        if (element) {
+            element.textContent = value;
+        }
+    }
+
+    function formatDate(value) {
+        if (!value) return "Date unavailable";
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return "Date unavailable";
+        }
+
+        return date.toLocaleDateString(undefined, {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        });
+    }
+
+    
+function showActivity(container, items, emptyMessage, getDetails) {
+    if (!container) return;
+
+    container.replaceChildren();
+
+    if (!items.length) {
+        const empty = document.createElement("p");
+        empty.className = "dashboard-activity-empty";
+        empty.textContent = emptyMessage;
+        container.appendChild(empty);
+        return;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "dashboard-activity-table-wrap";
+
+    const table = document.createElement("table");
+    table.className = "dashboard-activity-table";
+
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+
+    ["Job", "Status", "Date"].forEach(label => {
+        const th = document.createElement("th");
+        th.textContent = label;
+        headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+
+    const tbody = document.createElement("tbody");
+
+    items.slice(0, 5).forEach(item => {
+        const information = getDetails(item);
+        const description = information.description || "";
+        const separator = description.lastIndexOf(" · ");
+
+        const status = separator >= 0
+            ? description.slice(0, separator)
+            : description;
+
+        const date = separator >= 0
+            ? description.slice(separator + 3)
+            : "Date unavailable";
+
+        const normalizedStatus = status.toLowerCase();
+
+        let statusClass = "status-unknown";
+
+        if (
+            normalizedStatus === "pending" ||
+            normalizedStatus.includes("awaiting")
+        ) {
+            statusClass = "status-pending";
+        } else if (
+            normalizedStatus === "accepted" ||
+            normalizedStatus === "completed"
+        ) {
+            statusClass = "status-accepted";
+        } else if (normalizedStatus === "rejected") {
+            statusClass = "status-rejected";
+        }
+
+        const row = document.createElement("tr");
+
+        const jobCell = document.createElement("td");
+        jobCell.className = "dashboard-activity-job";
+        jobCell.textContent = information.title;
+
+        const statusCell = document.createElement("td");
+        const badge = document.createElement("span");
+        badge.className = `status-badge ${statusClass}`;
+        badge.textContent = status || "Unknown";
+        statusCell.appendChild(badge);
+
+        const dateCell = document.createElement("td");
+        dateCell.className = "dashboard-activity-date";
+        dateCell.textContent = date;
+
+        row.append(jobCell, statusCell, dateCell);
+        tbody.appendChild(row);
+    });
+
+    table.append(thead, tbody);
+    wrapper.appendChild(table);
+    container.appendChild(wrapper);
+}
+
+
+    try {
+        const {
+            data: { user },
+            error: authError
+        } = await supabaseClient.auth.getUser();
+
+        if (authError || !user) {
+            if (workerSection) workerSection.hidden = true;
+            if (clientSection) clientSection.hidden = true;
+            return;
+        }
+
+        const {
+            data: profile,
+            error: profileError
+        } = await supabaseClient
+            .from("profiles")
+            .select("account_type, is_suspended")
+            .eq("id", user.id)
+            .maybeSingle();
+
+        if (profileError || !profile) {
+            throw profileError || new Error(
+                "Could not load your account profile."
+            );
+        }
+
+        const accountType = profile.account_type;
+
+        // =====================================
+        // WORKER DASHBOARD
+        // =====================================
+
+        if (["worker", "job_seeker"].includes(accountType)) {
+            if (workerSection) workerSection.hidden = false;
+            if (clientSection) clientSection.hidden = true;
+
+            const {
+                data: applications,
+                error
+            } = await supabaseClient
+                .from("applications")
+                .select(`
+                    id,
+                    job_id,
+                    status,
+                    created_at,
+                    job_seeker_completed_at,
+                    completed_at,
+                    jobs (
+                        id,
+                        title,
+                        status
+                    )
+                `)
+                .eq("user_id", user.id)
+                .order("created_at", {
+                    ascending: false
+                });
+
+            if (error) throw error;
+
+            const records = applications || [];
+
+            const pending = records.filter(
+                item => item.status === "pending"
+            ).length;
+
+            const accepted = records.filter(
+                item => item.status === "accepted"
+            ).length;
+
+            const rejected = records.filter(
+                item => item.status === "rejected"
+            ).length;
+
+            const activeWork = records.filter(
+                item =>
+                    item.status === "accepted" &&
+                    !item.completed_at
+            ).length;
+
+            const completedWork = records.filter(
+                item => Boolean(item.completed_at)
+            ).length;
+
+            setText("worker-dashboard-total", records.length);
+            setText("worker-dashboard-pending", pending);
+            setText("worker-dashboard-accepted", accepted);
+            setText("worker-dashboard-rejected", rejected);
+            setText("worker-dashboard-active", activeWork);
+            setText("worker-dashboard-completed", completedWork);
+
+            showActivity(
+                workerActivity,
+                records,
+                "You haven't submitted any applications yet.",
+                application => {
+                    const job = Array.isArray(application.jobs)
+                        ? application.jobs[0]
+                        : application.jobs;
+
+                    let status = application.status || "Unknown";
+
+                    if (application.completed_at) {
+                        status = "Completed";
+                    } else if (application.job_seeker_completed_at) {
+                        status = "Awaiting client confirmation";
+                    }
+
+                    return {
+                        title: job?.title || "Job application",
+                        description:
+                            `${status.replace(/_/g, " ")} · ` +
+                            formatDate(application.created_at)
+                    };
+                }
+            );
+
+            return;
+        }
+
+        // =====================================
+        // CLIENT DASHBOARD
+        // =====================================
+
+        if (accountType === "client") {
+            if (clientSection) clientSection.hidden = false;
+            if (workerSection) workerSection.hidden = true;
+
+            const {
+                data: jobs,
+                error: jobsError
+            } = await supabaseClient
+                .from("jobs")
+                .select("id, title, status")
+                .eq("user_id", user.id)
+                .order("created_at", {
+                    ascending: false
+                });
+
+            if (jobsError) throw jobsError;
+
+            const clientJobs = jobs || [];
+            const jobIds = clientJobs.map(job => job.id);
+
+            const openJobs = clientJobs.filter(
+                job => job.status === "open"
+            ).length;
+
+            const progressJobs = clientJobs.filter(
+                job => job.status === "in_progress"
+            ).length;
+
+            const completedJobs = clientJobs.filter(
+                job => job.status === "completed"
+            ).length;
+
+            setText("client-dashboard-total-jobs", clientJobs.length);
+            setText("client-dashboard-open-jobs", openJobs);
+            setText("client-dashboard-progress-jobs", progressJobs);
+            setText("client-dashboard-completed-jobs", completedJobs);
+
+            if (!jobIds.length) {
+                setText("client-dashboard-total-applications", 0);
+                setText("client-dashboard-pending-applications", 0);
+
+                showActivity(
+                    clientActivity,
+                    [],
+                    "Applications received for your jobs will appear here.",
+                    () => ({ title: "", description: "" })
+                );
+
+                return;
+            }
+
+            const {
+                data: applications,
+                error: applicationsError
+            } = await supabaseClient
+                .from("applications")
+                .select("id, job_id, status, created_at")
+                .in("job_id", jobIds)
+                .order("created_at", {
+                    ascending: false
+                });
+
+            if (applicationsError) throw applicationsError;
+
+            const receivedApplications = applications || [];
+
+            const pendingApplications = receivedApplications.filter(
+                application => application.status === "pending"
+            ).length;
+
+            setText(
+                "client-dashboard-total-applications",
+                receivedApplications.length
+            );
+
+            setText(
+                "client-dashboard-pending-applications",
+                pendingApplications
+            );
+
+            const jobTitles = new Map(
+                clientJobs.map(job => [job.id, job.title])
+            );
+
+            showActivity(
+                clientActivity,
+                receivedApplications,
+                "No applications have been received for your jobs yet.",
+                application => ({
+                    title:
+                        jobTitles.get(application.job_id) ||
+                        "Your job received an application",
+                    description:
+                        `${String(application.status || "Unknown")
+                            .replace(/_/g, " ")} · ` +
+                        formatDate(application.created_at)
+                })
+            );
+
+            return;
+        }
+
+        // Hide both sections for other account types.
+        if (workerSection) workerSection.hidden = true;
+        if (clientSection) clientSection.hidden = true;
+
+    } catch (error) {
+        console.error(
+            "Dashboard overview could not be loaded:",
+            error
+        );
+
+        if (workerActivity) {
+            workerActivity.textContent =
+                "We couldn't load your dashboard information. Please refresh and try again.";
+        }
+
+        if (clientActivity) {
+            clientActivity.textContent =
+                "We couldn't load your dashboard information. Please refresh and try again.";
+        }
     }
 })();

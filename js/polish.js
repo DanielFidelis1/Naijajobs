@@ -209,8 +209,7 @@
                 '<span class="nj-pm-avatar"><span id="nj-pm-letter">' + initial() + '</span><img id="nj-pm-img" alt="" hidden></span>' +
                 '<span class="nj-pm-who"><strong id="nj-pm-name">' + (me.name || "Your account") + "</strong><small>View and manage your account</small></span>" +
                 svg("chev") + "</a>" +
-            '<a class="nj-pm-item" href="profile.html" role="menuitem">' + svg("user") + "<span>My Profile</span>" + svg("chev") + "</a>" +
-            '<a class="nj-pm-item" href="profile.html#email-alerts-card" role="menuitem">' + svg("gear") + "<span>Settings</span>" + svg("chev") + "</a>" +
+            '<a class="nj-pm-item" href="settings.html" role="menuitem">' + svg("gear") + "<span>Settings</span>" + svg("chev") + "</a>" +
             '<a class="nj-pm-item" href="announcements.html" role="menuitem">' + svg("mega") + "<span>Announcements</span>" + svg("chev") + "</a>" +
             '<a class="nj-pm-item" href="support.html" role="menuitem">' + svg("help") + "<span>Support</span>" + svg("chev") + "</a>" +
             '<button type="button" class="nj-pm-item nj-pm-logout" role="menuitem">' + svg("out") + "<span>Log Out</span></button>";

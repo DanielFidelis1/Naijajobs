@@ -1,5 +1,5 @@
 
-export function initializeNativePush({ Capacitor, PushNotifications }) {
+export function initializeNativePush({ Capacitor, PushNotifications, FCM }) {
     if (!Capacitor.isNativePlatform()) {
         return;
     }
@@ -45,16 +45,33 @@ export function initializeNativePush({ Capacitor, PushNotifications }) {
         if (listenersRegistered) return;
 
         await PushNotifications.addListener(
-            "registration",
-            async (tokenData) => {
-                try {
-                    await saveDeviceToken(tokenData.value);
+    "registration",
+    async (tokenData) => {
+        try {
+            let deviceToken = tokenData.value;
 
-                    if (pendingRegistration) {
-                        pendingRegistration.resolve(true);
-                        pendingRegistration = null;
-                    }
-                } catch (error) {
+            // iOS provides an APNs token through Capacitor.
+            // We need the FCM token for Firebase delivery instead.
+            if (Capacitor.getPlatform() === "ios") {
+                if (!FCM || typeof FCM.getToken !== "function") {
+                    throw new Error("iOS Firebase messaging is not configured.");
+                }
+
+                const fcmTokenData = await FCM.getToken();
+                deviceToken = fcmTokenData?.token;
+            }
+
+            if (typeof deviceToken !== "string" || !deviceToken.trim()) {
+                throw new Error("Could not obtain a valid device token.");
+            }
+
+            await saveDeviceToken(deviceToken);
+
+            if (pendingRegistration) {
+                pendingRegistration.resolve(true);
+                pendingRegistration = null;
+            }
+        } catch (error) {
                     console.error("Native push registration failed:", error);
 
                     if (pendingRegistration) {

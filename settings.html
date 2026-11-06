@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="Manage your NaijaJobs account settings.">
+    <meta name="theme-color" content="#0e3b2c">
+
+    <title>Settings | NaijaJobs</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&amp;display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/polish.css">
+    <link rel="icon" type="image/png" href="icons/naijajobs-96.png">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="NaijaJobs">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <style>
+        .settings-intro {
+            margin-bottom: 22px;
+            color: #647067;
+            line-height: 1.6;
+        }
+
+        .settings-section {
+            margin-bottom: 22px;
+        }
+
+        .settings-section h2 {
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+        }
+
+        .settings-section > p {
+            color: #647067;
+            line-height: 1.6;
+        }
+
+        .settings-back {
+            display: inline-block;
+            margin-top: 12px;
+            color: #0e3b2c;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .settings-back:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .settings-section .form-card {
+                padding: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body class="app">
+    <main class="main" id="main">
+        <div class="page">
+
+            <header class="page-head">
+                <div>
+                    <h1>Settings</h1>
+                    <p class="sub">Manage your NaijaJobs account preferences.</p>
+                </div>
+            </header>
+
+            <p class="settings-intro">
+                Control how NaijaJobs keeps you informed about activity on your account.
+            </p>
+
+            <section class="settings-section">
+                <h2>Notifications</h2>
+                <p>Choose whether you want to receive email updates.</p>
+
+                <div class="form-card email-card" id="email-alerts-card">
+                    <label class="check-row" for="email-alerts">
+                        <input type="checkbox" id="email-alerts" checked>
+                        <span>
+                            <strong>Email me about new activity</strong>
+                            <small>New applicants, acceptances, messages and reviews.</small>
+                        </span>
+                    </label>
+
+                    <p
+                        id="email-alerts-message"
+                        class="form-message"
+                        role="status"
+                        aria-live="polite"
+                    ></p>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <h2>Profile</h2>
+                <p>Update your personal information, skills and profile picture.</p>
+                <a class="settings-back" href="profile.html">Manage my profile →</a>
+            </section>
+
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/shell.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/polish.js" defer></script>
+</body>
+</html>

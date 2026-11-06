@@ -26,7 +26,7 @@
                     <p class="sub">What would you like to do today?</p>
                 </div>
             </header>
-                        
+
 <!-- BROWSER PUSH NOTIFICATION SETTINGS -->
 <section class="push-notification-section" id="push-notification-section">
     <div class="push-notification-content">
@@ -44,8 +44,7 @@
     </button>
 </section>
 
-
-            <div class="duo">
+        <div class="duo">
                 <a href="browse.html" class="tile tile-forest">
                     <h2>Find a job</h2>
                     <p>Browse open gigs and apply in a minute.</p>
@@ -57,6 +56,99 @@
                     <span class="tile-go">Post a job &rarr;</span>
                 </a>
             </div>
+                      
+<!-- WORKER DASHBOARD OVERVIEW -->
+<section id="worker-dashboard-overview" hidden>
+
+    <h2 class="section-title">Your job activity</h2>
+
+    <div class="stats">
+        <article class="stat">
+            <p>Total applications</p>
+            <h3 id="worker-dashboard-total">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Pending</p>
+            <h3 id="worker-dashboard-pending">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Accepted</p>
+            <h3 id="worker-dashboard-accepted">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Rejected</p>
+            <h3 id="worker-dashboard-rejected">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Active work</p>
+            <h3 id="worker-dashboard-active">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Completed work</p>
+            <h3 id="worker-dashboard-completed">—</h3>
+        </article>
+    </div>
+
+    <div class="dashboard-activity">
+        <h2 class="section-title">Recent application activity</h2>
+        <div id="worker-dashboard-activity">
+            <p>Loading your recent activity...</p>
+        </div>
+    </div>
+
+</section>
+
+
+<!-- CLIENT DASHBOARD OVERVIEW -->
+<section id="client-dashboard-overview" hidden>
+
+    <h2 class="section-title">Your hiring activity</h2>
+
+    <div class="stats">
+        <article class="stat">
+            <p>Total jobs</p>
+            <h3 id="client-dashboard-total-jobs">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Open jobs</p>
+            <h3 id="client-dashboard-open-jobs">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>In progress</p>
+            <h3 id="client-dashboard-progress-jobs">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Completed jobs</p>
+            <h3 id="client-dashboard-completed-jobs">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Total applications</p>
+            <h3 id="client-dashboard-total-applications">—</h3>
+        </article>
+
+        <article class="stat">
+            <p>Awaiting review</p>
+            <h3 id="client-dashboard-pending-applications">—</h3>
+        </article>
+    </div>
+
+    <div class="dashboard-activity">
+        <h2 class="section-title">Recent applications received</h2>
+        <div id="client-dashboard-activity">
+            <p>Loading recent applications...</p>
+        </div>
+    </div>
+
+</section>
 
             <h2 class="section-title">Your workspace</h2>
 
@@ -86,6 +178,25 @@
     <div class="client-plan-status" id="client-plan-status" role="status">
         Loading your subscription information...
     </div>
+    <!-- ACTIVE CLIENT MEMBERSHIP -->
+<div class="client-active-membership" id="client-active-membership" hidden>
+    <div>
+        <span class="client-plan-label">YOUR CURRENT MEMBERSHIP</span>
+        <h3 id="client-active-plan-name">Starter Membership</h3>
+        <p id="client-active-plan-details">
+            Your subscription is active.
+        </p>
+    </div>
+
+    <button
+        type="button"
+        class="client-plan-button"
+        id="client-upgrade-button"
+        hidden
+    >
+        Upgrade to Business
+    </button>
+</div>
 
     <div class="client-plans-grid">
 
