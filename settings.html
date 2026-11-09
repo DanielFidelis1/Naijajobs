@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/polish.css">
+    <link rel="stylesheet" href="css/theme.css">
     <link rel="icon" type="image/png" href="icons/naijajobs-96.png">
 
     <meta name="mobile-web-app-capable" content="yes">
@@ -30,7 +31,7 @@
         }
 
         .settings-section {
-            margin-bottom: 22px;
+            margin-bottom: 0;
         }
 
         .settings-section h2 {
@@ -55,13 +56,305 @@
             text-decoration: underline;
         }
 
-        @media (max-width: 600px) {
-            .settings-section .form-card {
-                padding: 17px;
-            }
+        /* =====================================
+   SMOOTH SETTINGS ACCORDION
+===================================== */
+
+.settings-accordion {
+    margin-bottom: 14px;
+    border: 1px solid var(--border-color, #e5e9e6);
+    border-radius: 16px;
+    background: var(--card-bg, #ffffff);
+    overflow: hidden;
+}
+
+.settings-accordion-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    width: 100%;
+    padding: 20px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: inherit;
+    transition: background 0.25s ease;
+}
+
+.settings-accordion-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.settings-accordion-trigger:hover {
+    background: rgba(14, 59, 44, 0.05);
+}
+
+.settings-accordion-trigger::after {
+    content: "⌄";
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    transition: transform 0.35s ease;
+}
+
+.settings-accordion[open] > .settings-accordion-trigger::after {
+    transform: rotate(180deg);
+}
+
+.settings-accordion-trigger:focus-visible {
+    outline: 2px solid #0e3b2c;
+    outline-offset: -4px;
+    border-radius: 12px;
+}
+
+/* Animated panel */
+
+.settings-accordion-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    opacity: 0;
+    transition:
+        grid-template-rows 0.4s ease,
+        opacity 0.3s ease;
+}
+
+.settings-accordion[open] > .settings-accordion-content {
+    grid-template-rows: 1fr;
+    opacity: 1;
+}
+
+.settings-accordion-inner {
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 20px;
+}
+
+.settings-accordion[open] > .settings-accordion-content > .settings-accordion-inner {
+    padding-bottom: 20px;
+}
+
+.settings-accordion-inner > .settings-section > h2 {
+    display: none;
+}
+
+.settings-accordion-inner .form-card {
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .settings-accordion-trigger {
+        padding: 17px;
+    }
+
+    .settings-accordion-inner {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .settings-accordion-content,
+    .settings-accordion-trigger,
+    .settings-accordion-trigger::after {
+        transition: none;
+    }
         }
+        /* =====================================
+   MODERN SETTINGS ACTION BUTTONS
+===================================== */
+
+.settings-accordion-inner button[type="submit"],
+#sign-out-all-devices {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 48px;
+    padding: 13px 24px;
+    border: 1px solid #0e3b2c;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #145c40, #0e3b2c);
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.94rem;
+    font-weight: 700;
+    letter-spacing: 0.1px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(14, 59, 44, 0.14);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.settings-accordion-inner button[type="submit"]:hover,
+#sign-out-all-devices:hover {
+    background: linear-gradient(135deg, #18734e, #105238);
+    box-shadow: 0 7px 18px rgba(14, 59, 44, 0.22);
+    transform: translateY(-2px);
+}
+
+.settings-accordion-inner button[type="submit"]:active,
+#sign-out-all-devices:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 6px rgba(14, 59, 44, 0.15);
+}
+
+.settings-accordion-inner button[type="submit"]:focus-visible,
+#sign-out-all-devices:focus-visible {
+    outline: 3px solid rgba(14, 122, 80, 0.3);
+    outline-offset: 3px;
+}
+
+.settings-accordion-inner button[type="submit"]:disabled,
+#sign-out-all-devices:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+@media (max-width: 600px) {
+    .settings-accordion-inner button[type="submit"],
+    #sign-out-all-devices {
+        width: 100%;
+        min-height: 50px;
+        border-radius: 13px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .settings-accordion-inner button[type="submit"],
+    #sign-out-all-devices {
+        transition: none;
+    }
+}
+/* =====================================
+   MODERN SETTINGS INTERACTIVE CONTROLS
+===================================== */
+
+/* Modern checkboxes */
+.settings-accordion-inner input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    accent-color: #0e7a50;
+    cursor: pointer;
+    border-radius: 5px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.settings-accordion-inner input[type="checkbox"]:hover {
+    transform: scale(1.12);
+}
+
+/* Interactive checkbox rows */
+.settings-accordion-inner .check-row {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 13px 14px;
+    margin: 7px 0;
+    border: 1px solid var(--border-color, #e5e9e6);
+    border-radius: 12px;
+    cursor: pointer;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.settings-accordion-inner .check-row:hover {
+    background: rgba(14, 122, 80, 0.045);
+    border-color: rgba(14, 122, 80, 0.35);
+}
+
+.settings-accordion-inner .check-row:active {
+    transform: scale(0.99);
+}
+
+/* Modern form inputs */
+.settings-accordion-inner input[type="text"],
+.settings-accordion-inner input[type="email"],
+.settings-accordion-inner input[type="password"],
+.settings-accordion-inner input[type="number"] {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color, #dce4de);
+    border-radius: 12px;
+    background: var(--card-bg, #ffffff);
+    color: inherit;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.settings-accordion-inner input[type="text"]:focus,
+.settings-accordion-inner input[type="email"]:focus,
+.settings-accordion-inner input[type="password"]:focus,
+.settings-accordion-inner input[type="number"]:focus {
+    border-color: #0e7a50;
+    box-shadow: 0 0 0 4px rgba(14, 122, 80, 0.10);
+}
+
+/* Modern theme selection cards */
+.settings-accordion-inner .theme-choice {
+    border-radius: 14px;
+    border: 1px solid var(--border-color, #e5e9e6);
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.settings-accordion-inner .theme-choice:hover {
+    transform: translateY(-3px);
+    border-color: #0e7a50;
+    box-shadow: 0 6px 16px rgba(14, 59, 44, 0.09);
+}
+
+.settings-accordion-inner .theme-choice[aria-pressed="true"] {
+    border-color: #0e7a50;
+    background: rgba(14, 122, 80, 0.07);
+    box-shadow: 0 0 0 2px rgba(14, 122, 80, 0.10);
+}
+
+/* Smooth focus for keyboard users */
+.settings-accordion-inner input:focus-visible {
+    outline: 2px solid #0e7a50;
+    outline-offset: 3px;
+}
+
+/* Mobile touch improvements */
+@media (max-width: 600px) {
+    .settings-accordion-inner .check-row {
+        padding: 15px 13px;
+        min-height: 54px;
+    }
+
+    .settings-accordion-inner input[type="checkbox"] {
+        width: 21px;
+        height: 21px;
+    }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .settings-accordion-inner *,
+    .settings-accordion-inner *::before,
+    .settings-accordion-inner *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
     </style>
-    <link rel="stylesheet" href="css/theme.css">
 </head>
 
 <body class="app">
@@ -79,61 +372,401 @@
                 Control how NaijaJobs keeps you informed about activity on your account.
             </p>
 
-            <section class="settings-section">
-                <h2>Notifications</h2>
-                <p>Choose whether you want to receive email updates.</p>
+            <!-- NOTIFICATIONS -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Notifications
+                </summary>
 
-                <div class="form-card email-card" id="email-alerts-card">
-                    <label class="check-row" for="email-alerts">
-                        <input type="checkbox" id="email-alerts" checked>
-                        <span>
-                            <strong>Email me about new activity</strong>
-                            <small>New applicants, acceptances, messages and reviews.</small>
-                        </span>
-                    </label>
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section">
+                            <h2>Notifications</h2>
+                            <p>Choose which email updates you want to receive.</p>
 
-                    <p
-                        id="email-alerts-message"
-                        class="form-message"
-                        role="status"
-                        aria-live="polite"
-                    ></p>
+                            <div class="form-card email-card" id="email-alerts-card">
+                                <label class="check-row" for="email-alerts">
+                                    <input type="checkbox" id="email-alerts" checked>
+                                    <span>
+                                        <strong>Email notifications</strong>
+                                        <small>Turn all NaijaJobs email notifications on or off.</small>
+                                    </span>
+                                </label>
+
+                                <p
+                                    id="email-alerts-message"
+                                    class="form-message"
+                                    role="status"
+                                    aria-live="polite"
+                                ></p>
+                            </div>
+
+                            <div class="form-card" id="notification-preferences-card">
+                                <h3>Email notification preferences</h3>
+                                <p>Choose the activities you want to hear about.</p>
+
+                                <label class="check-row" for="pref-applications">
+                                    <input type="checkbox" id="pref-applications" checked>
+                                    <span>
+                                        <strong>New job applications</strong>
+                                        <small>When someone applies for your job.</small>
+                                    </span>
+                                </label>
+
+                                <label class="check-row" for="pref-application-updates">
+                                    <input type="checkbox" id="pref-application-updates" checked>
+                                    <span>
+                                        <strong>Application updates</strong>
+                                        <small>When an application is accepted or rejected.</small>
+                                    </span>
+                                </label>
+
+                                <label class="check-row" for="pref-messages">
+                                    <input type="checkbox" id="pref-messages" checked>
+                                    <span>
+                                        <strong>New messages</strong>
+                                        <small>When someone sends you a message.</small>
+                                    </span>
+                                </label>
+
+                                <label class="check-row" for="pref-job-completed">
+                                    <input type="checkbox" id="pref-job-completed" checked>
+                                    <span>
+                                        <strong>Job completion updates</strong>
+                                        <small>Updates when a job is marked as completed.</small>
+                                    </span>
+                                </label>
+
+                                <label class="check-row" for="pref-reviews">
+                                    <input type="checkbox" id="pref-reviews" checked>
+                                    <span>
+                                        <strong>New reviews</strong>
+                                        <small>When someone leaves a review on your profile.</small>
+                                    </span>
+                                </label>
+
+                                <p
+                                    id="notification-preferences-message"
+                                    class="form-message"
+                                    role="status"
+                                    aria-live="polite"
+                                ></p>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-            </section>
+            </details>
 
-            <section class="settings-section">
-                <h2>Appearance</h2>
-                <p>Choose how NaijaJobs looks on your device.</p>
+            <!-- APPEARANCE -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Appearance
+                </summary>
 
-                <div class="theme-options" id="theme-options" role="group" aria-label="Choose appearance">
-                    <button type="button" class="theme-choice" data-theme-choice="light" aria-pressed="false">
-                        <span class="theme-choice-icon" aria-hidden="true">&#9728;</span>
-                        <strong>Light</strong>
-                        <small>Bright and clear</small>
-                        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
-                    </button>
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section">
+                            <h2>Appearance</h2>
+                            <p>Choose how NaijaJobs looks on your device.</p>
 
-                    <button type="button" class="theme-choice" data-theme-choice="dark" aria-pressed="false">
-                        <span class="theme-choice-icon" aria-hidden="true">&#9790;</span>
-                        <strong>Dark</strong>
-                        <small>Easy on the eyes</small>
-                        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
-                    </button>
+                            <div class="theme-options" id="theme-options" role="group" aria-label="Choose appearance">
+                                <button type="button" class="theme-choice" data-theme-choice="light" aria-pressed="false">
+                                    <span class="theme-choice-icon" aria-hidden="true">&#9728;</span>
+                                    <strong>Light</strong>
+                                    <small>Bright and clear</small>
+                                    <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+                                </button>
 
-                    <button type="button" class="theme-choice" data-theme-choice="system" aria-pressed="false">
-                        <span class="theme-choice-icon" aria-hidden="true">&#9633;</span>
-                        <strong>System</strong>
-                        <small>Follow device settings</small>
-                        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
-                    </button>
+                                <button type="button" class="theme-choice" data-theme-choice="dark" aria-pressed="false">
+                                    <span class="theme-choice-icon" aria-hidden="true">&#9790;</span>
+                                    <strong>Dark</strong>
+                                    <small>Easy on the eyes</small>
+                                    <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+                                </button>
+
+                                <button type="button" class="theme-choice" data-theme-choice="system" aria-pressed="false">
+                                    <span class="theme-choice-icon" aria-hidden="true">&#9633;</span>
+                                    <strong>System</strong>
+                                    <small>Follow device settings</small>
+                                    <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+                                </button>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-            </section>
+            </details>
 
-            <section class="settings-section">
-                <h2>Profile</h2>
-                <p>Update your personal information, skills and profile picture.</p>
-                <a class="settings-back" href="profile.html">Manage my profile →</a>
-            </section>
+            <!-- PROFILE -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Profile
+                </summary>
+
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section">
+                            <h2>Profile</h2>
+                            <p>Manage your personal information and public profile.</p>
+                            <a href="profile.html" class="settings-back">Go to Profile</a>
+                        </section>
+                    </div>
+                </div>
+            </details>
+
+            <!-- CHANGE EMAIL ADDRESS -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Change Email Address
+                </summary>
+
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section">
+                            <div class="form-card">
+                                <h3>Change email address</h3>
+                                <p>Update the email address associated with your account.</p>
+
+                                <form id="change-email-form">
+                                    <label for="new-email">New email address</label>
+                                    <input
+                                        type="email"
+                                        id="new-email"
+                                        autocomplete="email"
+                                        required
+                                    >
+
+                                    <label for="confirm-email">Confirm new email address</label>
+                                    <input
+                                        type="email"
+                                        id="confirm-email"
+                                        autocomplete="email"
+                                        required
+                                    >
+
+                                    <button type="submit">Update email address</button>
+
+                                    <p
+                                        id="email-change-message"
+                                        class="form-message"
+                                        role="status"
+                                        aria-live="polite"
+                                    ></p>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </details>
+
+            <!-- CHANGE PASSWORD -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Change Password
+                </summary>
+
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section">
+                            <h2>Account &amp; Security</h2>
+                            <p>Keep your NaijaJobs account secure.</p>
+
+                            <div class="form-card">
+                                <h3>Change password</h3>
+                                <p>Update your password to protect your account.</p>
+
+                                <form id="change-password-form">
+                                    <label for="new-password">New password</label>
+                                    <input
+                                        type="password"
+                                        id="new-password"
+                                        minlength="8"
+                                        autocomplete="new-password"
+                                        required
+                                    >
+
+                                    <label for="confirm-password">Confirm new password</label>
+                                    <input
+                                        type="password"
+                                        id="confirm-password"
+                                        minlength="8"
+                                        autocomplete="new-password"
+                                        required
+                                    >
+
+                                    <button type="submit">Update password</button>
+
+                                    <p
+                                        id="password-message"
+                                        class="form-message"
+                                        role="status"
+                                        aria-live="polite"
+                                    ></p>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </details>
+
+            <!-- ACTIVE SESSIONS -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Active Sessions
+                </summary>
+
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section" id="session-security-section">
+                            <h2>Active Sessions</h2>
+                            <p>Secure your account by signing out of all devices where you are currently logged in.</p>
+
+                            <div class="form-card">
+                                <h3>Sign out of all devices</h3>
+                                <p>
+                                    This will end your NaijaJobs sessions on other devices,
+                                    including this one. You will need to log in again.
+                                </p>
+
+                                <button type="button" id="sign-out-all-devices">
+                                    Sign Out of All Devices
+                                </button>
+
+                                <p
+                                    id="sign-out-all-message"
+                                    class="form-message"
+                                    role="status"
+                                    aria-live="polite"
+                                ></p>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </details>
+
+            <!-- JOB PREFERENCES -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Job Preferences
+                </summary>
+
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section" id="job-preferences-section">
+                            <h2>Job Preferences</h2>
+                            <p>Choose the types of jobs you would like to find on NaijaJobs.</p>
+
+                            <div class="form-card">
+                                <form id="job-preferences-form">
+
+                                    <h3>Preferred job categories</h3>
+                                    <p>Select the categories that interest you.</p>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Graphic Design">
+                                        <span>Graphic Design</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Writing">
+                                        <span>Writing</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Web Development">
+                                        <span>Web Development</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Photography">
+                                        <span>Photography</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Video Editing">
+                                        <span>Video Editing</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Tutoring">
+                                        <span>Tutoring</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Tech Support">
+                                        <span>Tech Support</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-category" value="Other">
+                                        <span>Other</span>
+                                    </label>
+
+                                    <hr>
+
+                                    <h3>Preferred location</h3>
+                                    <label for="preferred-location">Where would you like to find jobs?</label>
+                                    <input
+                                        type="text"
+                                        id="preferred-location"
+                                        placeholder="e.g. Abuja, Lagos or Anywhere"
+                                    >
+
+                                    <hr>
+
+                                    <h3>Preferred job types</h3>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-job-type" value="remote">
+                                        <span>Remote</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-job-type" value="onsite">
+                                        <span>On-site</span>
+                                    </label>
+
+                                    <label class="check-row">
+                                        <input type="checkbox" name="preferred-job-type" value="hybrid">
+                                        <span>Hybrid</span>
+                                    </label>
+
+                                    <hr>
+
+                                    <h3>Preferred budget (₦)</h3>
+
+                                    <label for="preferred-min-budget">Minimum budget</label>
+                                    <input
+                                        type="number"
+                                        id="preferred-min-budget"
+                                        min="0"
+                                        step="500"
+                                        placeholder="e.g. 5000"
+                                    >
+
+                                    <label for="preferred-max-budget">Maximum budget</label>
+                                    <input
+                                        type="number"
+                                        id="preferred-max-budget"
+                                        min="0"
+                                        step="500"
+                                        placeholder="e.g. 100000"
+                                    >
+
+                                    <button type="submit">Save Job Preferences</button>
+
+                                    <p
+                                        id="job-preferences-message"
+                                        class="form-message"
+                                        role="status"
+                                        aria-live="polite"
+                                    ></p>
+
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </details>
 
         </div>
     </main>
@@ -142,5 +775,31 @@
     <script src="js/shell.js"></script>
     <script src="js/app.js"></script>
     <script src="js/polish.js" defer></script>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const accordions = document.querySelectorAll(".settings-accordion");
+
+    accordions.forEach((accordion) => {
+        const trigger = accordion.querySelector(".settings-accordion-trigger");
+
+        trigger.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const shouldOpen = !accordion.open;
+
+            // Close every other panel first.
+            accordions.forEach((other) => {
+                if (other !== accordion && other.open) {
+                    other.open = false;
+                }
+            });
+
+            // Toggle the selected panel.
+            accordion.open = shouldOpen;
+        });
+    });
+});
+</script>
 </body>
 </html>
