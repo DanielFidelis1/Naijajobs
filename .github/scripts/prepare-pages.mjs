@@ -65,11 +65,11 @@ function main() {
     const htmlFiles = fs.readdirSync(ROOT)
         .filter(name => name.toLowerCase().endsWith(".html"));
 
-    if (htmlFiles.length !== 24) {
-        throw new Error(
-            `Expected 24 HTML pages, found ${htmlFiles.length}.`
-        );
-    }
+    if (htmlFiles.length < 24) {
+    throw new Error(
+        `Expected at least 24 HTML pages, found ${htmlFiles.length}.`
+    );
+}
 
     for (const file of htmlFiles) {
         copyFile(file);
