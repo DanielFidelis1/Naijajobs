@@ -354,6 +354,147 @@
         animation: none !important;
     }
 }
+/* =====================================
+   ACTIVE SESSION BUTTONS
+===================================== */
+
+#sign-out-this-device,
+#sign-out-all-devices {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 50px;
+    padding: 13px 22px;
+    border: none;
+    border-radius: 13px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+/* Sign out this device */
+#sign-out-this-device {
+    background: #0e7a50;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(14, 122, 80, 0.18);
+}
+
+#sign-out-this-device:hover {
+    background: #096640;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(14, 122, 80, 0.24);
+}
+
+/* Sign out all devices */
+#sign-out-all-devices {
+    background: #fff1f0;
+    color: #b42318;
+    border: 1px solid #f3c5c1;
+    box-shadow: none;
+}
+
+#sign-out-all-devices:hover {
+    background: #b42318;
+    color: #ffffff;
+    border-color: #b42318;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(180, 35, 24, 0.18);
+}
+
+/* Click effect */
+#sign-out-this-device:active,
+#sign-out-all-devices:active {
+    transform: scale(0.97);
+}
+
+/* Keyboard accessibility */
+#sign-out-this-device:focus-visible,
+#sign-out-all-devices:focus-visible {
+    outline: 3px solid rgba(14, 122, 80, 0.3);
+    outline-offset: 3px;
+}
+
+/* Disabled state */
+#sign-out-this-device:disabled,
+#sign-out-all-devices:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Mobile layout */
+@media (max-width: 600px) {
+    #sign-out-this-device,
+    #sign-out-all-devices {
+        width: 100%;
+        min-height: 52px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #sign-out-this-device,
+    #sign-out-all-devices {
+        transition: none;
+    }
+}
+/* =====================================
+   CURRENT DEVICE SESSION CARD
+===================================== */
+
+#current-session-card {
+    background: #f8faf9;
+    border: 1px solid #dce9e2;
+    border-radius: 16px;
+    padding: 22px;
+    margin: 20px 0;
+}
+
+#current-session-card h3 {
+    color: #0e3b2c;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 18px;
+}
+
+#current-session-card p {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 12px 0;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+#current-session-card p strong {
+    color: #1e293b;
+}
+
+#current-session-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    #current-session-card {
+        padding: 18px;
+    }
+
+    #current-session-card p {
+        font-size: 0.9rem;
+    }
+}
     </style>
 </head>
 
@@ -371,6 +512,49 @@
             <p class="settings-intro">
                 Control how NaijaJobs keeps you informed about activity on your account.
             </p>
+
+             <!-- APPEARANCE -->
+            <details class="settings-accordion" name="settings-panels">
+                <summary class="settings-accordion-trigger">
+                    Appearance
+                </summary>
+
+                <div class="settings-accordion-content">
+                    <div class="settings-accordion-inner">
+                        <section class="settings-section">
+                            <h2>Appearance</h2>
+                            <p>Choose how NaijaJobs looks on your device.</p>
+
+                            
+<div class="theme-options" id="theme-options" role="group" aria-label="Choose appearance">
+
+    <button type="button" class="theme-choice" data-theme-choice="system" aria-pressed="false">
+        <span class="theme-choice-icon" aria-hidden="true">&#9633;</span>
+        <strong>Automatic</strong>
+        <small>Follow device settings</small>
+        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+    </button>
+
+    <button type="button" class="theme-choice" data-theme-choice="light" aria-pressed="false">
+        <span class="theme-choice-icon" aria-hidden="true">&#9728;</span>
+        <strong>Light</strong>
+        <small>Bright and clear</small>
+        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+    </button>
+
+    <button type="button" class="theme-choice" data-theme-choice="dark" aria-pressed="false">
+        <span class="theme-choice-icon" aria-hidden="true">&#9790;</span>
+        <strong>Dark</strong>
+        <small>Easy on the eyes</small>
+        <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
+    </button>
+
+</div>
+
+                        </section>
+                    </div>
+                </div>
+            </details>
 
             <!-- NOTIFICATIONS -->
             <details class="settings-accordion" name="settings-panels">
@@ -399,6 +583,28 @@
                                     role="status"
                                     aria-live="polite"
                                 ></p>
+                                
+<!-- PUSH NOTIFICATIONS -->
+
+
+    <label class="check-row" for="push-notifications-enabled">
+        <input
+            type="checkbox"
+            id="push-notifications-enabled"
+        >
+        <span>
+            <strong>Push notifications</strong>
+            <small>Turn NaijaJobs push notifications on or off.</small>
+        </span>
+    </label>
+
+    <p
+        id="push-notifications-message"
+        class="form-message"
+        role="status"
+        aria-live="polite"
+    ></p>
+
                             </div>
 
                             <div class="form-card" id="notification-preferences-card">
@@ -451,67 +657,66 @@
                                     role="status"
                                     aria-live="polite"
                                 ></p>
+
+                                
                             </div>
                         </section>
                     </div>
                 </div>
             </details>
 
-            <!-- APPEARANCE -->
-            <details class="settings-accordion" name="settings-panels">
-                <summary class="settings-accordion-trigger">
-                    Appearance
-                </summary>
+<!-- CHANGE USERNAME -->
+<details class="settings-accordion" name="settings-panels">
+    <summary class="settings-accordion-trigger">
+        Change Username
+    </summary>
 
-                <div class="settings-accordion-content">
-                    <div class="settings-accordion-inner">
-                        <section class="settings-section">
-                            <h2>Appearance</h2>
-                            <p>Choose how NaijaJobs looks on your device.</p>
+    <div class="settings-accordion-content">
+        <div class="settings-accordion-inner">
+            <section class="settings-section">
+                <div class="form-card">
+                    <h3>Change username</h3>
+                    <p>
+                        Update the username you use to log in.
+                        Your email address will remain unchanged.
+                    </p>
 
-                            <div class="theme-options" id="theme-options" role="group" aria-label="Choose appearance">
-                                <button type="button" class="theme-choice" data-theme-choice="light" aria-pressed="false">
-                                    <span class="theme-choice-icon" aria-hidden="true">&#9728;</span>
-                                    <strong>Light</strong>
-                                    <small>Bright and clear</small>
-                                    <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
-                                </button>
+                    <form id="change-username-form">
+                        <label for="current-username">Current username</label>
+                        <input
+                            type="text"
+                            id="current-username"
+                            readonly
+                        >
 
-                                <button type="button" class="theme-choice" data-theme-choice="dark" aria-pressed="false">
-                                    <span class="theme-choice-icon" aria-hidden="true">&#9790;</span>
-                                    <strong>Dark</strong>
-                                    <small>Easy on the eyes</small>
-                                    <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
-                                </button>
+                        <label for="new-username">New username</label>
+                        <input
+                            type="text"
+                            id="new-username"
+                            minlength="3"
+                            maxlength="30"
+                            autocomplete="username"
+                            placeholder="Enter your new username"
+                            required
+                        >
 
-                                <button type="button" class="theme-choice" data-theme-choice="system" aria-pressed="false">
-                                    <span class="theme-choice-icon" aria-hidden="true">&#9633;</span>
-                                    <strong>System</strong>
-                                    <small>Follow device settings</small>
-                                    <span class="theme-choice-check" aria-hidden="true">&#10003;</span>
-                                </button>
-                            </div>
-                        </section>
-                    </div>
+                        <button type="submit">
+                            Update username
+                        </button>
+
+                        <p
+                            id="username-change-message"
+                            class="form-message"
+                            role="status"
+                            aria-live="polite"
+                        ></p>
+                    </form>
                 </div>
-            </details>
+            </section>
+        </div>
+    </div>
+</details>
 
-            <!-- PROFILE -->
-            <details class="settings-accordion" name="settings-panels">
-                <summary class="settings-accordion-trigger">
-                    Profile
-                </summary>
-
-                <div class="settings-accordion-content">
-                    <div class="settings-accordion-inner">
-                        <section class="settings-section">
-                            <h2>Profile</h2>
-                            <p>Manage your personal information and public profile.</p>
-                            <a href="profile.html" class="settings-back">Go to Profile</a>
-                        </section>
-                    </div>
-                </div>
-            </details>
 
             <!-- CHANGE EMAIL ADDRESS -->
             <details class="settings-accordion" name="settings-panels">
@@ -619,6 +824,24 @@
                         <section class="settings-section" id="session-security-section">
                             <h2>Active Sessions</h2>
                             <p>Secure your account by signing out of all devices where you are currently logged in.</p>
+                            
+                            <div class="form-card" id="current-session-card">
+                                <h3>Current Device</h3>
+                                
+                                <p>
+                                    <strong>Session status:</strong>
+                                    <span id="current-session-status">Checking...</span>
+                                </p>
+                                <p>
+                                    <strong>Account:</strong>
+                                    <span id="current-session-email">Loading...</span>
+                                </p>
+                                
+                                <p>
+                                    <strong>Last sign-in:</strong>
+                                    <span id="current-session-last-signin">Loading...</span>
+                                </p>
+                            </div>
 
                             <div class="form-card">
                                 <h3>Sign out of all devices</h3>
@@ -630,6 +853,15 @@
                                 <button type="button" id="sign-out-all-devices">
                                     Sign Out of All Devices
                                 </button>
+                                <button type="button" id="sign-out-this-device">
+                                    Sign Out of This Device
+                                </button>
+                                <p
+                                id="sign-out-this-device-message"
+                                class="form-message"
+                                role="status"
+                                aria-live="polite"
+                                ></p>
 
                                 <p
                                     id="sign-out-all-message"
@@ -643,130 +875,111 @@
                 </div>
             </details>
 
-            <!-- JOB PREFERENCES -->
-            <details class="settings-accordion" name="settings-panels">
-                <summary class="settings-accordion-trigger">
-                    Job Preferences
-                </summary>
+            <!-- DELETE ACCOUNT -->
+<details class="settings-accordion" name="settings-panels">
 
-                <div class="settings-accordion-content">
-                    <div class="settings-accordion-inner">
-                        <section class="settings-section" id="job-preferences-section">
-                            <h2>Job Preferences</h2>
-                            <p>Choose the types of jobs you would like to find on NaijaJobs.</p>
+    <summary class="settings-accordion-trigger">
+        Delete Account
+    </summary>
 
-                            <div class="form-card">
-                                <form id="job-preferences-form">
+    <div class="settings-accordion-content">
+        <div class="settings-accordion-inner">
 
-                                    <h3>Preferred job categories</h3>
-                                    <p>Select the categories that interest you.</p>
+            <section class="settings-section" id="delete-account-section">
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Graphic Design">
-                                        <span>Graphic Design</span>
-                                    </label>
+                <h2 style="color: #b42318;">
+                    Permanently Delete Your Account
+                </h2>
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Writing">
-                                        <span>Writing</span>
-                                    </label>
+                <p>
+                    You can permanently delete your NaijaJobs account
+                    and its associated information.
+                </p>
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Web Development">
-                                        <span>Web Development</span>
-                                    </label>
+                <div class="form-card">
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Photography">
-                                        <span>Photography</span>
-                                    </label>
+                    <h3 style="color: #b42318;">
+                        Important: This action cannot be undone.
+                    </h3>
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Video Editing">
-                                        <span>Video Editing</span>
-                                    </label>
+                    <p>
+                        When you delete your account, the following
+                        information will be removed:
+                    </p>
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Tutoring">
-                                        <span>Tutoring</span>
-                                    </label>
+                    <ul>
+                        <li>Your profile and account information.</li>
+                        <li>Your job listings and applications.</li>
+                        <li>Your conversations and messages.</li>
+                        <li>Your reviews and ratings.</li>
+                        <li>Your notifications and account preferences.</li>
+                        <li>Uploaded profile pictures and associated application documents.</li>
+                        <li>Your support tickets and messages.</li>
+                    </ul>
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Tech Support">
-                                        <span>Tech Support</span>
-                                    </label>
+                    <p>
+                        Financial transaction records and legal acceptance
+                        records may be retained where required for record-keeping.
+                    </p>
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-category" value="Other">
-                                        <span>Other</span>
-                                    </label>
+                    <p>
+                        If you are a client, application documents uploaded
+                        by workers for your jobs will also be deleted.
+                    </p>
 
-                                    <hr>
+                    <hr>
 
-                                    <h3>Preferred location</h3>
-                                    <label for="preferred-location">Where would you like to find jobs?</label>
-                                    <input
-                                        type="text"
-                                        id="preferred-location"
-                                        placeholder="e.g. Abuja, Lagos or Anywhere"
-                                    >
+                    <form id="delete-account-form">
 
-                                    <hr>
+                        <label for="delete-account-password">
+                            Enter your current password
+                        </label>
 
-                                    <h3>Preferred job types</h3>
+                        <input
+                            type="password"
+                            id="delete-account-password"
+                            autocomplete="current-password"
+                            placeholder="Your current password"
+                            required
+                        >
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-job-type" value="remote">
-                                        <span>Remote</span>
-                                    </label>
+                        <label for="delete-account-confirmation">
+                            Type DELETE to confirm
+                        </label>
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-job-type" value="onsite">
-                                        <span>On-site</span>
-                                    </label>
+                        <input
+                            type="text"
+                            id="delete-account-confirmation"
+                            placeholder="Type DELETE"
+                            autocomplete="off"
+                            required
+                        >
 
-                                    <label class="check-row">
-                                        <input type="checkbox" name="preferred-job-type" value="hybrid">
-                                        <span>Hybrid</span>
-                                    </label>
+                        <button
+                            type="submit"
+                            id="delete-account-button"
+                            style="background: #b42318; color: #ffffff; border: none;"
+                        >
+                            Permanently Delete My Account
+                        </button>
 
-                                    <hr>
+                        <p
+                            id="delete-account-message"
+                            class="form-message"
+                            role="status"
+                            aria-live="polite"
+                        ></p>
 
-                                    <h3>Preferred budget (₦)</h3>
+                    </form>
 
-                                    <label for="preferred-min-budget">Minimum budget</label>
-                                    <input
-                                        type="number"
-                                        id="preferred-min-budget"
-                                        min="0"
-                                        step="500"
-                                        placeholder="e.g. 5000"
-                                    >
-
-                                    <label for="preferred-max-budget">Maximum budget</label>
-                                    <input
-                                        type="number"
-                                        id="preferred-max-budget"
-                                        min="0"
-                                        step="500"
-                                        placeholder="e.g. 100000"
-                                    >
-
-                                    <button type="submit">Save Job Preferences</button>
-
-                                    <p
-                                        id="job-preferences-message"
-                                        class="form-message"
-                                        role="status"
-                                        aria-live="polite"
-                                    ></p>
-
-                                </form>
-                            </div>
-                        </section>
-                    </div>
                 </div>
-            </details>
+
+            </section>
+
+        </div>
+    </div>
+
+</details>
 
         </div>
     </main>

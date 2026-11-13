@@ -33,26 +33,115 @@
             <form class="filters" id="job-filters" role="search">
                 <div class="f-wide">
                     <label for="job-search">Search</label>
+                    <div>
+                        <label for="recommendation-filter">Job recommendations</label>
+                        <select id="recommendation-filter">
+                            <option value="all">All jobs</option>
+                            <option value="recommended">Recommended jobs</option>
+                        </select>
+                    </div>
                     <input type="search" id="job-search" placeholder="e.g. graphic design, writing">
                 </div>
                 <div>
                     <label for="category-filter">Category</label>
                     <select id="category-filter">
                         <option value="">All categories</option>
-                        <option value="Graphic Design">Graphic Design</option>
-                            <option value="Writing">Writing</option>
-                            <option value="Web Development">Web Development</option>
-                            <option value="Photography">Photography</option>
-                            <option value="Video Editing">Video Editing</option>
-                            <option value="Tutoring">Tutoring</option>
-                            <option value="Tech Support">Tech Support</option>
-                            <option value="Other">Other</option>
+                        <optgroup label="Professional & Business">
+                            <option value="Technology & Digital">Technology & Digital</option>
+                            <option value="Engineering & Technical Services">Engineering & Technical Services</option>
+                            <option value="Business & Administration">Business & Administration</option>
+                            <option value="Sales & Marketing">Sales & Marketing</option>
+                            <option value="Finance & Accounting">Finance & Accounting</option>
+                            <option value="Education & Training">Education & Training</option>
+                            <option value="Healthcare & Medical">Healthcare & Medical</option>
+                            <option value="Media, Arts & Entertainment">Media, Arts & Entertainment</option>
+                        </optgroup>
+                        
+                        <optgroup label="Skilled & Everyday Work">
+                            <option value="Construction & Skilled Trades">Construction & Skilled Trades</option>
+                            <option value="Transport & Logistics">Transport & Logistics</option>
+                            <option value="Hospitality & Food Services">Hospitality & Food Services</option>
+                            <option value="Agriculture & Farming">Agriculture & Farming</option>
+                            <option value="Cleaning & Domestic Services">Cleaning & Domestic Services</option>
+                            <option value="Security & Safety">Security & Safety</option>
+                            <option value="Beauty, Fashion & Lifestyle">Beauty, Fashion & Lifestyle</option>
+                            <option value="Retail & Customer Service">Retail & Customer Service</option>
+                            <option value="General Labour & Casual Work">General Labour & Casual Work</option>
+                            <option value="Other Services">Other Services</option>
+                        </optgroup>
+
+                        <optgroup label="Existing Categories">
+                          <option value="Graphic Design">Graphic Design</option>
+                          <option value="Writing">Writing</option>
+                          <option value="Web Development">Web Development</option>
+                          <option value="Photography">Photography</option>
+                          <option value="Video Editing">Video Editing</option>
+                          <option value="Tutoring">Tutoring</option>
+                          <option value="Tech Support">Tech Support</option>
+                          <option value="Other">Other</option>
+                       </optgroup>
                     </select>
+                    
+                    <div>
+                        <label for="subcategory-filter">Subcategory</label>
+                        <select id="subcategory-filter" disabled>
+                            <option value="">All subcategories</option>
+                        </select>
+                    </div>
+                
                 </div>
                 <div>
-                    <label for="location-filter">Location</label>
-                    <input type="text" id="location-filter" list="location-options" placeholder="e.g. Lagos" autocomplete="off">
-                </div>
+                    <label for="state-filter">State</label>
+    <select id="state-filter">
+        <option value="">All states</option>
+        <option value="Remote">Remote (Nationwide)</option>
+        <option value="Abia">Abia</option>
+        <option value="Adamawa">Adamawa</option>
+        <option value="Akwa Ibom">Akwa Ibom</option>
+        <option value="Anambra">Anambra</option>
+        <option value="Bauchi">Bauchi</option>
+        <option value="Bayelsa">Bayelsa</option>
+        <option value="Benue">Benue</option>
+        <option value="Borno">Borno</option>
+        <option value="Cross River">Cross River</option>
+        <option value="Delta">Delta</option>
+        <option value="Ebonyi">Ebonyi</option>
+        <option value="Edo">Edo</option>
+        <option value="Ekiti">Ekiti</option>
+        <option value="Enugu">Enugu</option>
+        <option value="FCT">FCT</option>
+        <option value="Gombe">Gombe</option>
+        <option value="Imo">Imo</option>
+        <option value="Jigawa">Jigawa</option>
+        <option value="Kaduna">Kaduna</option>
+        <option value="Kano">Kano</option>
+        <option value="Katsina">Katsina</option>
+        <option value="Kebbi">Kebbi</option>
+        <option value="Kogi">Kogi</option>
+        <option value="Kwara">Kwara</option>
+        <option value="Lagos">Lagos</option>
+        <option value="Nasarawa">Nasarawa</option>
+        <option value="Niger">Niger</option>
+        <option value="Ogun">Ogun</option>
+        <option value="Ondo">Ondo</option>
+        <option value="Osun">Osun</option>
+        <option value="Oyo">Oyo</option>
+        <option value="Plateau">Plateau</option>
+        <option value="Rivers">Rivers</option>
+        <option value="Sokoto">Sokoto</option>
+        <option value="Taraba">Taraba</option>
+        <option value="Yobe">Yobe</option>
+        <option value="Zamfara">Zamfara</option>
+    </select>
+</div>
+
+<div>
+    <label for="city-filter">City / Town</label>
+    <select id="city-filter" disabled>
+        <option value="">All cities</option>
+    </select>
+</div>
+
                 <div class="f-extra">
                     <label for="type-filter">Job type</label>
                     <select id="type-filter">

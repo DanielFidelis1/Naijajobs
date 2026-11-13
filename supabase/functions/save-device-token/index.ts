@@ -103,6 +103,27 @@ Deno.serve(async (req: Request) => {
       }
     );
 
+    // Only register mobile tokens when push notifications are enabled.
+    const { data: profile, error: profileError } = await adminClient
+      .from("profiles")
+      .select("push_notifications_enabled")
+      .eq("id", userData.user.id)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error("Could not check push preference:", profileError.message);
+      return jsonResponse({
+        error: "Could not verify your notification settings.",
+      }, 500);
+    }
+
+    if (!profile || profile.push_notifications_enabled !== true) {
+      return jsonResponse({
+        error: "Push notifications are turned off in your settings.",
+      }, 403);
+    }
+
+
     const { error: saveError } = await adminClient
       .from("device_push_tokens")
       .upsert(

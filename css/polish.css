@@ -1551,3 +1551,626 @@ label { color: var(--ink); }
         font-size: .76rem;
     }
 }
+
+/* =========================================
+   GLOBAL MOBILE RESPONSIVENESS FIXES
+   Preserves desktop layouts
+========================================= */
+
+@media (max-width: 768px) {
+
+    /* Prevent page-wide horizontal overflow */
+    html,
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    /* Keep content inside the phone screen */
+    body,
+    body.app,
+    .main,
+    .container,
+    .content,
+    .page-content {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Make common grids stack vertically */
+    .admin-grid,
+    .dashboard-grid,
+    .content-grid,
+    .cards-grid,
+    .two-column,
+    .two-col,
+    .split,
+    .row2 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Prevent flex rows from forcing page width */
+    .card,
+    .admin-card,
+    .form-card,
+    .panel,
+    .section,
+    .tile,
+    .stat {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* Allow long text and titles to wrap */
+    h1, h2, h3, h4,
+    p,
+    a,
+    span,
+    td,
+    th {
+        overflow-wrap: anywhere;
+    }
+
+    /* Keep tables inside their own scroll containers */
+    .table-wrap,
+    .table-responsive,
+    .table-container,
+    .dashboard-activity-table-wrap {
+        max-width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Prevent tables from stretching the whole page */
+    .table-wrap table,
+    .table-responsive table,
+    .table-container table,
+    .dashboard-activity-table-wrap table {
+        max-width: 100%;
+    }
+
+    /* Stack common form rows */
+    .form-row,
+    .form-grid,
+    .filter-row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Keep wide images and media within their cards */
+    img,
+    video,
+    iframe {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    /* Give cards a little more room on small phones */
+    .main {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .card,
+    .admin-card,
+    .form-card,
+    .panel {
+        min-width: 0;
+    }
+
+    /* Stack common action/button groups */
+    .card-actions,
+    .form-actions,
+    .action-buttons {
+        flex-wrap: wrap;
+    }
+}
+/* ADMIN DASHBOARD MOBILE CARD FIX */
+@media (max-width: 768px) {
+    body.admin .admin-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        width: 100%;
+        gap: 14px;
+    }
+
+    body.admin .admin-grid > .admin-card {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    body.admin .admin-page {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+/* NaijaJobs Budget Selector */
+.budget-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 12px 0 16px;
+}
+
+.budget-option {
+    min-height: 46px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color, #dce5df);
+    border-radius: 12px;
+    background: var(--card-bg, #fff);
+    color: var(--text-color, #183b2d);
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease, transform 0.2s ease;
+}
+
+.budget-option:hover {
+    border-color: #0e7a50;
+    transform: translateY(-2px);
+}
+
+.budget-option.selected {
+    background: #0e3b2c;
+    color: #fff;
+    border-color: #0e3b2c;
+    box-shadow: 0 3px 10px rgba(14, 59, 44, 0.15);
+}
+
+.budget-option:focus-visible {
+    outline: 3px solid rgba(14, 122, 80, 0.25);
+    outline-offset: 2px;
+}
+
+.budget-option.budget-custom {
+    border-style: dashed;
+}
+
+.budget-field .money {
+    margin-top: 8px;
+}
+
+.budget-field input[readonly] {
+    cursor: default;
+}
+
+@media (max-width: 600px) {
+    .budget-options {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .budget-option {
+        min-height: 48px;
+        font-size: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .budget-option {
+        transition: none;
+    }
+}
+
+/* =================================
+   NAIJAJOBS - HOMEPAGE LIVE JOBS
+================================= */
+
+.latest-jobs-section {
+    padding-top: 45px;
+    padding-bottom: 55px;
+}
+
+#home-jobs-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.home-job-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 22px;
+    min-width: 0;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e3ebe6;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(14, 59, 44, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-job-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(14, 59, 44, 0.11);
+}
+
+.home-job-card h3 {
+    margin: 0 0 12px;
+    color: #0e3b2c;
+    font-size: 19px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.home-job-card p {
+    margin: 6px 0;
+    color: #68766f;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.home-job-card > div:last-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 15px;
+    border-top: 1px solid #edf1ee;
+}
+
+.home-job-card strong {
+    color: #0e3b2c;
+    font-size: 17px;
+}
+
+.home-job-card a {
+    display: inline-block;
+    padding: 9px 15px;
+    background: #0e3b2c;
+    color: #ffffff;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.home-job-card a:hover {
+    background: #185b43;
+}
+
+@media (max-width: 850px) {
+    #home-jobs-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    #home-jobs-container {
+        grid-template-columns: 1fr;
+    }
+
+    .home-job-card {
+        padding: 19px;
+    }
+}
+
+/* =================================
+   NAIJAJOBS - HOMEPAGE FEATURES
+================================= */
+
+.nj-features-section {
+    padding-top: 55px;
+    padding-bottom: 60px;
+}
+
+.nj-features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.nj-feature-card {
+    padding: 24px 20px;
+    background: #ffffff;
+    border: 1px solid #e3ebe6;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgba(14, 59, 44, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.nj-feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(14, 59, 44, 0.10);
+}
+
+.nj-feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 17px;
+    background: #eaf3ee;
+    border-radius: 14px;
+    font-size: 24px;
+}
+
+.nj-feature-card h3 {
+    margin: 0 0 10px;
+    color: #0e3b2c;
+    font-size: 17px;
+    line-height: 1.4;
+}
+
+.nj-feature-card p {
+    margin: 0;
+    color: #68766f;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+@media (max-width: 950px) {
+    .nj-features-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .nj-features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .nj-feature-card {
+        padding: 21px;
+    }
+}
+
+/* =================================
+   NAIJAJOBS - HOMEPAGE FOOTER
+================================= */
+
+.nj-footer {
+    padding: 55px 0 20px;
+    background: #0e3b2c;
+    color: #ffffff;
+}
+
+.nj-footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1.3fr;
+    gap: 35px;
+    padding-bottom: 40px;
+}
+
+.nj-footer-brand .logo {
+    display: inline-block;
+    margin-bottom: 15px;
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.nj-footer-brand .logo span {
+    color: #f5c84c;
+}
+
+.nj-footer-brand p {
+    max-width: 280px;
+    color: #d0ded7;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.nj-footer-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.nj-footer-links h3 {
+    margin: 0 0 7px;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.nj-footer-links a {
+    color: #d0ded7;
+    font-size: 14px;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    transition: color 0.2s ease;
+}
+
+.nj-footer-links a:hover {
+    color: #f5c84c;
+}
+
+.nj-footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.nj-footer-bottom p {
+    margin: 0;
+    color: #bdcec5;
+    font-size: 13px;
+}
+
+@media (max-width: 850px) {
+    .nj-footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .nj-footer {
+        padding-top: 40px;
+    }
+
+    .nj-footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 30px 18px;
+    }
+
+    .nj-footer-brand {
+        grid-column: 1 / -1;
+    }
+
+    .nj-footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* =========================================
+   NAIJAJOBS - HOMEPAGE DARK MODE
+   ========================================= */
+
+html[data-theme="dark"] .home-job-card,
+html[data-theme="dark"] .nj-feature-card {
+    background: #242832;
+    border-color: #3B414B;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme="dark"] .home-job-card:hover,
+html[data-theme="dark"] .nj-feature-card:hover {
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+}
+
+html[data-theme="dark"] .home-job-card h3,
+html[data-theme="dark"] .home-job-card strong,
+html[data-theme="dark"] .nj-feature-card h3 {
+    color: #F5F5F5;
+}
+
+html[data-theme="dark"] .home-job-card p,
+html[data-theme="dark"] .nj-feature-card p {
+    color: #C1C7D0;
+}
+
+html[data-theme="dark"] .home-job-card > div:last-child {
+    border-top-color: #3B414B;
+}
+
+html[data-theme="dark"] .home-job-card a {
+    background: #216448;
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .home-job-card a:hover {
+    background: #287B56;
+}
+
+html[data-theme="dark"] .nj-feature-icon {
+    background: #303944;
+    color: #F5F5F5;
+}
+
+/* Homepage footer */
+html[data-theme="dark"] .nj-footer {
+    background: #111419;
+    color: #F5F5F5;
+    border-top: 1px solid #3B414B;
+}
+
+html[data-theme="dark"] .nj-footer-brand p,
+html[data-theme="dark"] .nj-footer-links a {
+    color: #C1C7D0;
+}
+
+html[data-theme="dark"] .nj-footer-links h3 {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .nj-footer-links a:hover {
+    color: #65D69B;
+}
+
+html[data-theme="dark"] .nj-footer-bottom {
+    border-top-color: #3B414B;
+}
+
+html[data-theme="dark"] .nj-footer-bottom p {
+    color: #AEB5C0;
+}
+
+html[data-theme="dark"] .nj-footer-brand .logo {
+    color: #FFFFFF;
+}
+
+/* MY JOBS - STATUS FILTERS */
+
+.my-jobs-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.my-jobs-filter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 10px 15px;
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background: var(--card);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.my-jobs-filter:hover {
+    border-color: var(--forest);
+}
+
+.my-jobs-filter.active {
+    background: var(--forest);
+    color: #FFFFFF;
+    border-color: var(--forest);
+}
+
+.my-jobs-filter-count {
+    min-width: 23px;
+    height: 23px;
+    padding: 0 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: rgba(128, 128, 128, .15);
+    font-size: 11px;
+}
+
+.my-jobs-filter.active .my-jobs-filter-count {
+    background: rgba(255, 255, 255, .2);
+    color: #FFFFFF;
+}
+
+.my-jobs-results {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    .my-jobs-filter-bar {
+        gap: 8px;
+    }
+
+    .my-jobs-filter {
+        padding: 9px 12px;
+        font-size: 12px;
+    }
+}

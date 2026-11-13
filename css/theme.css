@@ -33,28 +33,28 @@ html[data-theme="light"] {
 html[data-theme="dark"] {
     color-scheme: dark;
 
-    --paper: #101713;
-    --card: #19241e;
-    --ink: #e8f0ea;
-    --muted: #a8b8ad;
-    --line: #34463a;
+    --paper: #171A20;
+    --card: #242832;
+    --ink: #F5F5F5;
+    --muted: #AEB5C0;
+    --line: #3B414B;
 
-    --forest: #174d37;
+    --forest: #174B38;
     --forest-hover: #216448;
-    --leaf: #223b2d;
+    --leaf: #303944;
 
-    --yellow: #ffc928;
-    --yellow-hover: #ffda58;
-    --yellow-soft: #4a3b12;
+    --yellow: #FFC928;
+    --yellow-hover: #FFDA58;
+    --yellow-soft: #493B19;
 
-    --green: #65c995;
-    --green-soft: #193c2b;
+    --green: #35B879;
+    --green-soft: #203D31;
 
-    --red: #ff8e86;
+    --red: #FF8E86;
     --red-soft: #472522;
 
-    --amber-soft: #493b19;
-    --amber-ink: #ffdc82;
+    --amber-soft: #493B19;
+    --amber-ink: #FFDC82;
 }
 
 /* Main page surfaces */
@@ -79,6 +79,29 @@ html[data-theme="dark"] .conversation-card {
     background-color: var(--card);
     color: var(--ink);
     border-color: var(--line);
+}
+
+/* Dark mode - expandable sections */
+html[data-theme="dark"] details,
+html[data-theme="dark"] details[open] {
+    background-color: var(--card);
+    color: var(--ink);
+    border-color: var(--line);
+}
+
+html[data-theme="dark"] details summary {
+    background-color: var(--card);
+    color: var(--ink);
+}
+
+html[data-theme="dark"] details summary:hover {
+    background-color: var(--leaf);
+}
+
+html[data-theme="dark"] details p,
+html[data-theme="dark"] details label,
+html[data-theme="dark"] details span {
+    color: var(--ink);
 }
 
 /* Text */
@@ -248,66 +271,90 @@ html[data-theme="dark"] .theme-setting-select option {
 }
 
 
-/* NaijaJobs appearance choice cards */
+/* NaijaJobs appearance settings - horizontal layout */
+
 .theme-options {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
     margin-top: 14px;
-    max-width: 620px;
+    max-width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: var(--card);
 }
 
 .theme-choice {
     position: relative;
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
     min-width: 0;
-    min-height: 145px;
-    padding: 16px;
-    border: 1.5px solid var(--line) !important;
-    border-radius: 14px;
+    min-height: 78px;
+    padding: 12px 24px;
+    border: none !important;
+    border-bottom: 1px solid var(--line) !important;
+    border-radius: 0 !important;
     background: var(--card) !important;
     color: var(--ink) !important;
     text-align: left;
     cursor: pointer;
-    transition: border-color .2s ease, background-color .2s ease, transform .2s ease;
+    transition: background-color .2s ease;
+}
+
+.theme-choice:last-child {
+    border-bottom: none !important;
 }
 
 .theme-choice:hover {
-    border-color: var(--green) !important;
-    transform: translateY(-2px);
+    background: var(--green-soft) !important;
+    transform: none;
 }
 
 .theme-choice:focus-visible {
     outline: 3px solid var(--green);
-    outline-offset: 3px;
+    outline-offset: -3px;
+    z-index: 1;
 }
 
 .theme-choice[aria-pressed="true"] {
-    border: 2px solid var(--green) !important;
-    background: var(--green-soft) !important;
+    background: var(--card) !important;
 }
 
 .theme-choice-icon {
     display: grid;
     place-items: center;
-    width: 38px;
-    height: 38px;
-    border-radius: 11px;
-    background: var(--leaf);
-    color: var(--forest);
-    font-size: 24px;
+    flex-shrink: 0;
+    width: 40px;
+    height: 46px;
+    border-radius: 13px;
+    background: #666666;
+    color: white;
+    font-size: 25px;
     line-height: 1;
 }
 
+.theme-choice[data-theme-choice="light"] .theme-choice-icon {
+    background: #F5A900;
+    color: white;
+}
+
+.theme-choice[data-theme-choice="dark"] .theme-choice-icon {
+    background: #7915D9;
+    color: white;
+}
+
 .theme-choice strong {
-    font-size: 15px;
+    font-size: 17px;
+    font-weight: 600;
     color: var(--ink);
 }
 
 .theme-choice small {
+    margin-left: -16px;
     color: var(--muted);
     font-size: 12px;
     line-height: 1.4;
@@ -316,15 +363,16 @@ html[data-theme="dark"] .theme-setting-select option {
 .theme-choice-check {
     display: none;
     position: absolute;
-    top: 12px;
-    right: 12px;
-    width: 22px;
-    height: 22px;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
     place-items: center;
     border-radius: 50%;
-    background: var(--green);
+    background: #16A765;
     color: white;
-    font-size: 13px;
+    font-size: 17px;
     font-weight: 700;
 }
 
@@ -332,29 +380,34 @@ html[data-theme="dark"] .theme-setting-select option {
     display: grid;
 }
 
-@media (max-width: 480px) {
-    .theme-options {
-        gap: 8px;
-    }
-
+@media (max-width: 600px) {
     .theme-choice {
-        min-height: 132px;
-        padding: 11px 9px;
-        gap: 7px;
-    }
-
-    .theme-choice strong {
-        font-size: 13px;
-    }
-
-    .theme-choice small {
-        font-size: 10px;
+        gap: 18px;
+        min-height: 78px;
+        padding: 12px 24px;
     }
 
     .theme-choice-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 21px;
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        font-size: 25px;
+    }
+
+    .theme-choice strong {
+        font-size: 17px;
+    }
+
+    .theme-choice small {
+        font-size: 12px;
+        margin-left: -8px;
+    }
+
+    .theme-choice-check {
+        right: 20px;
+        width: 28px;
+        height: 28px;
+        font-size: 17px;
     }
 }
 
@@ -503,4 +556,448 @@ html[data-theme="dark"] .site-header nav a:not(.btn) {
 html[data-theme="dark"] .nj-tab svg,
 html[data-theme="dark"] .nj-profile-menu svg {
     color: inherit;
+}
+
+/* Dark mode - Current Active Session */
+html[data-theme="dark"] #current-session-card {
+    background-color: #242832 !important;
+    color: #F5F5F5 !important;
+    border: 1px solid #3B414B !important;
+}
+
+html[data-theme="dark"] #current-session-card h3,
+html[data-theme="dark"] #current-session-card p,
+html[data-theme="dark"] #current-session-card strong,
+html[data-theme="dark"] #current-session-card span {
+    color: #F5F5F5 !important;
+}
+
+/* Dark mode - Form fields and typing visibility */
+html[data-theme="dark"] input,
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background-color: #171A20 !important;
+    color: #F5F5F5 !important;
+    border: 1px solid #3B414B !important;
+    caret-color: #35B879;
+}
+
+/* Placeholder text */
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #AEB5C0 !important;
+    opacity: 1;
+}
+
+/* Labels and field text */
+html[data-theme="dark"] label {
+    color: #F5F5F5;
+}
+
+/* Text selected inside fields */
+html[data-theme="dark"] input::selection,
+html[data-theme="dark"] textarea::selection {
+    background: #216448;
+    color: #FFFFFF;
+}
+
+/* Browser autofill */
+html[data-theme="dark"] input:-webkit-autofill,
+html[data-theme="dark"] input:-webkit-autofill:hover,
+html[data-theme="dark"] input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #F5F5F5 !important;
+    box-shadow: 0 0 0 1000px #171A20 inset !important;
+    caret-color: #35B879;
+}
+
+/* =========================================
+   DASHBOARD - SUBSCRIPTION & PREMIUM DARK MODE
+   ========================================= */
+
+/* Section headings */
+html[data-theme="dark"] .client-plans-section,
+html[data-theme="dark"] .worker-premium-section {
+    color: var(--ink);
+}
+
+html[data-theme="dark"] .client-plans-heading h2,
+html[data-theme="dark"] .worker-premium-heading h2 {
+    color: #F5F5F5;
+}
+
+html[data-theme="dark"] .client-plans-heading p,
+html[data-theme="dark"] .worker-premium-heading p {
+    color: #C1C7D0;
+}
+
+html[data-theme="dark"] .client-plans-eyebrow,
+html[data-theme="dark"] .worker-premium-eyebrow {
+    color: #65D69B;
+}
+
+/* Subscription and premium cards */
+html[data-theme="dark"] .client-plan-card,
+html[data-theme="dark"] .worker-premium-card,
+html[data-theme="dark"] .client-active-membership {
+    background: #242832 !important;
+    color: #F5F5F5 !important;
+    border-color: #3B414B !important;
+}
+
+/* Card headings and descriptions */
+html[data-theme="dark"] .client-plan-card h3,
+html[data-theme="dark"] .worker-premium-card h3,
+html[data-theme="dark"] .client-active-membership h3 {
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .client-plan-card p,
+html[data-theme="dark"] .worker-premium-card p,
+html[data-theme="dark"] .client-active-membership p {
+    color: #C1C7D0 !important;
+}
+
+/* Prices */
+html[data-theme="dark"] .client-plan-price,
+html[data-theme="dark"] .worker-premium-price {
+    color: #65D69B !important;
+}
+
+html[data-theme="dark"] .worker-premium-price span {
+    color: #AEB5C0 !important;
+}
+
+/* Features and membership labels */
+html[data-theme="dark"] .client-plan-features,
+html[data-theme="dark"] .client-plan-features li,
+html[data-theme="dark"] .client-plan-label {
+    color: #E1E5EB !important;
+}
+
+/* Featured plans */
+html[data-theme="dark"] .client-plan-card-featured,
+html[data-theme="dark"] .worker-premium-card-featured {
+    background: #26352F !important;
+    border-color: #35B879 !important;
+}
+
+html[data-theme="dark"] .worker-premium-popular {
+    background: #493B19;
+    color: #FFDC82;
+}
+
+/* Plan notes and messages */
+html[data-theme="dark"] .client-plan-note,
+html[data-theme="dark"] .worker-premium-note {
+    color: #AEB5C0 !important;
+}
+
+html[data-theme="dark"] .client-plan-status {
+    background: #242832;
+    color: #E1E5EB;
+    border-color: #3B414B;
+}
+
+/* Account plan badges */
+html[data-theme="dark"] .client-account-plan {
+    background: #242832;
+    color: #F5F5F5;
+    border-color: #3B414B;
+}
+
+html[data-theme="dark"] .client-account-plan strong {
+    color: #65D69B;
+}
+
+/* Dashboard - Full subscription section backgrounds */
+html[data-theme="dark"] #client-plans-section,
+html[data-theme="dark"] #worker-premium-section {
+    background-color: var(--paper) !important;
+    color: var(--ink) !important;
+}
+
+/* Subscription section inner containers */
+html[data-theme="dark"] .client-plans-heading,
+html[data-theme="dark"] .worker-premium-heading,
+html[data-theme="dark"] .client-plans-grid,
+html[data-theme="dark"] .worker-premium-plans {
+    background-color: transparent !important;
+}
+
+/* Active membership and status areas */
+html[data-theme="dark"] .client-plan-status,
+html[data-theme="dark"] .client-active-membership {
+    background-color: var(--card) !important;
+    color: var(--ink) !important;
+    border-color: var(--line) !important;
+}
+
+/* Plan section notes */
+html[data-theme="dark"] .client-plan-note,
+html[data-theme="dark"] .worker-premium-note {
+    color: var(--muted) !important;
+}
+
+/* Dashboard - Premium and subscription text visibility */
+html[data-theme="dark"] .client-plans-section,
+html[data-theme="dark"] .worker-premium-section {
+    color: #F5F5F5 !important;
+}
+
+html[data-theme="dark"] .client-plans-section h2,
+html[data-theme="dark"] .worker-premium-section h2,
+html[data-theme="dark"] .client-plans-section h3,
+html[data-theme="dark"] .worker-premium-section h3 {
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .client-plans-section p,
+html[data-theme="dark"] .worker-premium-section p,
+html[data-theme="dark"] .client-plans-section li,
+html[data-theme="dark"] .worker-premium-section li {
+    color: #C1C7D0 !important;
+}
+
+html[data-theme="dark"] .client-plans-section .client-plan-label,
+html[data-theme="dark"] .worker-premium-section .worker-premium-popular {
+    color: #FFDC82 !important;
+}
+
+html[data-theme="dark"] .client-plans-section button,
+html[data-theme="dark"] .worker-premium-section button {
+    color: #FFFFFF;
+}
+
+/* Dashboard - Subscription and Premium buttons */
+html[data-theme="dark"] .client-plan-button,
+html[data-theme="dark"] .worker-premium-button {
+    background-color: #216448 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #35B879 !important;
+}
+
+html[data-theme="dark"] .client-plan-button:hover,
+html[data-theme="dark"] .worker-premium-button:hover {
+    background-color: #287B56 !important;
+    color: #FFFFFF !important;
+}
+
+/* Free plan button */
+html[data-theme="dark"] .client-plan-button-light {
+    background-color: #303944 !important;
+    color: #FFFFFF !important;
+    border-color: #3B414B !important;
+}
+
+/* Disabled buttons */
+html[data-theme="dark"] .client-plan-button:disabled,
+html[data-theme="dark"] .worker-premium-button:disabled {
+    background-color: #303944 !important;
+    color: #AEB5C0 !important;
+    opacity: 0.7;
+}
+
+/* =========================================
+   DASHBOARD - PUSH NOTIFICATION DARK MODE
+   ========================================= */
+
+html[data-theme="dark"] .push-notification-section {
+    background: #242832 !important;
+    color: #F5F5F5 !important;
+    border: 1px solid #3B414B !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.18);
+}
+
+html[data-theme="dark"] .push-notification-content h3 {
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .push-notification-content p {
+    color: #C1C7D0 !important;
+}
+
+html[data-theme="dark"] .push-notification-button {
+    background: #216448 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #35B879 !important;
+}
+
+html[data-theme="dark"] .push-notification-button:hover {
+    background: #287B56 !important;
+    color: #FFFFFF !important;
+}
+
+/* Dashboard - Shortcut tiles dark mode */
+html[data-theme="dark"] .tile-forest {
+    background: #203D31 !important;
+    color: #F5F5F5 !important;
+    border-color: #35B879 !important;
+}
+
+html[data-theme="dark"] .tile-yellow {
+    background: #383321 !important;
+    color: #FFFFFF !important;
+    border-color: #806B32 !important;
+}
+
+html[data-theme="dark"] .tile h2 {
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .tile p {
+    color: #D0D5DC !important;
+}
+
+html[data-theme="dark"] .tile-go {
+    color: #65D69B !important;
+}
+
+html[data-theme="dark"] .tile-yellow .tile-go {
+    color: #FFDC82 !important;
+}
+
+html[data-theme="dark"] .tile:hover {
+    filter: brightness(1.12);
+}
+
+/* POST JOB - BUDGET OPTIONS DARK MODE */
+
+html[data-theme="dark"] .budget-field label {
+    color: #F5F5F5 !important;
+}
+
+html[data-theme="dark"] .budget-options .budget-option {
+    background-color: #242832 !important;
+    color: #F5F5F5 !important;
+    border: 1px solid #3B414B !important;
+}
+
+html[data-theme="dark"] .budget-options .budget-option:hover {
+    background-color: #303944 !important;
+    border-color: #35B879 !important;
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .budget-options .budget-option.selected {
+    background-color: #203D31 !important;
+    color: #65D69B !important;
+    border: 1px solid #35B879 !important;
+}
+
+html[data-theme="dark"] .budget-options .budget-custom {
+    background-color: #383321 !important;
+    color: #FFDC82 !important;
+    border-color: #806B32 !important;
+}
+
+html[data-theme="dark"] .budget-field .money {
+    background-color: #171A20 !important;
+    border: 1px solid #3B414B !important;
+    color: #F5F5F5 !important;
+}
+
+html[data-theme="dark"] .budget-field .money span {
+    color: #65D69B !important;
+}
+
+html[data-theme="dark"] .budget-field .money input {
+    background-color: transparent !important;
+    color: #FFFFFF !important;
+    border: none !important;
+}
+
+html[data-theme="dark"] .budget-field .money input::placeholder {
+    color: #AEB5C0 !important;
+    opacity: 1;
+}
+
+html[data-theme="dark"] .budget-field small {
+    color: #AEB5C0 !important;
+}
+
+/* SUPPORT PAGE - DARK MODE */
+
+html[data-theme="dark"] .support-card {
+    background: #242832 !important;
+    color: #F5F5F5 !important;
+    border: 1px solid #3B414B !important;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, .18);
+}
+
+html[data-theme="dark"] .support-card h2 {
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .support-card > p {
+    color: #C1C7D0 !important;
+}
+
+html[data-theme="dark"] .support-form label,
+html[data-theme="dark"] .reply-form label {
+    color: #F5F5F5 !important;
+}
+
+html[data-theme="dark"] .support-form input,
+html[data-theme="dark"] .support-form select,
+html[data-theme="dark"] .support-form textarea,
+html[data-theme="dark"] .reply-form textarea {
+    background: #171A20 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #3B414B !important;
+}
+
+html[data-theme="dark"] .support-form input::placeholder,
+html[data-theme="dark"] .support-form textarea::placeholder,
+html[data-theme="dark"] .reply-form textarea::placeholder {
+    color: #AEB5C0 !important;
+    opacity: 1;
+}
+
+html[data-theme="dark"] .support-form select option {
+    background: #242832;
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .support-button {
+    background: #216448 !important;
+    color: #FFFFFF !important;
+    border: 1px solid #35B879 !important;
+}
+
+html[data-theme="dark"] .support-button:hover {
+    background: #287B56 !important;
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] .support-state {
+    color: #AEB5C0 !important;
+}
+
+/* Ticket list and conversation */
+html[data-theme="dark"] .ticket-list,
+html[data-theme="dark"] .support-conversation,
+html[data-theme="dark"] .support-messages {
+    color: #F5F5F5 !important;
+}
+
+html[data-theme="dark"] .ticket-list > p {
+    color: #AEB5C0 !important;
+}
+
+html[data-theme="dark"] .support-notice {
+    background: #203D31 !important;
+    color: #E1E5EB !important;
+    border-color: #35B879 !important;
+}
+
+html[data-theme="dark"] .support-notice strong {
+    color: #65D69B !important;
+}
+
+html[data-theme="dark"] #selected-ticket-subject {
+    color: #FFFFFF !important;
+}
+
+html[data-theme="dark"] #selected-ticket-status {
+    color: #AEB5C0 !important;
 }

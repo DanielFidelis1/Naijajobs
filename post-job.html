@@ -48,80 +48,141 @@
                             <label for="job-category">Category</label>
                             <select id="job-category" required>
                                 <option value="">Select a category</option>
+                                <optgroup label="Professional & Business">
+                                    <option value="Technology & Digital">Technology & Digital</option>
+                                    <option value="Engineering & Technical Services">Engineering & Technical Services</option>
+                                    <option value="Business & Administration">Business & Administration</option>
+                                    <option value="Sales & Marketing">Sales & Marketing</option>
+                                    <option value="Finance & Accounting">Finance & Accounting</option>
+                                    <option value="Education & Training">Education & Training</option>
+                                    <option value="Healthcare & Medical">Healthcare & Medical</option>
+                                    <option value="Media, Arts & Entertainment">Media, Arts & Entertainment</option>
+                                </optgroup>
+                                <optgroup label="Skilled & Everyday Work">
+                                    <option value="Construction & Skilled Trades">Construction & Skilled Trades</option>
+                                    <option value="Transport & Logistics">Transport & Logistics</option>
+                                    <option value="Hospitality & Food Services">Hospitality & Food Services</option>
+                                    <option value="Agriculture & Farming">Agriculture & Farming</option>
+                                    <option value="Cleaning & Domestic Services">Cleaning & Domestic Services</option>
+                                    <option value="Security & Safety">Security & Safety</option>
+                                    <option value="Beauty, Fashion & Lifestyle">Beauty, Fashion & Lifestyle</option>
+                                    <option value="Retail & Customer Service">Retail & Customer Service</option>
+                                    <option value="General Labour & Casual Work">General Labour & Casual Work</option>
+                                    <option value="Other Services">Other Services</option>
+                                </optgroup>
+
                                 <option value="Graphic Design">Graphic Design</option>
-                            <option value="Writing">Writing</option>
-                            <option value="Web Development">Web Development</option>
-                            <option value="Photography">Photography</option>
-                            <option value="Video Editing">Video Editing</option>
-                            <option value="Tutoring">Tutoring</option>
-                            <option value="Tech Support">Tech Support</option>
-                            <option value="Other">Other</option>
+                                <option value="Writing">Writing</option>
+                                <option value="Web Development">Web Development</option>
+                                <option value="Photography">Photography</option>
+                                <option value="Video Editing">Video Editing</option>
+                                <option value="Tutoring">Tutoring</option>
+                                <option value="Tech Support">Tech Support</option>
+                                <option value="Other">Other</option>
                             </select>
                         </div>
+
                         <div class="field">
-                            <label for="job-budget">Budget</label>
-                            <div class="money">
-                                <span>&#8358;</span>
-                                <input type="number" id="job-budget" placeholder="5000" min="1" step="1" required>
-                            </div>
+                            <label for="job-subcategory">Subcategory</label>
+                            <select id="job-subcategory" required disabled>
+                                <option value="">Select a category first</option>
+                            </select>
                         </div>
+                        
+<div class="field budget-field">
+    <label for="job-budget">Choose your budget</label>
+
+    <div class="budget-options">
+        <button type="button" class="budget-option" data-budget="5000">₦5,000</button>
+        <button type="button" class="budget-option" data-budget="10000">₦10,000</button>
+        <button type="button" class="budget-option" data-budget="20000">₦20,000</button>
+        <button type="button" class="budget-option" data-budget="30000">₦30,000</button>
+        <button type="button" class="budget-option" data-budget="50000">₦50,000</button>
+        <button type="button" class="budget-option" data-budget="100000">₦100,000</button>
+        <button type="button" class="budget-option budget-custom" id="custom-budget-option">
+            Other amount
+        </button>
+    </div>
+
+    <div class="money">
+        <span>&#8358;</span>
+        <input type="number" id="job-budget" placeholder="Select an amount above"
+            min="1" step="1" required readonly>
+    </div>
+    <small>Select a price or choose Other amount to enter your own.</small>
+</div>
+
                     </div>
 
-                    <div class="row2">
-                        <div class="field">
-                            <label for="job-location">Location</label>
-                            <input type="text" id="job-location" list="location-options" placeholder="e.g. Abuja or Remote" autocomplete="off" required>
-                            <datalist id="location-options">
-                                    <option value="Remote">
-                                    <option value="Abia">
-                                    <option value="Adamawa">
-                                    <option value="Akwa Ibom">
-                                    <option value="Anambra">
-                                    <option value="Bauchi">
-                                    <option value="Bayelsa">
-                                    <option value="Benue">
-                                    <option value="Borno">
-                                    <option value="Cross River">
-                                    <option value="Delta">
-                                    <option value="Ebonyi">
-                                    <option value="Edo">
-                                    <option value="Ekiti">
-                                    <option value="Enugu">
-                                    <option value="FCT Abuja">
-                                    <option value="Gombe">
-                                    <option value="Imo">
-                                    <option value="Jigawa">
-                                    <option value="Kaduna">
-                                    <option value="Kano">
-                                    <option value="Katsina">
-                                    <option value="Kebbi">
-                                    <option value="Kogi">
-                                    <option value="Kwara">
-                                    <option value="Lagos">
-                                    <option value="Nasarawa">
-                                    <option value="Niger">
-                                    <option value="Ogun">
-                                    <option value="Ondo">
-                                    <option value="Osun">
-                                    <option value="Oyo">
-                                    <option value="Plateau">
-                                    <option value="Rivers">
-                                    <option value="Sokoto">
-                                    <option value="Taraba">
-                                    <option value="Yobe">
-                                    <option value="Zamfara">
-                                </datalist>
-                        </div>
-                        <div class="field">
-                            <label for="job-type">Job type</label>
-                            <select id="job-type" required>
-                                <option value="">Select type</option>
-                                <option value="remote">Remote</option>
-                                <option value="onsite">On-site</option>
-                                <option value="hybrid">Hybrid</option>
-                            </select>
-                        </div>
-                    </div>
+
+                    
+
+<div class="row2">
+    <div class="field">
+        <label for="job-state">State</label>
+        <select id="job-state" required>
+            <option value="">Select a state</option>
+            <option value="Remote">Remote (Nationwide)</option>
+            <option value="Abia">Abia</option>
+            <option value="Adamawa">Adamawa</option>
+            <option value="Akwa Ibom">Akwa Ibom</option>
+            <option value="Anambra">Anambra</option>
+            <option value="Bauchi">Bauchi</option>
+            <option value="Bayelsa">Bayelsa</option>
+            <option value="Benue">Benue</option>
+            <option value="Borno">Borno</option>
+            <option value="Cross River">Cross River</option>
+            <option value="Delta">Delta</option>
+            <option value="Ebonyi">Ebonyi</option>
+            <option value="Edo">Edo</option>
+            <option value="Ekiti">Ekiti</option>
+            <option value="Enugu">Enugu</option>
+            <option value="FCT">FCT Abuja</option>
+            <option value="Gombe">Gombe</option>
+            <option value="Imo">Imo</option>
+            <option value="Jigawa">Jigawa</option>
+            <option value="Kaduna">Kaduna</option>
+            <option value="Kano">Kano</option>
+            <option value="Katsina">Katsina</option>
+            <option value="Kebbi">Kebbi</option>
+            <option value="Kogi">Kogi</option>
+            <option value="Kwara">Kwara</option>
+            <option value="Lagos">Lagos</option>
+            <option value="Nasarawa">Nasarawa</option>
+            <option value="Niger">Niger</option>
+            <option value="Ogun">Ogun</option>
+            <option value="Ondo">Ondo</option>
+            <option value="Osun">Osun</option>
+            <option value="Oyo">Oyo</option>
+            <option value="Plateau">Plateau</option>
+            <option value="Rivers">Rivers</option>
+            <option value="Sokoto">Sokoto</option>
+            <option value="Taraba">Taraba</option>
+            <option value="Yobe">Yobe</option>
+            <option value="Zamfara">Zamfara</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="job-city">City / Town</label>
+        <select id="job-city" required disabled>
+            <option value="">Select a state first</option>
+        </select>
+    </div>
+</div>
+
+<!-- Keeps compatibility with existing job-posting code -->
+<input type="hidden" id="job-location">
+
+<div class="field">
+    <label for="job-type">Job type</label>
+    <select id="job-type" required>
+        <option value="">Select type</option>
+        <option value="remote">Remote</option>
+        <option value="onsite">On-site</option>
+        <option value="hybrid">Hybrid</option>
+    </select>
+</div>
 
                     <div class="field">
                         <label for="job-deadline">Application deadline</label>
@@ -140,5 +201,318 @@
     <script src="js/shell.js"></script>
     <script src="js/app.js"></script>
     <script src="js/polish.js" defer></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const budgetInput = document.getElementById("job-budget");
+        const budgetButtons = document.querySelectorAll(".budget-option");
+        const customButton = document.getElementById("custom-budget-option");
+        
+        if (!budgetInput || !budgetButtons.length || !customButton) return;
+        
+        budgetButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                budgetButtons.forEach(function (item) {
+                    item.classList.remove("selected");
+                });
+
+                button.classList.add("selected");
+
+                if (button === customButton) {
+                    budgetInput.readOnly = false;
+                    budgetInput.value = "";
+                    budgetInput.placeholder = "Enter your budget";
+                    budgetInput.focus();
+                } else {
+                    budgetInput.readOnly = true;
+                    budgetInput.value = button.dataset.budget;
+                    budgetInput.placeholder = "Select an amount above";
+                }
+            });
+        });
+        });
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const stateSelect = document.getElementById("job-state");
+    const citySelect = document.getElementById("job-city");
+    const locationInput = document.getElementById("job-location");
+
+    if (!stateSelect || !citySelect || !locationInput) return;
+
+    const cities = {
+        "Abia": ["Umuahia", "Aba", "Ohafia", "Arochukwu"],
+        "Adamawa": ["Yola", "Mubi", "Jimeta", "Numan"],
+        "Akwa Ibom": ["Uyo", "Eket", "Ikot Ekpene", "Oron"],
+        "Anambra": ["Awka", "Onitsha", "Nnewi", "Ekwulobia"],
+        "Bauchi": ["Bauchi", "Azare", "Misau", "Jama'are"],
+        "Bayelsa": ["Yenagoa", "Brass", "Ogbia", "Nembe"],
+        "Benue": ["Makurdi", "Gboko", "Otukpo", "Katsina-Ala"],
+        "Borno": ["Maiduguri", "Biu", "Bama", "Dikwa"],
+        "Cross River": ["Calabar", "Ogoja", "Ikom", "Ugep"],
+        "Delta": ["Asaba", "Warri", "Effurun", "Sapele", "Ughelli"],
+        "Ebonyi": ["Abakaliki", "Afikpo", "Onueke", "Onicha"],
+        "Edo": ["Benin City", "Auchi", "Ekpoma", "Irrua"],
+        "Ekiti": ["Ado-Ekiti", "Ikere-Ekiti", "Ilawe-Ekiti", "Ijero-Ekiti"],
+        "Enugu": ["Enugu", "Nsukka", "Agbani", "Oji River"],
+        "FCT": ["Abuja", "Gwagwalada", "Kuje", "Kubwa", "Bwari", "Lugbe"],
+        "Gombe": ["Gombe", "Kumo", "Billiri", "Dukku"],
+        "Imo": ["Owerri", "Orlu", "Okigwe", "Mbaise"],
+        "Jigawa": ["Dutse", "Hadejia", "Kazaure", "Gumel"],
+        "Kaduna": ["Kaduna", "Zaria", "Kafanchan", "Saminaka"],
+        "Kano": ["Kano", "Wudil", "Gwarzo", "Rano"],
+        "Katsina": ["Katsina", "Daura", "Funtua", "Malumfashi"],
+        "Kebbi": ["Birnin Kebbi", "Argungu", "Yauri", "Zuru"],
+        "Kogi": ["Lokoja", "Okene", "Idah", "Anyigba"],
+        "Kwara": ["Ilorin", "Offa", "Jebba", "Lafiagi"],
+        "Lagos": ["Ikeja", "Lekki", "Victoria Island", "Ikorodu", "Epe", "Badagry"],
+        "Nasarawa": ["Lafia", "Keffi", "Karu", "Akwanga"],
+        "Niger": ["Minna", "Suleja", "Bida", "Kontagora"],
+        "Ogun": ["Abeokuta", "Ijebu-Ode", "Sagamu", "Ota"],
+        "Ondo": ["Akure", "Ondo", "Owo", "Ikare-Akoko"],
+        "Osun": ["Osogbo", "Ile-Ife", "Ilesa", "Ede"],
+        "Oyo": ["Ibadan", "Ogbomoso", "Oyo", "Iseyin"],
+        "Plateau": ["Jos", "Bukuru", "Pankshin", "Shendam"],
+        "Rivers": ["Port Harcourt", "Obio-Akpor", "Bonny", "Eleme", "Okrika"],
+        "Sokoto": ["Sokoto", "Tambuwal", "Wurno", "Gwadabawa"],
+        "Taraba": ["Jalingo", "Wukari", "Bali", "Takum"],
+        "Yobe": ["Damaturu", "Potiskum", "Gashua", "Nguru"],
+        "Zamfara": ["Gusau", "Kaura Namoda", "Talata Mafara", "Anka"]
+    };
+
+    function updateLocation() {
+        const state = stateSelect.value;
+
+        citySelect.innerHTML = "";
+        locationInput.value = "";
+
+        if (state === "Remote") {
+            citySelect.add(new Option("Nationwide", "Remote"));
+            citySelect.disabled = true;
+            locationInput.value = "Remote";
+            return;
+        }
+
+        citySelect.disabled = false;
+        citySelect.add(new Option("Select a city or town", ""));
+
+        (cities[state] || []).forEach(function (city) {
+            citySelect.add(new Option(city, city));
+        });
+    }
+
+    stateSelect.addEventListener("change", updateLocation);
+
+    citySelect.addEventListener("change", function () {
+        if (stateSelect.value && citySelect.value) {
+            locationInput.value =
+                citySelect.value + ", " + stateSelect.value + ", Nigeria";
+        } else {
+            locationInput.value = "";
+        }
+    });
+
+    updateLocation();
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const categorySelect = document.getElementById("job-category");
+    const subcategorySelect = document.getElementById("job-subcategory");
+
+    if (!categorySelect || !subcategorySelect) return;
+
+    const subcategories = {
+        "Technology & Digital": [
+            "Web Development",
+            "Mobile App Development",
+            "Software Development",
+            "UI/UX Design",
+            "Graphic Design",
+            "Data Analysis",
+            "Cybersecurity",
+            "IT Support",
+            "Digital Marketing",
+            "Other Technology Work"
+        ],
+        "Engineering & Technical Services": [
+            "Electrical Engineering",
+            "Mechanical Engineering",
+            "Civil Engineering",
+            "Electronics & Embedded Systems",
+            "Installation & Maintenance",
+            "Technical Repairs",
+            "Other Engineering Work"
+        ],
+        "Business & Administration": [
+            "Virtual Assistance",
+            "Administrative Support",
+            "Data Entry",
+            "Project Management",
+            "Human Resources",
+            "Customer Support",
+            "Other Business Services"
+        ],
+        "Sales & Marketing": [
+            "Sales Representative",
+            "Social Media Marketing",
+            "Digital Marketing",
+            "Lead Generation",
+            "Brand Promotion",
+            "Market Research",
+            "Other Sales & Marketing"
+        ],
+        "Finance & Accounting": [
+            "Bookkeeping",
+            "Accounting",
+            "Financial Analysis",
+            "Payroll",
+            "Tax Services",
+            "Other Finance Work"
+        ],
+        "Education & Training": [
+            "Home Tutoring",
+            "Online Tutoring",
+            "Exam Preparation",
+            "Language Teaching",
+            "Professional Training",
+            "Other Education Work"
+        ],
+        "Healthcare & Medical": [
+            "Nursing",
+            "Caregiving",
+            "Medical Laboratory Services",
+            "Pharmacy Services",
+            "Health Assistance",
+            "Other Healthcare Work"
+        ],
+        "Media, Arts & Entertainment": [
+            "Photography",
+            "Video Editing",
+            "Videography",
+            "Content Writing",
+            "Animation",
+            "Music & Audio Production",
+            "Other Media Work"
+        ],
+        "Construction & Skilled Trades": [
+            "Plumbing",
+            "Electrical Installation",
+            "Carpentry",
+            "Masonry",
+            "Painting",
+            "Welding",
+            "Tiling",
+            "Other Skilled Trades"
+        ],
+        "Transport & Logistics": [
+            "Delivery Services",
+            "Dispatch Riding",
+            "Driving",
+            "Moving & Relocation",
+            "Warehouse Assistance",
+            "Other Logistics Work"
+        ],
+        "Hospitality & Food Services": [
+            "Cooking",
+            "Baking",
+            "Catering",
+            "Waiter / Waitress",
+            "Bartending",
+            "Hotel Services",
+            "Event Assistance",
+            "Other Hospitality Work"
+        ],
+        "Agriculture & Farming": [
+            "Crop Farming",
+            "Poultry Farming",
+            "Fish Farming",
+            "Livestock Farming",
+            "Farm Assistance",
+            "Other Agricultural Work"
+        ],
+        "Cleaning & Domestic Services": [
+            "House Cleaning",
+            "Office Cleaning",
+            "Laundry & Ironing",
+            "Gardening",
+            "Housekeeping",
+            "Other Domestic Services"
+        ],
+        "Security & Safety": [
+            "Security Guard",
+            "Personal Security",
+            "Safety Assistance",
+            "CCTV Monitoring",
+            "Other Security Work"
+        ],
+        "Beauty, Fashion & Lifestyle": [
+            "Hair Styling",
+            "Barbing",
+            "Makeup",
+            "Nail Technology",
+            "Fashion Design",
+            "Tailoring",
+            "Styling",
+            "Other Beauty & Fashion Work"
+        ],
+        "Retail & Customer Service": [
+            "Shop Attendant",
+            "Cashier",
+            "Sales Assistant",
+            "Store Management",
+            "Customer Service",
+            "Other Retail Work"
+        ],
+        "General Labour & Casual Work": [
+            "Loading & Offloading",
+            "Construction Labour",
+            "Packaging",
+            "Event Setup",
+            "Factory Assistance",
+            "Other General Labour"
+        ],
+        "Other Services": [
+            "Repairs",
+            "Errands",
+            "Event Planning",
+            "Personal Assistance",
+            "Other Services"
+        ],
+        "Graphic Design": ["Logo Design", "Flyer Design", "Brand Identity", "Other Graphic Design"],
+        "Writing": ["Article Writing", "Copywriting", "Proofreading", "Other Writing"],
+        "Web Development": ["Frontend Development", "Backend Development", "Full-stack Development", "Other Web Development"],
+        "Photography": ["Event Photography", "Product Photography", "Portrait Photography", "Other Photography"],
+        "Video Editing": ["Social Media Videos", "Event Videos", "Promotional Videos", "Other Video Editing"],
+        "Tutoring": ["Primary School", "Secondary School", "University", "Other Tutoring"],
+        "Tech Support": ["Computer Repair", "Software Installation", "Network Support", "Other Tech Support"],
+        "Other": ["General Services", "Other"]
+    };
+
+    function updateSubcategories() {
+        const selectedCategory = categorySelect.value;
+        const options = subcategories[selectedCategory] || [];
+
+        subcategorySelect.innerHTML = "";
+
+        subcategorySelect.add(new Option(
+            options.length ? "Select a subcategory" : "No subcategories available",
+            ""
+        ));
+
+        options.forEach(function (subcategory) {
+            subcategorySelect.add(new Option(subcategory, subcategory));
+        });
+
+        subcategorySelect.disabled = options.length === 0;
+    }
+
+    categorySelect.addEventListener("change", updateSubcategories);
+
+    updateSubcategories();
+});
+</script>
+
 </body>
 </html>

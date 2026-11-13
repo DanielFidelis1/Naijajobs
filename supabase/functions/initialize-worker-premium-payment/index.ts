@@ -133,6 +133,23 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "This Premium plan is unavailable." }, 400);
     }
 
+    const requestOrigin = req.headers.get("Origin");
+
+    const allowedOrigins = [
+      "https://danielfidelis1.github.io",
+      "http://127.0.0.1:5500",
+      "http://localhost:5500",
+    ];
+
+    if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
+      return jsonResponse({ error: "Unrecognized website address." }, 403);
+    }
+
+    const callbackUrl =
+      requestOrigin === "https://danielfidelis1.github.io"
+        ? `${requestOrigin}/Naijajobs/dashboard.html`
+        : `${requestOrigin}/dashboard.html`;
+        
     const reference = `njwp_${crypto.randomUUID()}`;
 
     const { error: insertError } = await adminClient
@@ -150,29 +167,6 @@ Deno.serve(async (req: Request) => {
     if (insertError) {
       console.error("Could not create the pending Premium payment.");
       return jsonResponse({ error: "Could not start your payment. Please try again." }, 500);
-    }
-
-    // Allow only the approved production callback or approved local test callbacks.
-const callbackUrl = Deno.env.get("WORKER_PREMIUM_CALLBACK_URL");
-
-const isProductionCallback =
-  callbackUrl === "https://naijajobs.netlify.app/dashboard.html";
-
-const isLocalTestCallback =
-  callbackUrl === "http://127.0.0.1:5500/dashboard.html" ||
-  callbackUrl === "http://localhost:5500/dashboard.html";
-
-if (!isProductionCallback && !isLocalTestCallback) {
-      await adminClient
-        .from("worker_premium_payments")
-        .update({ status: "failed", updated_at: new Date().toISOString() })
-        .eq("reference", reference)
-        .eq("status", "pending");
-
-      return jsonResponse(
-        { error: "The Premium return URL has not been configured yet." },
-        500,
-      );
     }
 
     const paystackResponse = await fetch(

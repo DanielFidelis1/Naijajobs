@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const allowedOrigins = new Set([
   "https://naijajobs.netlify.app",
+  "https://danielfidelis1.github.io",
   "http://127.0.0.1:5500",
   "http://localhost:5500",
 ]);

@@ -155,7 +155,23 @@ Deno.serve(async (req: Request) => {
       }, 400);
     }
 
-    // The server controls the price and duration.
+    const requestOrigin = req.headers.get("Origin");
+
+    const allowedOrigins = [
+      "https://danielfidelis1.github.io",
+      "http://127.0.0.1:5500",
+      "http://localhost:5500",
+    ];
+
+    if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
+      return respond({ error: "Unrecognized website address." }, 403);
+    }
+
+    const callbackUrl =
+      requestOrigin === "https://danielfidelis1.github.io"
+        ? `${requestOrigin}/Naijajobs/my-jobs.html`
+        : `${requestOrigin}/my-jobs.html`;
+        
     const amountKobo = 150000;
     const durationDays = 7;
     const reference = `njf_${crypto.randomUUID()}`;
@@ -179,6 +195,7 @@ Deno.serve(async (req: Request) => {
       return respond({ error: "Could not start your payment." }, 500);
     }
 
+    // The server controls the price and duration.
     // Ask Paystack to initialize checkout.
     const paystackResponse = await fetch(
       "https://api.paystack.co/transaction/initialize",
@@ -193,7 +210,7 @@ Deno.serve(async (req: Request) => {
           amount: amountKobo,
           currency: "NGN",
           reference,
-          callback_url: "http://127.0.0.1:5500/my-jobs.html",
+          callback_url: callbackUrl,
           metadata: {
             user_id: user.id,
             job_id: job.id,
@@ -224,7 +241,8 @@ Deno.serve(async (req: Request) => {
       return respond({ error: "Could not initialize Paystack checkout." }, 502);
     }
 
-    return respond({
+        return respond({
+      success: true,
       authorization_url: result.data.authorization_url,
       reference,
       amount_kobo: amountKobo,

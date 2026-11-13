@@ -69,6 +69,25 @@
             </div>
         </section>
 
+
+<section class="section latest-jobs-section">
+    <div class="container">
+        <div class="section-head">
+            <h2>Latest Opportunities</h2>
+            <p>Discover some of the latest jobs posted on NaijaJobs.</p>
+        </div>
+
+        <div id="home-jobs-container">
+            <p>Loading latest opportunities...</p>
+        </div>
+
+        <div class="actions" style="justify-content:center; margin-top:24px;">
+            <a href="browse.html" class="btn">View All Jobs</a>
+        </div>
+    </div>
+</section>
+
+
         <section class="section" style="padding-top:8px">
             <div class="container">
                 <div class="section-head">
@@ -118,6 +137,66 @@
             </div>
         </section>
 
+
+<section class="section nj-features-section">
+    <div class="container">
+        <div class="section-head">
+            <h2>More than just finding jobs</h2>
+            <p>Everything you need to connect, work and grow on NaijaJobs.</p>
+        </div>
+
+        <div class="nj-features-grid">
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">💬</div>
+                <h3>In-app Messaging</h3>
+                <p>Communicate directly with clients or workers through conversations linked to accepted applications.</p>
+            </article>
+
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">📋</div>
+                <h3>Manage Applications</h3>
+                <p>Apply for opportunities, review applicants and keep track of your work in one place.</p>
+            </article>
+
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">✅</div>
+                <h3>Work Completion</h3>
+                <p>Workers can mark work as completed, while clients confirm completion.</p>
+            </article>
+
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">⭐</div>
+                <h3>Ratings & Reviews</h3>
+                <p>Build trust and reputation through reviews after completed jobs.</p>
+            </article>
+
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">🔔</div>
+                <h3>Notifications & Announcements</h3>
+                <p>Stay informed about important updates and activity on the platform.</p>
+            </article>
+
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">🚀</div>
+                <h3>Premium Services</h3>
+                <p>Access additional visibility and subscription options through our premium services.</p>
+            </article>
+
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">🛟</div>
+                <h3>Customer Support</h3>
+                <p>Get help and communicate with our support team when you need assistance.</p>
+            </article>
+
+            <article class="nj-feature-card">
+                <div class="nj-feature-icon">📱</div>
+                <h3>Mobile & Desktop</h3>
+                <p>Access NaijaJobs across supported devices and stay connected to opportunities.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
         <section class="cta-band">
             <div class="container">
                 <h2>Your next opportunity could start here.</h2>
@@ -126,12 +205,56 @@
         </section>
     </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <p>&copy; 2026 NaijaJobs</p>
-            <p>Connecting Nigerian workers with opportunities.</p>
+    
+<footer class="site-footer nj-footer">
+    <div class="container">
+
+        <div class="nj-footer-grid">
+
+            <div class="nj-footer-brand">
+                <a href="index.html" class="logo">
+                    Naija<span>Jobs</span>
+                </a>
+                <p>
+                    Connecting Nigerian workers with opportunities.
+                    Find work, hire talent and get things done.
+                </p>
+            </div>
+
+            <div class="nj-footer-links">
+                <h3>Explore</h3>
+                <a href="browse.html">Browse Jobs</a>
+                <a href="download.html">Download App</a>
+                <a href="signup.html">Create Account</a>
+                <a href="login.html">Log In</a>
+            </div>
+
+            <div class="nj-footer-links">
+                <h3>Legal</h3>
+                <a href="terms.html">Terms & Conditions</a>
+                <a href="privacy.html">Privacy Policy</a>
+            </div>
+
+            <div class="nj-footer-links">
+                <h3>Support</h3>
+                <a href="mailto:support.naijajobs@gmail.com">
+                    Contact Support
+                </a>
+                <a href="mailto:support.naijajobs@gmail.com">
+                    support.naijajobs@gmail.com
+                </a>
+            </div>
+
         </div>
-    </footer>
+
+        <div class="nj-footer-bottom">
+            <p>&copy; 2026 NaijaJobs. All rights reserved.</p>
+            <p>Made for opportunities across Nigeria.</p>
+        </div>
+
+    </div>
+</footer>
+
     
 <script>
 if ("serviceWorker" in navigator) {
@@ -143,7 +266,10 @@ if ("serviceWorker" in navigator) {
     });
 }
 </script>
-
-    <script src="js/polish.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/app.js"></script>
+<script src="js/app-start.js"></script>
+<script src="js/home-jobs.js"></script>
+<script src="js/polish.js" defer></script>
 </body>
 </html>

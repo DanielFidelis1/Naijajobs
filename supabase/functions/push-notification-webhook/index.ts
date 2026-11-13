@@ -245,6 +245,33 @@ Deno.serve(async (req: Request) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
+  // Enforce the user's independent push notification preference.
+  // Fail closed if the preference cannot be verified.
+  const { data: profile, error: preferenceError } = await supabase
+    .from("profiles")
+    .select("push_notifications_enabled")
+    .eq("id", record.user_id)
+    .maybeSingle();
+
+  if (preferenceError) {
+    console.error(
+      "Could not verify push preference:",
+      preferenceError.message,
+    );
+
+    return respond({
+      error: "Could not verify push notification settings.",
+    }, 500);
+  }
+
+  if (!profile || profile.push_notifications_enabled !== true) {
+    return respond({
+      success: true,
+      skipped: true,
+      reason: "Push notifications are disabled.",
+    });
+  }
+
   try {
     const notification = {
       id: record.id,
@@ -332,12 +359,13 @@ Deno.serve(async (req: Request) => {
     let androidSent = 0;
     let androidFailed = 0;
     const expiredDeviceTokens: string[] = [];
-
+    
     const { data: androidDevices, error: deviceError } = await supabase
       .from("device_push_tokens")
       .select("id, token")
       .eq("user_id", record.user_id)
-      .eq("platform", "android");
+      .in("platform", ["android", "ios"]);
+
 
     if (deviceError) {
       console.error("Android device lookup failed:", deviceError.message);

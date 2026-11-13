@@ -9,12 +9,19 @@ const SUPABASE_KEY =
     "sb_publishable_MkiEBVs-uQpKsKNsVt2jsQ_zFwK-2Nc";
 
 
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-    );
-    window.supabaseClient = supabaseClient;
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
+);
+
+window.supabaseClient = supabaseClient;
 
 // Only allow same-site relative destinations after login.
 function getSafeNextPath(fallback) {
@@ -46,8 +53,8 @@ if (signupForm) {
 
             const fullName =
                 document.getElementById("full-name").value.trim();
-            
-            const username = 
+
+            const username =
                 document.getElementById("username").value.trim();
 
             const email =
@@ -59,12 +66,25 @@ if (signupForm) {
             const accountType =
                 document.getElementById("account-type").value;
 
+            const termsCheckbox =
+                document.getElementById("accept-terms");
+
             const message =
                 document.getElementById("signup-message");
+
+            // Confirm acceptance of both legal documents.
+            if (!termsCheckbox || !termsCheckbox.checked) {
+                message.textContent =
+                    "Please accept the Terms & Conditions and Privacy Policy.";
+                return;
+            }
 
             message.textContent = "Creating your account...";
 
             try {
+
+                const acceptanceTime =
+                    new Date().toISOString();
 
                 const {
                     data,
@@ -78,7 +98,13 @@ if (signupForm) {
                         data: {
                             full_name: fullName,
                             username: username,
-                            account_type: accountType
+                            account_type: accountType,
+
+                            // Legal acceptance record
+                            terms_accepted: true,
+                            terms_version: "1.0",
+                            privacy_policy_version: "1.0",
+                            terms_accepted_at: acceptanceTime
                         }
                     }
 
@@ -96,26 +122,26 @@ if (signupForm) {
                     return;
                 }
 
-                // Save the profile only when a session exists.
+                // Preserve the existing signup flow.
                 // If email confirmation is required, the profile
-                // should instead be created by a secure database trigger.
+                // should be created by the existing secure database trigger.
 
-                
-if (data.session) {
+                if (data.session) {
 
-    message.textContent =
-        "Account created successfully!";
+                    message.textContent =
+                        "Account created successfully!";
 
-    setTimeout(function () {
-        window.location.href = "login.html";
-    }, 1500);
+                    setTimeout(function () {
+                        window.location.href = "login.html";
+                    }, 1500);
 
-} else {
+                } else {
 
-    message.textContent =
-        "Account created! Please check your email and confirm your account before logging in.";
+                    message.textContent =
+                        "Account created! Please check your email and confirm your account before logging in.";
 
-}
+                }
+
             } catch (error) {
 
                 console.error("Unexpected error:", error);
@@ -129,8 +155,6 @@ if (data.session) {
     );
 
 }
-
-
  
  // ================================
  // LOGIN WITH SUSPENSION CHECK
@@ -278,6 +302,8 @@ if (email.includes("@")) {
                     return;
                 }
             }
+            // Remember that this user has successfully logged in before.
+            localStorage.setItem("naijajobs_app_has_logged_in", "true");
 
             message.textContent = "Login successful!";
 
@@ -297,6 +323,7 @@ if (email.includes("@")) {
         }
     });
 }   
+
 // ========================================
 // POST A JOB
 // ========================================
@@ -478,16 +505,44 @@ if (
         const category =
             document.getElementById("job-category").value;
 
+        const subcategory =
+            document.getElementById("job-subcategory").value;
+
         const budget =
             Number(
                 document.getElementById("job-budget").value
             );
 
+        const state =
+            document.getElementById("job-state").value;
+        
+        const city =
+            document.getElementById("job-city").value;
+        
         const location =
             document.getElementById("job-location").value.trim();
 
         const jobType =
             document.getElementById("job-type").value;
+
+
+// Validate job location
+if (!state) {
+    message.textContent = "Please select a state.";
+    return;
+}
+
+if (state !== "Remote" && !city) {
+    message.textContent = "Please select a city or town.";
+    return;
+}
+
+if (!location) {
+    message.textContent = "Please select a valid job location.";
+    return;
+}
+
+
 
         const deadline =
             document.getElementById("job-deadline").value;
@@ -505,8 +560,11 @@ if (
                     title: title,
                     description: description,
                     category: category,
+                    subcategory: subcategory,
                     budget: budget,
                     location: location,
+                    state: state,
+                    city: city,
                     job_type: jobType,
                     deadline: deadline,
                 }
@@ -584,16 +642,22 @@ if (error) {
 // ========================================
 
 const jobsContainer = document.getElementById("jobs-container");
+const recommendationFilter = document.getElementById("recommendation-filter");
 
 if (jobsContainer) {
     let allJobs = [];
     let filteredJobs = [];
     let visibleJobCount = 12;
     const jobsPerPage = 12;
+        // Saved job preferences for personalised recommendations.
+    let currentJobPreferences = null;
+    let isJobSeeker = false;
 
     const jobSearch = document.getElementById("job-search");
     const categoryFilter = document.getElementById("category-filter");
-    const locationFilter = document.getElementById("location-filter");
+    const subcategoryFilter = document.getElementById("subcategory-filter");
+    const stateFilter = document.getElementById("state-filter");
+    const cityFilter = document.getElementById("city-filter");
     const typeFilter = document.getElementById("type-filter");
     const minBudgetFilter = document.getElementById("budget-min");
     const maxBudgetFilter = document.getElementById("budget-max");
@@ -604,40 +668,335 @@ if (jobsContainer) {
     const jobsCount = document.getElementById("jobs-count");
     const filtersForm = document.getElementById("job-filters");
 
+    const citiesByState = {
+    "Abia": ["Umuahia", "Aba", "Ohafia"],
+    "Adamawa": ["Yola", "Mubi", "Jimeta"],
+    "Akwa Ibom": ["Uyo", "Eket", "Ikot Ekpene"],
+    "Anambra": ["Awka", "Onitsha", "Nnewi"],
+    "Bauchi": ["Bauchi", "Azare", "Misau"],
+    "Bayelsa": ["Yenagoa", "Ogbia", "Brass"],
+    "Benue": ["Makurdi", "Gboko", "Otukpo"],
+    "Borno": ["Maiduguri", "Biu", "Dikwa"],
+    "Cross River": ["Calabar", "Ikom", "Ogoja"],
+    "Delta": ["Asaba", "Warri", "Sapele", "Ughelli"],
+    "Ebonyi": ["Abakaliki", "Afikpo", "Onueke"],
+    "Edo": ["Benin City", "Auchi", "Ekpoma", "Irrua"],
+    "Ekiti": ["Ado-Ekiti", "Ikere-Ekiti", "Ijero-Ekiti"],
+    "Enugu": ["Enugu", "Nsukka", "Agbani"],
+    "FCT": ["Abuja", "Gwagwalada", "Kubwa", "Kuje", "Bwari", "Abaji"],
+    "Gombe": ["Gombe", "Kumo", "Deba"],
+    "Imo": ["Owerri", "Orlu", "Okigwe"],
+    "Jigawa": ["Dutse", "Hadejia", "Kazaure"],
+    "Kaduna": ["Kaduna", "Zaria", "Kafanchan"],
+    "Kano": ["Kano", "Wudil", "Gwarzo"],
+    "Katsina": ["Katsina", "Daura", "Funtua"],
+    "Kebbi": ["Birnin Kebbi", "Argungu", "Yauri"],
+    "Kogi": ["Lokoja", "Okene", "Kabba"],
+    "Kwara": ["Ilorin", "Offa", "Jebba"],
+    "Lagos": ["Ikeja", "Lagos Island", "Lekki", "Epe", "Badagry"],
+    "Nasarawa": ["Lafia", "Keffi", "Karu", "Akwanga"],
+    "Niger": ["Minna", "Suleja", "Bida"],
+    "Ogun": ["Abeokuta", "Ijebu-Ode", "Sagamu", "Ota"],
+    "Ondo": ["Akure", "Ondo", "Owo"],
+    "Osun": ["Osogbo", "Ile-Ife", "Ilesa"],
+    "Oyo": ["Ibadan", "Ogbomoso", "Oyo", "Iseyin"],
+    "Plateau": ["Jos", "Bukuru", "Pankshin"],
+    "Rivers": ["Port Harcourt", "Bonny", "Eleme", "Obio-Akpor"],
+    "Sokoto": ["Sokoto", "Tambuwal", "Wurno"],
+    "Taraba": ["Jalingo", "Wukari", "Bali"],
+    "Yobe": ["Damaturu", "Potiskum", "Gashua"],
+    "Zamfara": ["Gusau", "Kaura Namoda", "Talata Mafara"]
+};
+
+function updateCityFilter() {
+    if (!stateFilter || !cityFilter) return;
+
+    const selectedState = stateFilter.value;
+
+    cityFilter.replaceChildren();
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = selectedState ? "All cities" : "Select a state first";
+    cityFilter.appendChild(defaultOption);
+
+    if (!selectedState || selectedState === "Remote") {
+        cityFilter.disabled = true;
+        return;
+    }
+
+    cityFilter.disabled = false;
+
+    (citiesByState[selectedState] || []).forEach(function (city) {
+        const option = document.createElement("option");
+        option.value = city;
+        option.textContent = city;
+        cityFilter.appendChild(option);
+    });
+}
+const subcategoriesByCategory = {
+    "Technology & Digital": [
+        "Web Development", "Mobile App Development", "Software Development",
+        "UI/UX Design", "Graphic Design", "Data Analysis", "Cybersecurity",
+        "IT Support", "Digital Marketing", "Other Technology Work"
+    ],
+    "Engineering & Technical Services": [
+        "Electrical Engineering", "Mechanical Engineering", "Civil Engineering",
+        "Electronics & Embedded Systems", "Installation & Maintenance",
+        "Technical Repairs", "Other Engineering Work"
+    ],
+    "Business & Administration": [
+        "Virtual Assistance", "Administrative Support", "Data Entry",
+        "Project Management", "Human Resources", "Customer Support",
+        "Other Business Services"
+    ],
+    "Sales & Marketing": [
+        "Sales Representative", "Social Media Marketing", "Digital Marketing",
+        "Lead Generation", "Brand Promotion", "Market Research",
+        "Other Sales & Marketing"
+    ],
+    "Finance & Accounting": [
+        "Bookkeeping", "Accounting", "Financial Analysis", "Payroll",
+        "Tax Services", "Other Finance Work"
+    ],
+    "Education & Training": [
+        "Home Tutoring", "Online Tutoring", "Exam Preparation",
+        "Language Teaching", "Professional Training", "Other Education Work"
+    ],
+    "Healthcare & Medical": [
+        "Nursing", "Caregiving", "Medical Laboratory Services",
+        "Pharmacy Services", "Health Assistance", "Other Healthcare Work"
+    ],
+    "Media, Arts & Entertainment": [
+        "Photography", "Video Editing", "Videography", "Content Writing",
+        "Animation", "Music & Audio Production", "Other Media Work"
+    ],
+    "Construction & Skilled Trades": [
+        "Plumbing", "Electrical Installation", "Carpentry", "Masonry",
+        "Painting", "Welding", "Tiling", "Other Skilled Trades"
+    ],
+    "Transport & Logistics": [
+        "Delivery Services", "Dispatch Riding", "Driving",
+        "Moving & Relocation", "Warehouse Assistance", "Other Logistics Work"
+    ],
+    "Hospitality & Food Services": [
+        "Cooking", "Baking", "Catering", "Waiter / Waitress",
+        "Bartending", "Hotel Services", "Event Assistance",
+        "Other Hospitality Work"
+    ],
+    "Agriculture & Farming": [
+        "Crop Farming", "Poultry Farming", "Fish Farming",
+        "Livestock Farming", "Farm Assistance", "Other Agricultural Work"
+    ],
+    "Cleaning & Domestic Services": [
+        "House Cleaning", "Office Cleaning", "Laundry & Ironing",
+        "Gardening", "Housekeeping", "Other Domestic Services"
+    ],
+    "Security & Safety": [
+        "Security Guard", "Personal Security", "Safety Assistance",
+        "CCTV Monitoring", "Other Security Work"
+    ],
+    "Beauty, Fashion & Lifestyle": [
+        "Hair Styling", "Barbing", "Makeup", "Nail Technology",
+        "Fashion Design", "Tailoring", "Styling",
+        "Other Beauty & Fashion Work"
+    ],
+    "Retail & Customer Service": [
+        "Shop Attendant", "Cashier", "Sales Assistant",
+        "Store Management", "Customer Service", "Other Retail Work"
+    ],
+    "General Labour & Casual Work": [
+        "Loading & Offloading", "Construction Labour", "Packaging",
+        "Event Setup", "Factory Assistance", "Other General Labour"
+    ],
+    "Other Services": [
+        "Repairs", "Errands", "Event Planning",
+        "Personal Assistance", "Other Services"
+    ],
+    "Graphic Design": [
+        "Logo Design", "Flyer Design", "Brand Identity", "Other Graphic Design"
+    ],
+    "Writing": [
+        "Article Writing", "Copywriting", "Proofreading", "Other Writing"
+    ],
+    "Web Development": [
+        "Frontend Development", "Backend Development",
+        "Full-stack Development", "Other Web Development"
+    ],
+    "Photography": [
+        "Event Photography", "Product Photography",
+        "Portrait Photography", "Other Photography"
+    ],
+    "Video Editing": [
+        "Social Media Videos", "Event Videos",
+        "Promotional Videos", "Other Video Editing"
+    ],
+    "Tutoring": [
+        "Primary School", "Secondary School", "University", "Other Tutoring"
+    ],
+    "Tech Support": [
+        "Computer Repair", "Software Installation",
+        "Network Support", "Other Tech Support"
+    ],
+    "Other": ["General Services", "Other"]
+};
+
+function updateSubcategoryFilter() {
+    if (!categoryFilter || !subcategoryFilter) return;
+
+    const selectedCategory = categoryFilter.value;
+    const options = subcategoriesByCategory[selectedCategory] || [];
+
+    subcategoryFilter.replaceChildren();
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "All subcategories";
+    subcategoryFilter.appendChild(defaultOption);
+
+    if (!selectedCategory) {
+        subcategoryFilter.disabled = true;
+        return;
+    }
+
+    subcategoryFilter.disabled = false;
+
+    options.forEach(function (subcategory) {
+        const option = document.createElement("option");
+        option.value = subcategory;
+        option.textContent = subcategory;
+        subcategoryFilter.appendChild(option);
+    });
+}
+
+categoryFilter?.addEventListener("change", function () {
+    updateSubcategoryFilter();
+    applyJobFilters();
+});
+
+subcategoryFilter?.addEventListener("change", applyJobFilters);
+
+updateSubcategoryFilter();
+
+
     function isFeatured(job) {
+
+
         return Boolean(job.featured_until && new Date(job.featured_until).getTime() > Date.now());
+    }
+        function isRecommendedJob(job) {
+        if (!isJobSeeker || !currentJobPreferences) return false;
+
+        const preferences = currentJobPreferences;
+
+        const categories = preferences.preferred_categories || [];
+        const jobTypes = preferences.preferred_job_types || [];
+        const preferredLocation = String(
+            preferences.preferred_location || ""
+        ).trim().toLowerCase();
+
+        const jobCategory = String(job.category || "").toLowerCase();
+        const jobLocation = String(job.location || "").toLowerCase();
+        const jobType = String(job.job_type || "").toLowerCase()
+            .replace(/[ -]/g, "");
+
+        const budget = Number(job.budget);
+
+        const hasPreferences =
+            categories.length > 0 ||
+            jobTypes.length > 0 ||
+            preferredLocation !== "" ||
+            preferences.min_budget != null ||
+            preferences.max_budget != null;
+
+        if (!hasPreferences) return false;
+
+        const matchesCategory =
+            categories.length === 0 ||
+            categories.some(category =>
+                String(category).toLowerCase() === jobCategory
+            );
+
+        const matchesLocation =
+            !preferredLocation ||
+            jobLocation.includes(preferredLocation);
+
+        const matchesJobType =
+            jobTypes.length === 0 ||
+            jobTypes.some(type =>
+                String(type).toLowerCase().replace(/[ -]/g, "") === jobType
+            );
+
+        const matchesMinBudget =
+            preferences.min_budget == null ||
+            (Number.isFinite(budget) && budget >= Number(preferences.min_budget));
+
+        const matchesMaxBudget =
+            preferences.max_budget == null ||
+            (Number.isFinite(budget) && budget <= Number(preferences.max_budget));
+
+        return matchesCategory &&
+            matchesLocation &&
+            matchesJobType &&
+            matchesMinBudget &&
+            matchesMaxBudget;
     }
 
     function applyJobFilters() {
         const search = (jobSearch?.value || "").trim().toLowerCase();
         const category = (categoryFilter?.value || "").trim().toLowerCase();
-        const location = (locationFilter?.value || "").trim().toLowerCase();
+        const selectedSubcategory = (subcategoryFilter?.value || "").trim().toLowerCase();
+        const selectedState = (stateFilter?.value || "").trim().toLowerCase();
+        const selectedCity = (cityFilter?.value || "").trim().toLowerCase();
         const type = (typeFilter?.value || "").trim().toLowerCase();
         const minValue = minBudgetFilter?.value.trim() || "";
         const maxValue = maxBudgetFilter?.value.trim() || "";
         const minBudget = minValue === "" ? null : Number(minValue);
         const maxBudget = maxValue === "" ? null : Number(maxValue);
+        const recommendationMode = recommendationFilter?.value || "all";
 
         filteredJobs = allJobs.filter(function (job) {
-            const haystack = [job.title, job.description, job.category, job.location, job.job_type]
+            const haystack = [job.title, job.description, job.category, job.subcategory, job.location, job.job_type]
                 .map(function (value) { return String(value || "").toLowerCase(); }).join(" ");
             const jobCategory = String(job.category || "").toLowerCase();
-            const jobLocation = String(job.location || "").toLowerCase();
+            const jobSubcategory = String(job.subcategory || "").toLowerCase();
+            const jobState = String(job.state || "").toLowerCase();
+            const jobCity = String(job.city || "").toLowerCase();
             const jobType = String(job.job_type || "").toLowerCase().replace(/[ -]/g, "");
             const wantedType = type.replace(/[ -]/g, "");
             const budget = Number(job.budget);
-            return (!search || haystack.includes(search)) &&
+            const deadlineDate = job.deadline ? new Date(job.deadline) : null;
+            const deadlineHasPassed = deadlineDate &&
+                !Number.isNaN(deadlineDate.getTime()) &&
+                new Date(
+                    deadlineDate.getFullYear(),
+                    deadlineDate.getMonth(),
+                    deadlineDate.getDate(),
+                    23, 59, 59, 999
+                ).getTime() < Date.now();
+                
+                return !deadlineHasPassed &&
+                (recommendationMode !== "recommended" || isRecommendedJob(job)) &&
+                (!search || haystack.includes(search)) &&
                 (!category || jobCategory === category) &&
-                (!location || jobLocation.includes(location)) &&
+                (!selectedSubcategory || jobSubcategory === selectedSubcategory) &&
+                (!selectedState || jobState === selectedState) &&
+                (!selectedCity || jobCity === selectedCity) &&
                 (!wantedType || jobType === wantedType) &&
                 (minBudget === null || (Number.isFinite(budget) && budget >= minBudget)) &&
                 (maxBudget === null || (Number.isFinite(budget) && budget <= maxBudget));
         });
 
         const sortBy = sortFilter?.value || "newest";
-        filteredJobs.sort(function (a, b) {
+            filteredJobs.sort(function (a, b) {
             const featuredDifference = Number(isFeatured(b)) - Number(isFeatured(a));
             if (featuredDifference !== 0) return featuredDifference;
+
+            const recommendationDifference =
+                Number(isRecommendedJob(b)) - Number(isRecommendedJob(a));
+
+            if (recommendationDifference !== 0) return recommendationDifference;
+
             if (sortBy === "budget_high") return Number(b.budget || 0) - Number(a.budget || 0);
             if (sortBy === "deadline") {
                 const aDate = a.deadline ? new Date(a.deadline).getTime() : Number.MAX_SAFE_INTEGER;
@@ -655,7 +1014,21 @@ if (jobsContainer) {
         jobsContainer.replaceChildren();
         if (!shownJobs.length) {
             const empty = document.createElement("p");
-            empty.textContent = allJobs.length ? "No jobs match those filters. Try changing or clearing them." : "No open jobs are available right now. Please check back soon.";
+            const hasPreferences = currentJobPreferences && (
+    (currentJobPreferences.preferred_categories || []).length > 0 ||
+    (currentJobPreferences.preferred_job_types || []).length > 0 ||
+    String(currentJobPreferences.preferred_location || "").trim() !== "" ||
+    currentJobPreferences.min_budget != null ||
+    currentJobPreferences.max_budget != null
+);
+
+if (isJobSeeker && recommendationFilter?.value === "recommended" && !hasPreferences) {
+    empty.textContent = "You haven't set your job preferences yet. Visit Settings to set them and see recommended jobs.";
+} else {
+    empty.textContent = allJobs.length
+        ? "No jobs match those filters. Try changing or clearing them."
+        : "No open jobs are available right now. Please check back soon.";
+}
             jobsContainer.appendChild(empty);
         } else {
             shownJobs.forEach(function (job) {
@@ -664,15 +1037,24 @@ if (jobsContainer) {
                 const budget = Number(job.budget);
                 const budgetText = Number.isFinite(budget) ? budget.toLocaleString("en-NG") : "Negotiable";
                 const deadlineText = job.deadline ? new Date(job.deadline).toLocaleDateString("en-GB") : "Not specified";
+
+const locationText = job.state === "Remote"
+    ? "Remote (Nationwide)"
+    : job.city && job.state
+        ? `${job.city}, ${job.state}`
+        : job.location || "Location not specified";
+
                 card.innerHTML = `
                     <div class="job-card-content">
                         ${isFeatured(job) ? '<span class="featured-badge">Featured</span>' : ""}
+                        ${isRecommendedJob(job) ? '<span class="recommended-badge">Recommended for you</span>' : ""}
                         <span class="job-category">${escapeHTML(job.category || "Other")}</span>
+                        ${job.subcategory ? `<span class="job-subcategory">${escapeHTML(job.subcategory)}</span>` : ""}
                         <h3>${escapeHTML(job.title || "Untitled job")}</h3>
                         <p class="job-description">${escapeHTML(job.description || "No description provided.")}</p>
                         <div class="job-details">
                             <span>₦${budgetText}</span>
-                            <span>${escapeHTML(job.location || "Location not specified")}</span>
+                            <span>${escapeHTML(locationText)}</span>
                             <span>${escapeHTML(job.job_type || "Not specified")}</span>
                         </div>
                         <p class="job-deadline">Deadline: ${escapeHTML(deadlineText)}</p>
@@ -690,12 +1072,62 @@ if (jobsContainer) {
         }
     }
 
+        async function loadJobPreferences() {
+        currentJobPreferences = null;
+        isJobSeeker = false;
+
+        try {
+            const {
+                data: { user },
+                error: authError
+            } = await supabaseClient.auth.getUser();
+
+            // Visitors who are not logged in keep normal job browsing.
+            if (authError || !user) return;
+
+            // Only personalise recommendations for job seekers.
+            const { data: profile, error: profileError } = await supabaseClient
+                .from("profiles")
+                .select("account_type")
+                .eq("id", user.id)
+                .maybeSingle();
+
+            if (profileError) {
+                console.error("Job seeker profile loading error:", profileError);
+                return;
+            }
+
+            if (!profile || profile.account_type !== "job_seeker") return;
+
+            isJobSeeker = true;
+
+            const { data: preferences, error: preferencesError } =
+                await supabaseClient
+                    .from("job_preferences")
+                    .select("preferred_categories, preferred_location, preferred_job_types, min_budget, max_budget")
+                    .eq("user_id", user.id)
+                    .maybeSingle();
+
+            if (preferencesError) {
+                console.error("Job preferences loading error:", preferencesError);
+                return;
+            }
+
+            currentJobPreferences = preferences || null;
+
+        } catch (error) {
+            console.error("Job recommendations setup error:", error);
+        }
+    }
+
     async function loadJobs() {
         jobsContainer.innerHTML = '<div class="loading"><span class="nj-loading-spinner"></span><p>Loading jobs...</p></div>';
         try {
+                await loadJobPreferences();
+
             let result = await supabaseClient
                 .from("jobs")
-                .select("id, user_id, title, description, category, budget, location, job_type, deadline, status, created_at, featured_until")
+                .select("id, user_id, title, description, category, subcategory, budget, location, state, city, job_type, deadline, status, created_at, featured_until")
                 .eq("status", "open")
                 .is("archived_at", null)
                 .order("created_at", { ascending: false });
@@ -704,7 +1136,7 @@ if (jobsContainer) {
             if (result.error && /featured_until|column .* does not exist/i.test(result.error.message || "")) {
                 result = await supabaseClient
                     .from("jobs")
-                    .select("id, user_id, title, description, category, budget, location, job_type, deadline, status, created_at")
+                    .select("id, user_id, title, description, category, subcategory, budget, location, state, city, job_type, deadline, status, created_at")
                     .eq("status", "open")
                     .is("archived_at", null)
                     .order("created_at", { ascending: false });
@@ -721,20 +1153,35 @@ if (jobsContainer) {
         }
     }
 
-    [jobSearch, categoryFilter, locationFilter, typeFilter, minBudgetFilter, maxBudgetFilter, sortFilter]
-        .filter(Boolean).forEach(function (control) {
-            control.addEventListener(control.tagName === "INPUT" ? "input" : "change", applyJobFilters);
-        });
+    if (stateFilter) {
+    stateFilter.addEventListener("change", function () {
+        updateCityFilter();
+        applyJobFilters();
+    });
+}
+
+[jobSearch, categoryFilter, stateFilter, cityFilter, typeFilter, minBudgetFilter, maxBudgetFilter, sortFilter, recommendationFilter]
+.filter(Boolean).forEach(function (control) {
+    control.addEventListener(control.tagName === "INPUT" ? "input" : "change", applyJobFilters);
+});
 
     if (filtersForm) {
         filtersForm.addEventListener("submit", function (event) { event.preventDefault(); applyJobFilters(); });
     }
     if (clearFiltersButton) {
         clearFiltersButton.addEventListener("click", function () {
-            [jobSearch, locationFilter, minBudgetFilter, maxBudgetFilter].filter(Boolean).forEach(function (el) { el.value = ""; });
+            [jobSearch, minBudgetFilter, maxBudgetFilter].filter(Boolean).forEach(function (el) { el.value = ""; });
+            if (stateFilter) stateFilter.value = "";
+            updateCityFilter();
+            if (cityFilter) cityFilter.value = "";
             if (categoryFilter) categoryFilter.value = "";
+            if (subcategoryFilter) {
+                subcategoryFilter.value = "";
+                updateSubcategoryFilter();
+            }
             if (typeFilter) typeFilter.value = "";
             if (sortFilter) sortFilter.value = "newest";
+            if (recommendationFilter) recommendationFilter.value = "all";
             if (filtersForm) filtersForm.classList.remove("filters-expanded");
             if (toggleFiltersButton) { toggleFiltersButton.setAttribute("aria-expanded", "false"); toggleFiltersButton.textContent = "More filters"; }
             applyJobFilters();
@@ -2485,227 +2932,347 @@ attachmentSection.appendChild(tableWrapper);
 // MY JOBS
 // ========================================
 
-const myJobsContainer =
-document.getElementById(
-"my-jobs-container"
-);
+const myJobsContainer = document.getElementById("my-jobs-container");
 
 if (myJobsContainer) {
 
-async function loadMyJobs() {
+    async function loadMyJobs() {
 
-    try {
+        try {
 
-        // Check logged-in user
-        const {
-            data: {
-                user
-            },
-            error: authError
-        } = await supabaseClient.auth.getUser();
+            // Check logged-in user
+            const {
+                data: { user },
+                error: authError
+            } = await supabaseClient.auth.getUser();
 
+            if (authError || !user) {
+                window.location.href = "login.html";
+                return;
+            }
 
-        if (authError || !user) {
+            // Load jobs posted by this user
+            const {
+                data: jobs,
+                error
+            } = await supabaseClient
+                .from("jobs")
+                .select("*")
+                .eq("user_id", user.id)
+                .order("created_at", {
+                    ascending: false
+                });
 
-            window.location.href =
-                "login.html";
+            if (error) {
+                console.error("My jobs error:", error);
+                myJobsContainer.innerHTML =
+                    "<p>Could not load your jobs.</p>";
+                return;
+            }
 
-            return;
-        }
+            if (!jobs || !jobs.length) {
 
+                myJobsContainer.innerHTML = `
+                    <div class="empty-my-jobs">
+                        <h2>You haven't posted any jobs yet.</h2>
+                        <p>Post your first job and start receiving applications.</p>
+                        <a href="post-job.html" class="apply-button">
+                            Post a Job
+                        </a>
+                    </div>
+                `;
 
-        // Load jobs posted by this user
-        const {
-            data: jobs,
-            error
-        } = await supabaseClient
-            .from("jobs")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("created_at", {
-                ascending: false
+                return;
+            }
+
+            // Available job statuses
+            const knownStatuses = [
+                "open",
+                "in_progress",
+                "completed",
+                "cancelled",
+                "closed"
+            ];
+
+            function getJobStatus(job) {
+                return String(job.status || "open")
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[\s-]+/g, "_");
+            }
+
+            // Include an Other section if an unexpected status exists
+            const hasOtherStatuses = jobs.some(function (job) {
+                return !knownStatuses.includes(getJobStatus(job));
             });
 
+            const filters = [
+                { id: "all", label: "All Jobs" },
+                { id: "open", label: "Open" },
+                { id: "in_progress", label: "In Progress" },
+                { id: "completed", label: "Completed" },
+                { id: "cancelled", label: "Cancelled" },
+                { id: "closed", label: "Closed" }
+            ];
 
-        if (error) {
+            if (hasOtherStatuses) {
+                filters.push({
+                    id: "other",
+                    label: "Other"
+                });
+            }
 
-            console.error(
-                "My jobs error:",
-                error
-            );
+            let activeFilter = "all";
 
-            myJobsContainer.innerHTML =
-                "<p>Could not load your jobs.</p>";
-
-            return;
-        }
-
-
-        if (!jobs || !jobs.length) {
-
+            // Build the page layout
             myJobsContainer.innerHTML = `
+                <div class="my-jobs-filter-bar"
+                     role="group"
+                     aria-label="Filter jobs by status">
 
-                <div class="empty-my-jobs">
+                    ${filters.map(function (filter) {
 
-                    <h2>
-                        You haven't posted any jobs yet.
-                    </h2>
+                        const count = filter.id === "all"
+                            ? jobs.length
+                            : filter.id === "other"
+                                ? jobs.filter(function (job) {
+                                    return !knownStatuses.includes(
+                                        getJobStatus(job)
+                                    );
+                                }).length
+                                : jobs.filter(function (job) {
+                                    return getJobStatus(job) === filter.id;
+                                }).length;
 
-                    <p>
-                        Post your first job and start receiving applications.
-                    </p>
+                        return `
+                            <button
+                                type="button"
+                                class="my-jobs-filter"
+                                data-job-filter="${filter.id}"
+                                aria-pressed="false">
 
-                    <a
-                        href="post-job.html"
-                        class="apply-button"
-                    >
-                        Post a Job
-                    </a>
+                                <span>${filter.label}</span>
+
+                                <span class="my-jobs-filter-count">
+                                    ${count}
+                                </span>
+
+                            </button>
+                        `;
+
+                    }).join("")}
 
                 </div>
 
+                <div class="my-jobs-results"
+                     id="my-jobs-results"
+                     aria-live="polite">
+                </div>
             `;
 
-            return;
-        }
+            const resultsContainer =
+                document.getElementById("my-jobs-results");
 
+            // Create an individual job card
+            function createJobCard(job) {
 
-        myJobsContainer.innerHTML = "";
+                const card = document.createElement("div");
+                card.className = "my-job-card";
 
-
-        jobs.forEach(function (job) {
-
-            const card =
-                document.createElement("div");
-
-            card.className =
-                "my-job-card";
-
-
-            const budget =
-                Number(job.budget)
+                const budget = Number(job.budget || 0)
                     .toLocaleString();
 
+                const jobId = encodeURIComponent(String(job.id));
 
-            card.innerHTML = `
+                const statusLabel = getJobStatus(job)
+                    .replace(/_/g, " ");
 
-                <div class="my-job-top">
+                const isFeatured =
+                    job.featured_until &&
+                    new Date(job.featured_until) > new Date();
 
-                    <div>
+                card.innerHTML = `
 
-                        <span class="job-category">
-                            ${escapeHTML(job.category)}
-                        </span>
+                    <div class="my-job-top">
 
-                        <h2>
-                            ${escapeHTML(job.title)}
-                        </h2>
+                        <div>
+
+                            <span class="job-category">
+                                ${escapeHTML(String(job.category || ""))}
+                            </span>
+
+                            <h2>
+                                ${escapeHTML(String(job.title || ""))}
+                            </h2>
+
+                        </div>
+
+                        <div class="my-job-status-group">
+
+                            ${
+                                isFeatured
+                                    ? `<span class="featured-job-badge">
+                                           ⭐ Featured
+                                       </span>`
+                                    : ""
+                            }
+
+                            <span class="my-job-status">
+                                ${escapeHTML(statusLabel)}
+                            </span>
+
+                        </div>
 
                     </div>
 
+                    <p class="my-job-description">
+                        ${escapeHTML(String(job.description || ""))}
+                    </p>
 
-                                        <div class="my-job-status-group">
+                    <div class="application-details">
 
-                        ${
-                            job.featured_until &&
-                            new Date(job.featured_until) > new Date()
-                                ? `<span class="featured-job-badge">
-                                       ⭐ Featured
-                                   </span>`
-                                : ""
-                        }
+                        <span>💰 ₦${budget}</span>
 
-                        <span class="my-job-status">
-                            ${escapeHTML(String(job.status || "").replace(/_/g, " "))}
+                        <span>
+                            📍 ${escapeHTML(String(job.location || ""))}
+                        </span>
+
+                        <span>
+                            💼 ${escapeHTML(String(job.job_type || ""))}
+                        </span>
+
+                        <span>
+                            📅 ${escapeHTML(String(job.deadline || ""))}
                         </span>
 
                     </div>
 
-                </div>
+                    <div class="my-job-actions">
 
+                        <a
+                            href="job.html?id=${jobId}"
+                            class="job-button">
+                            View Job
+                        </a>
 
-                <p class="my-job-description">
-                    ${escapeHTML(job.description)}
-                </p>
+                        <a
+                            href="applicants.html?id=${jobId}"
+                            class="job-button secondary-job-button">
+                            View Applicants
+                        </a>
 
+                    </div>
 
-                <div class="application-details">
+                    <div class="feature-box"
+                         data-job-id="${escapeHTML(String(job.id))}">
 
-                    <span>
-                        💰 ₦${budget}
-                    </span>
+                        <button
+                            type="button"
+                            class="job-button feature-open">
+                            ⭐ Feature this job
+                        </button>
 
-                    <span>
-                        📍 ${escapeHTML(job.location)}
-                    </span>
+                        <div class="feature-panel" hidden></div>
 
-                    <span>
-                        💼 ${escapeHTML(job.job_type)}
-                    </span>
+                    </div>
 
-                    <span>
-                        📅 ${escapeHTML(job.deadline)}
-                    </span>
+                `;
 
-                </div>
+                return card;
+            }
 
+            // Display jobs according to selected status
+            function renderJobs() {
 
-                <div class="my-job-actions">
+                const filteredJobs = jobs.filter(function (job) {
 
-    <a
-        href="job.html?id=${job.id}"
-        class="job-button"
-    >
-        View Job
-    </a>
+                    const status = getJobStatus(job);
 
-    <a
-        href="applicants.html?id=${job.id}"
-        class="job-button secondary-job-button"
-    >
-        View Applicants
-    </a>
+                    if (activeFilter === "all") {
+                        return true;
+                    }
 
-</div>
+                    if (activeFilter === "other") {
+                        return !knownStatuses.includes(status);
+                    }
 
-<div
-    class="feature-box"
-    data-job-id="${job.id}"
->
-    <button
-        type="button"
-        class="job-button feature-open"
-    >
-        ⭐ Feature this job
-    </button>
+                    return status === activeFilter;
 
-    <div
-        class="feature-panel"
-        hidden
-    ></div>
-</div>
+                });
 
-            `;
+                // Update active filter appearance
+                myJobsContainer
+                    .querySelectorAll(".my-jobs-filter")
+                    .forEach(function (button) {
 
+                        const selected =
+                            button.dataset.jobFilter === activeFilter;
 
-            myJobsContainer.appendChild(card);
+                        button.classList.toggle("active", selected);
 
-        });
+                        button.setAttribute(
+                            "aria-pressed",
+                            String(selected)
+                        );
 
-    } catch (error) {
+                    });
 
-        console.error(error);
+                resultsContainer.innerHTML = "";
 
-        myJobsContainer.innerHTML =
-            "<p>Something went wrong.</p>";
+                if (!filteredJobs.length) {
+
+                    const selectedFilter = filters.find(function (filter) {
+                        return filter.id === activeFilter;
+                    });
+
+                    resultsContainer.innerHTML = `
+                        <div class="empty-my-jobs">
+                            <h2>No ${selectedFilter.label.toLowerCase()} yet</h2>
+                            <p>
+                                Jobs with this status will appear here.
+                            </p>
+                        </div>
+                    `;
+
+                    return;
+                }
+
+                filteredJobs.forEach(function (job) {
+                    resultsContainer.appendChild(createJobCard(job));
+                });
+
+            }
+
+            // Handle filter clicks
+            myJobsContainer.addEventListener("click", function (event) {
+
+                const button = event.target.closest("[data-job-filter]");
+
+                if (!button || !myJobsContainer.contains(button)) {
+                    return;
+                }
+
+                activeFilter = button.dataset.jobFilter;
+
+                renderJobs();
+
+            });
+
+            // Show all jobs initially
+            renderJobs();
+
+        } catch (error) {
+
+            console.error("My jobs error:", error);
+
+            myJobsContainer.innerHTML =
+                "<p>Something went wrong.</p>";
+
+        }
 
     }
 
-}
-
-
-loadMyJobs();
-
+    loadMyJobs();
 
 }
 
@@ -4721,57 +5288,565 @@ if (workerProfileContainer) {
     })();
 }
 
-// ---------- Profile page extras: public profile link + email alerts switch ----------
+// ---------- Profile extras: public profile link and notification settings ----------
 (async function setupProfileExtras() {
     const emailSwitch = document.getElementById("email-alerts");
+    const pushSwitch = document.getElementById("push-notifications-enabled");
+    const pushMessage = document.getElementById("push-notifications-message");
     const publicLink = document.getElementById("view-public-profile");
-    if (!emailSwitch && !publicLink) {
-        return;
+    const preferencesCard = document.getElementById("notification-preferences-card");
+
+    const preferenceControls = {
+        applications: "pref-applications",
+        application_updates: "pref-application-updates",
+        messages: "pref-messages",
+        job_completed: "pref-job-completed",
+        reviews: "pref-reviews"
+    };
+
+    if (!emailSwitch && !pushSwitch && !publicLink && !preferencesCard) {
+    return;
     }
+
+
     try {
-        const { data: { user } } = await supabaseClient.auth.getUser();
-        if (!user) {
+        const { data: { user }, error: userError } =
+            await supabaseClient.auth.getUser();
+
+        if (userError || !user) {
             return;
         }
+
+        // Preserve the existing public profile link.
         if (publicLink) {
-            publicLink.href = "worker-profile.html?id=" + encodeURIComponent(user.id);
+            publicLink.href =
+                "worker-profile.html?id=" + encodeURIComponent(user.id);
         }
-        if (!emailSwitch) {
-            return;
-        }
-        const note = document.getElementById("email-alerts-message");
-        const { data, error } = await supabaseClient
+
+// Load and manage the independent push notification setting.
+if (pushSwitch) {
+    pushSwitch.disabled = true;
+
+    const { data: pushSettings, error: pushLoadError } =
+        await supabaseClient
             .from("profiles")
-            .select("email_alerts")
+            .select("push_notifications_enabled")
             .eq("id", user.id)
             .maybeSingle();
-        const card = document.getElementById("email-alerts-card");
-        if (error || !data) {
-            // sql/05 has not been run yet: keep the switch hidden
-            if (card) { card.hidden = true; }
-            return;
+
+    if (pushLoadError || !pushSettings) {
+        console.error("Push preference loading error:", pushLoadError);
+
+        pushSwitch.checked = false;
+
+        if (pushMessage) {
+            pushMessage.textContent =
+                "Could not load your push notification setting.";
         }
-        emailSwitch.checked = data.email_alerts !== false;
-        emailSwitch.addEventListener("change", async function () {
-            const wanted = emailSwitch.checked;
-            emailSwitch.disabled = true;
-            const { error: saveError } = await supabaseClient
+    } else {
+        pushSwitch.checked =
+            pushSettings.push_notifications_enabled === true;
+
+        pushSwitch.addEventListener("change", async function () {
+            const wanted = pushSwitch.checked;
+            pushSwitch.disabled = true;
+
+            if (pushMessage) {
+                pushMessage.textContent = "Saving your setting...";
+            }
+
+            try {
+                if (!wanted) {
+                    // Turn OFF push delivery without deleting device subscriptions.
+                    const { error } = await supabaseClient
+                        .from("profiles")
+                        .update({ push_notifications_enabled: false })
+                        .eq("id", user.id);
+
+                    if (error) throw error;
+
+                    if (pushMessage) {
+                        pushMessage.textContent =
+                            "Push notifications are off. In-app notifications and email alerts are unchanged.";
+                    }
+
+                    return;
+                }
+
+                // Enable native Android/iOS push.
+                if (window.NaijaJobsNativePush?.isNative) {
+                    const { error } = await supabaseClient
+                        .from("profiles")
+                        .update({ push_notifications_enabled: true })
+                        .eq("id", user.id);
+
+                    if (error) throw error;
+
+                    await window.NaijaJobsNativePush.enable(
+                        supabaseClient
+                    );
+                }
+
+                // Enable browser push.
+                else if (window.NaijaJobsBrowserPush?.enable) {
+                    await window.NaijaJobsBrowserPush.enable(
+                        supabaseClient
+                    );
+                }
+
+                else {
+                    throw new Error(
+                        "Push notification setup is unavailable. Please refresh the page."
+                    );
+                }
+
+                if (pushMessage) {
+                    pushMessage.textContent =
+                        "Push notifications have been enabled successfully.";
+                }
+
+            } catch (error) {
+                console.error("Push preference update failed:", error);
+
+                // Restore OFF if enabling failed.
+                if (wanted) {
+                    const { error: rollbackError } =
+                        await supabaseClient
+                            .from("profiles")
+                            .update({ push_notifications_enabled: false })
+                            .eq("id", user.id);
+
+                    if (rollbackError) {
+                        console.error(
+                            "Could not restore push preference:",
+                            rollbackError
+                        );
+                    }
+                }
+
+                pushSwitch.checked = !wanted;
+
+                if (pushMessage) {
+                    pushMessage.textContent =
+                        error.message ||
+                        "Could not update push notifications. Please try again.";
+                }
+
+            } finally {
+                pushSwitch.disabled = false;
+            }
+        });
+    }
+
+    pushSwitch.disabled = false;
+}
+
+        // Load and manage the master email notification switch.
+        if (emailSwitch) {
+            const note = document.getElementById("email-alerts-message");
+            const card = document.getElementById("email-alerts-card");
+
+            const { data, error } = await supabaseClient
                 .from("profiles")
-                .update({ email_alerts: wanted })
-                .eq("id", user.id);
-            emailSwitch.disabled = false;
-            if (saveError) {
-                console.error("Email alert save error:", saveError);
-                emailSwitch.checked = !wanted;
-                note.textContent = "Could not save this setting. Please try again.";
+                .select("email_alerts")
+                .eq("id", user.id)
+                .maybeSingle();
+
+            if (error || !data) {
+                if (card) card.hidden = true;
+            } else {
+                emailSwitch.checked = data.email_alerts !== false;
+
+                emailSwitch.addEventListener("change", async function () {
+                    const wanted = emailSwitch.checked;
+                    emailSwitch.disabled = true;
+
+                    const { error: saveError } = await supabaseClient
+                        .from("profiles")
+                        .update({ email_alerts: wanted })
+                        .eq("id", user.id);
+
+                    emailSwitch.disabled = false;
+
+                    if (saveError) {
+                        console.error("Email alert save error:", saveError);
+                        emailSwitch.checked = !wanted;
+
+                        if (note) {
+                            note.textContent =
+                                "Could not save this setting. Please try again.";
+                        }
+                        return;
+                    }
+
+                    if (note) {
+                        note.textContent = wanted
+                            ? "Email notifications are on."
+                            : "Email notifications are off.";
+                    }
+                });
+            }
+        }
+
+        // Load and manage individual notification preferences.
+        if (preferencesCard) {
+            const message = document.getElementById(
+                "notification-preferences-message"
+            );
+
+            const controlElements = {};
+
+            for (const [column, elementId] of Object.entries(preferenceControls)) {
+                controlElements[column] = document.getElementById(elementId);
+            }
+
+            const { data: preferences, error: preferenceError } =
+                await supabaseClient
+                    .from("user_notification_preferences")
+                    .select(
+                        "applications, application_updates, messages, job_completed, reviews"
+                    )
+                    .eq("user_id", user.id)
+                    .maybeSingle();
+
+            if (preferenceError || !preferences) {
+                console.error(
+                    "Notification preferences loading error:",
+                    preferenceError
+                );
+
+                preferencesCard.hidden = true;
+
+                if (message) {
+                    message.textContent =
+                        "Could not load your notification preferences.";
+                }
+
                 return;
             }
-            note.textContent = wanted ? "Email alerts are on." : "Email alerts are off.";
-        });
+
+            for (const [column, checkbox] of Object.entries(controlElements)) {
+                if (!checkbox) continue;
+
+                checkbox.checked = preferences[column] !== false;
+
+                checkbox.addEventListener("change", async function () {
+                    const wanted = checkbox.checked;
+                    checkbox.disabled = true;
+
+                    const update = { [column]: wanted };
+
+                    const { error: saveError } = await supabaseClient
+                        .from("user_notification_preferences")
+                        .update(update)
+                        .eq("user_id", user.id);
+
+                    checkbox.disabled = false;
+
+                    if (saveError) {
+                        console.error(
+                            "Notification preference save error:",
+                            saveError
+                        );
+
+                        checkbox.checked = !wanted;
+
+                        if (message) {
+                            message.textContent =
+                                "Could not save this preference. Please try again.";
+                        }
+
+                        return;
+                    }
+
+                    if (message) {
+                        message.textContent = "Notification preference saved.";
+                    }
+                });
+            }
+        }
     } catch (error) {
         console.error("Profile extras error:", error);
     }
+    // ---------- Job Preferences ----------
+        const jobPreferencesForm = document.getElementById("job-preferences-form");
+
+        if (jobPreferencesForm) {
+            const preferencesMessage = document.getElementById(
+                "job-preferences-message"
+            );
+
+            const categoryCheckboxes = jobPreferencesForm.querySelectorAll(
+                'input[name="preferred-category"]'
+            );
+
+            const jobTypeCheckboxes = jobPreferencesForm.querySelectorAll(
+                'input[name="preferred-job-type"]'
+            );
+
+            const locationInput = document.getElementById("preferred-location");
+            const minBudgetInput = document.getElementById("preferred-min-budget");
+            const maxBudgetInput = document.getElementById("preferred-max-budget");
+            const saveButton = jobPreferencesForm.querySelector(
+                'button[type="submit"]'
+            );
+
+            try {
+                // Get the authenticated user first.
+                const {
+                    data: { user: preferencesUser },
+                    error: preferencesUserError
+                } = await supabaseClient.auth.getUser();
+
+                if (preferencesUserError || !preferencesUser) {
+                    preferencesMessage.textContent =
+                        "Please log in again to manage your job preferences.";
+                    return;
+                }
+
+                // Load saved preferences.
+                const { data: savedPreferences, error: loadError } =
+                    await supabaseClient
+                        .from("job_preferences")
+                        .select("*")
+                        .eq("user_id", preferencesUser.id)
+                        .maybeSingle();
+
+                if (loadError) {
+                    console.error("Job preferences loading error:", loadError);
+                    preferencesMessage.textContent =
+                        "Could not load your job preferences.";
+                } else if (savedPreferences) {
+                    const savedCategories =
+                        savedPreferences.preferred_categories || [];
+
+                    const savedJobTypes =
+                        savedPreferences.preferred_job_types || [];
+
+                    categoryCheckboxes.forEach(function (checkbox) {
+                        checkbox.checked = savedCategories.includes(checkbox.value);
+                    });
+
+                    jobTypeCheckboxes.forEach(function (checkbox) {
+                        checkbox.checked = savedJobTypes.includes(checkbox.value);
+                    });
+
+                    locationInput.value =
+                        savedPreferences.preferred_location || "";
+
+                    minBudgetInput.value =
+                        savedPreferences.min_budget ?? "";
+
+                    maxBudgetInput.value =
+                        savedPreferences.max_budget ?? "";
+                }
+
+                // Save preferences.
+                jobPreferencesForm.addEventListener("submit", async function (event) {
+                    event.preventDefault();
+
+                    const minBudget = minBudgetInput.value.trim();
+                    const maxBudget = maxBudgetInput.value.trim();
+
+                    if (
+                        minBudget !== "" &&
+                        (!Number.isFinite(Number(minBudget)) || Number(minBudget) < 0)
+                    ) {
+                        preferencesMessage.textContent =
+                            "Enter a valid minimum budget.";
+                        return;
+                    }
+
+                    if (
+                        maxBudget !== "" &&
+                        (!Number.isFinite(Number(maxBudget)) || Number(maxBudget) < 0)
+                    ) {
+                        preferencesMessage.textContent =
+                            "Enter a valid maximum budget.";
+                        return;
+                    }
+
+                    if (
+                        minBudget !== "" &&
+                        maxBudget !== "" &&
+                        Number(minBudget) > Number(maxBudget)
+                    ) {
+                        preferencesMessage.textContent =
+                            "Minimum budget cannot be greater than maximum budget.";
+                        return;
+                    }
+
+                    const preferences = {
+                        user_id: preferencesUser.id,
+
+                        preferred_categories: Array.from(categoryCheckboxes)
+                            .filter(checkbox => checkbox.checked)
+                            .map(checkbox => checkbox.value),
+
+                        preferred_location: locationInput.value.trim() || null,
+
+                        preferred_job_types: Array.from(jobTypeCheckboxes)
+                            .filter(checkbox => checkbox.checked)
+                            .map(checkbox => checkbox.value),
+
+                        min_budget: minBudget === "" ? null : Number(minBudget),
+
+                        max_budget: maxBudget === "" ? null : Number(maxBudget),
+
+                        updated_at: new Date().toISOString()
+                    };
+
+                    saveButton.disabled = true;
+                    preferencesMessage.textContent = "Saving your preferences...";
+
+                    try {
+                        const { error: saveError } = await supabaseClient
+                            .from("job_preferences")
+                            .upsert(preferences, { onConflict: "user_id" });
+
+                        if (saveError) {
+                            console.error(
+                                "Job preferences saving error:",
+                                saveError
+                            );
+
+                            preferencesMessage.textContent =
+                                "Could not save your preferences. Please try again.";
+                            return;
+                        }
+
+                        preferencesMessage.textContent =
+                            "Your job preferences have been saved successfully.";
+                    } catch (error) {
+                        console.error("Job preferences error:", error);
+
+                        preferencesMessage.textContent =
+                            "Something went wrong. Please try again.";
+                    } finally {
+                        saveButton.disabled = false;
+                    }
+                });
+            } catch (error) {
+                console.error("Job preferences setup error:", error);
+
+                preferencesMessage.textContent =
+                    "Something went wrong while loading your preferences.";
+            }
+        }
 })();
+
+
+        // Change account email address
+        const emailChangeForm = document.getElementById("change-email-form");
+
+        if (emailChangeForm) {
+            emailChangeForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const newEmail = document.getElementById("new-email").value.trim();
+                const confirmEmail = document.getElementById("confirm-email").value.trim();
+                const message = document.getElementById("email-change-message");
+                const submitButton = emailChangeForm.querySelector('button[type="submit"]');
+
+                if (newEmail.toLowerCase() !== confirmEmail.toLowerCase()) {
+                    message.textContent = "The email addresses do not match.";
+                    return;
+                }
+
+                const { data: { user }, error: userError } =
+                    await supabaseClient.auth.getUser();
+
+                if (userError || !user) {
+                    message.textContent = "Please log in again before changing your email.";
+                    return;
+                }
+
+                if (newEmail.toLowerCase() === user.email.toLowerCase()) {
+                    message.textContent = "This is already your current email address.";
+                    return;
+                }
+
+                submitButton.disabled = true;
+                message.textContent = "Submitting email change...";
+
+                try {
+                    const { error } = await supabaseClient.auth.updateUser({
+                        email: newEmail
+                    });
+
+                    if (error) {
+                        console.error("Email change error:", error);
+                        message.textContent = error.message ||
+                            "Could not update your email address. Please try again.";
+                        return;
+                    }
+
+                    emailChangeForm.reset();
+                    message.textContent =
+                        "Email change requested. Check your email for the confirmation link.";
+                } catch (error) {
+                    console.error("Email change error:", error);
+                    message.textContent =
+                        "Something went wrong. Please try again.";
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+        }
+
+
+
+        // Change account password
+        const passwordForm = document.getElementById("change-password-form");
+
+        if (passwordForm) {
+            passwordForm.addEventListener("submit", async function (event) {
+                event.preventDefault();
+
+                const newPassword = document.getElementById("new-password").value;
+                const confirmPassword = document.getElementById("confirm-password").value;
+                const passwordMessage = document.getElementById("password-message");
+                const submitButton = passwordForm.querySelector('button[type="submit"]');
+
+                if (newPassword.length < 8) {
+                    passwordMessage.textContent =
+                        "Your password must contain at least 8 characters.";
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    passwordMessage.textContent =
+                        "The passwords do not match.";
+                    return;
+                }
+
+                submitButton.disabled = true;
+                passwordMessage.textContent = "Updating password...";
+
+                try {
+                    const { error } = await supabaseClient.auth.updateUser({
+                        password: newPassword
+                    });
+
+                    if (error) {
+                        console.error("Password update error:", error);
+                        passwordMessage.textContent =
+                            "Could not update your password. Please try again.";
+                        return;
+                    }
+
+                    passwordForm.reset();
+                    passwordMessage.textContent =
+                        "Your password has been updated successfully.";
+                } catch (error) {
+                    console.error("Password update error:", error);
+                    passwordMessage.textContent =
+                        "Something went wrong. Please try again.";
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
+        }
 
 // ---------- Featured jobs (my-jobs page) ----------
 function featuredControlsHTML(job) {
@@ -5479,11 +6554,12 @@ if (profileForm) {
                     id,
                     full_name,
                     email,
+                    username,
                     account_type,
                     location,
                     skills,
                     bio
-                `)
+                    `)
                 .eq("id", user.id)
                 .maybeSingle();
 
@@ -5505,6 +6581,13 @@ if (profileForm) {
 
             document.getElementById("profile-email").value =
                 profile.email || user.email || "";
+            
+            const currentUsernameInput =
+            document.getElementById("current-username");
+            
+            if (currentUsernameInput) {
+                currentUsernameInput.value = profile.username || "";
+            }
 
             document.getElementById("account-type").value =
                 profile.account_type || "";
@@ -6350,6 +7433,9 @@ if (chatInput) {
     const chatNotice =
         document.getElementById("chat-notice");
 
+    const chatTrialStatus =
+        document.getElementById("chat-trial-status");
+
     const chatStatus =
         document.getElementById("chat-status");
 
@@ -6370,6 +7456,96 @@ if (chatInput) {
             isError
         );
     }
+    let trialCountdownInterval = null;
+async function updateChatTrialStatus(conversation) {
+    if (!chatTrialStatus) return;
+
+    if (trialCountdownInterval) {
+        clearInterval(trialCountdownInterval);
+        trialCountdownInterval = null;
+    }
+
+    const { data: status, error } = await supabaseClient.rpc(
+        "get_conversation_messaging_status",
+        {
+            p_conversation_id: conversationId
+        }
+    );
+
+    if (error) throw error;
+
+    chatTrialStatus.hidden = false;
+
+    function setChatAccess(canSend) {
+        chatInput.disabled = !canSend;
+        sendButton.disabled = !canSend;
+    }
+
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+
+        return `${minutes}m ${String(remainingSeconds).padStart(2, "0")}s`;
+    }
+
+    if (status.state === "paid") {
+        setChatAccess(true);
+        chatTrialStatus.hidden = true;
+        return;
+    }
+
+    if (status.state === "trial_expired") {
+        setChatAccess(false);
+        chatTrialStatus.textContent =
+            "Your 7-day free messaging trial has ended. Activate a membership to send new messages. You can still read this conversation.";
+        return;
+    }
+
+    if (status.state === "unavailable") {
+        setChatAccess(false);
+        chatTrialStatus.textContent =
+            "Messaging is currently unavailable.";
+        return;
+    }
+
+    if (status.state === "not_started") {
+        setChatAccess(true);
+        chatTrialStatus.textContent =
+            "Your 7-day free messaging trial starts when you send your first message.";
+        return;
+    }
+
+    let remaining = status.seconds_remaining;
+
+    function updateCountdown() {
+        if (remaining <= 0) {
+            clearInterval(trialCountdownInterval);
+            trialCountdownInterval = null;
+
+            updateChatTrialStatus(conversation).catch(error => {
+                console.error("Could not refresh messaging status:", error);
+            });
+
+            return;
+        }
+
+        if (status.state === "unlocked") {
+            setChatAccess(true);
+            chatTrialStatus.textContent =
+                `Free messaging: ${formatTime(remaining)} remaining before your 20-minute cooldown.`;
+        } else if (status.state === "cooldown") {
+            setChatAccess(false);
+            chatTrialStatus.textContent =
+                `Messaging paused. You can send messages again in ${formatTime(remaining)}.`;
+        }
+
+        remaining--;
+    }
+
+    updateCountdown();
+
+    trialCountdownInterval = setInterval(updateCountdown, 1000);
+}
 
     function renderMessages(messages) {
         chatMessages.replaceChildren();
@@ -6473,7 +7649,7 @@ if (chatInput) {
         } = await supabaseClient
             .from("conversations")
             .select(
-                "id, participant_one, participant_two"
+                "id, participant_one, participant_two, trial_started_at, trial_expires_at"
             )
             .eq("id", conversationId)
             .maybeSingle();
@@ -6502,6 +7678,8 @@ if (chatInput) {
             chatForm.hidden = true;
             return;
         }
+        // Check the messaging trial and membership access.
+        await updateChatTrialStatus(conversation);
 
         // Identify the other person in the conversation.
         const otherUserId =
@@ -6713,6 +7891,27 @@ await loadChatMessages();
                     // appears immediately after a successful send.
                     await loadChatMessages();
 
+                    // Refresh the conversation's trial dates after sending.
+const {
+    data: updatedConversation,
+    error: trialRefreshError
+} = await supabaseClient
+    .from("conversations")
+    .select(
+        "id, participant_one, participant_two, trial_started_at, trial_expires_at"
+    )
+    .eq("id", conversationId)
+    .maybeSingle();
+
+if (trialRefreshError) {
+    console.error(
+        "Could not refresh messaging trial:",
+        trialRefreshError
+    );
+} else if (updatedConversation) {
+    await updateChatTrialStatus(updatedConversation);
+}
+
                 } catch (error) {
                     console.error(
                         "Failed to send message:",
@@ -6726,7 +7925,7 @@ await loadChatMessages();
                     );
                 } finally {
                     sending = false;
-                    sendButton.disabled = false;
+                    sendButton.disabled = chatInput.disabled;
                 }
             }
         );
@@ -6978,7 +8177,7 @@ const values = [
 
             const actionButton = document.createElement("button");
             actionButton.type = "button";
-            actionButton.className = "admin-button";
+            actionButton.className = "admin-button admin-action-btn admin-suspend-btn";
             actionButton.textContent = profile.is_suspended
                 ? "Restore User"
                 : "Suspend User";
@@ -7056,7 +8255,7 @@ const values = [
             
 if (profile.account_type === "client") {
     const approvalSelect = document.createElement("select");
-    approvalSelect.className = "admin-button";
+    approvalSelect.className = "admin-button admin-action-select";
     approvalSelect.style.marginLeft = "8px";
 
     const statuses = [
@@ -7076,7 +8275,7 @@ if (profile.account_type === "client") {
 
     const approvalButton = document.createElement("button");
     approvalButton.type = "button";
-    approvalButton.className = "admin-button";
+    approvalButton.className = "admin-button admin-action-btn admin-save-btn";
     approvalButton.style.marginLeft = "8px";
     approvalButton.textContent = "Save Approval";
 
@@ -7235,7 +8434,7 @@ try {
         // VIEW DETAILS BUTTON
         const viewButton = document.createElement("button");
         viewButton.type = "button";
-        viewButton.className = "admin-button";
+        viewButton.className = "admin-button admin-action-btn admin-view-btn";
         viewButton.textContent = "View Details";
 
         viewButton.addEventListener("click", function () {
@@ -7315,6 +8514,11 @@ try {
 
         // CHANGE STATUS DROPDOWN
         const statusSelect = document.createElement("select");
+        statusSelect.className = "admin-action-select admin-job-status-select";
+        statusSelect.style.display = "block";
+        statusSelect.style.marginTop = "8px";
+        statusSelect.style.padding = "8px";
+        statusSelect.style.maxWidth = "180px";
         statusSelect.style.display = "block";
         statusSelect.style.marginTop = "8px";
         statusSelect.style.padding = "8px";
@@ -7343,7 +8547,7 @@ try {
 
         const saveStatusButton = document.createElement("button");
         saveStatusButton.type = "button";
-        saveStatusButton.className = "admin-button";
+        saveStatusButton.className = "admin-button admin-action-btn admin-save-btn";
         saveStatusButton.textContent = "Save Status";
         saveStatusButton.style.marginTop = "8px";
 
@@ -7396,7 +8600,7 @@ new_status: newStatus
         // DELETE JOB BUTTON
         const deleteButton = document.createElement("button");
         deleteButton.type = "button";
-        deleteButton.className = "admin-button";
+        deleteButton.className = "admin-button admin-action-btn admin-delete-btn";
         deleteButton.textContent = "Delete Job";
         deleteButton.style.display = "block";
         deleteButton.style.marginTop = "8px";
@@ -7477,117 +8681,220 @@ loadAdminJobs();
 // NAIJAJOBS - ADMIN ACTIVITY LOG
 // ========================================
 
-async function loadAdminActivity() {
-const tableBody = document.getElementById("admin-activity-list");
+let adminActivityPage = 1;
+const ADMIN_ACTIVITY_PAGE_SIZE = 20;
 
-if (!tableBody) return;
+async function loadAdminActivity(page) {
+    const tableBody = document.getElementById("admin-activity-list");
+    const message = document.getElementById("activity-message");
+    const pagination = document.getElementById("activity-pagination");
 
-const message = document.getElementById("activity-message");
+    if (!tableBody || !message || !pagination) return;
 
-tableBody.replaceChildren();
-message.textContent = "Loading activity...";
-
-try {
-    const {
-        data: { user },
-        error: authError
-    } = await supabaseClient.auth.getUser();
-
-    if (authError || !user) {
-        window.location.replace("login.html");
-        return;
+    if (Number.isInteger(page) && page >= 1) {
+        adminActivityPage = page;
     }
 
-    const { data: logs, error } = await supabaseClient
-        .from("admin_activity_logs")
-        .select("id, admin_user_id, action, target_type, target_id, details, created_at")
-        .order("created_at", { ascending: false })
-        .limit(100);
+    tableBody.replaceChildren();
+    pagination.replaceChildren();
+    message.textContent = "Loading activity...";
 
-    if (error) throw error;
+    try {
+        const {
+            data: { user },
+            error: authError
+        } = await supabaseClient.auth.getUser();
 
-    if (!logs || logs.length === 0) {
-        const row = document.createElement("tr");
-        const cell = document.createElement("td");
+        if (authError || !user) {
+            window.location.replace("login.html");
+            return;
+        }
 
-        cell.colSpan = 4;
-        cell.style.padding = "12px";
-        cell.textContent = "No activity recorded yet.";
+        let from = (adminActivityPage - 1) * ADMIN_ACTIVITY_PAGE_SIZE;
+        let to = from + ADMIN_ACTIVITY_PAGE_SIZE - 1;
 
-        row.appendChild(cell);
-        tableBody.appendChild(row);
+        let { data: logs, error, count } = await supabaseClient
+            .from("admin_activity_logs")
+            .select(
+                "id, admin_user_id, action, target_type, target_id, details, created_at",
+                { count: "exact" }
+            )
+            .order("created_at", { ascending: false })
+            .range(from, to);
 
-        message.textContent = "No activity recorded yet.";
-        return;
-    }
+        if (error) throw error;
 
-    logs.forEach(function (log) {
-        const row = document.createElement("tr");
-
-        const dateCell = document.createElement("td");
-        dateCell.style.padding = "12px";
-        dateCell.style.borderBottom = "1px solid #eee";
-        dateCell.textContent = new Date(
-            log.created_at
-        ).toLocaleString();
-        row.appendChild(dateCell);
-
-        const actionCell = document.createElement("td");
-        actionCell.style.padding = "12px";
-        actionCell.style.borderBottom = "1px solid #eee";
-        actionCell.textContent = log.action;
-        row.appendChild(actionCell);
-
-        const targetCell = document.createElement("td");
-        targetCell.style.padding = "12px";
-        targetCell.style.borderBottom = "1px solid #eee";
-        targetCell.textContent =
-            log.target_type +
-            (log.target_id ? " (" + log.target_id + ")" : "");
-        row.appendChild(targetCell);
-
-        const detailsCell = document.createElement("td");
-        detailsCell.style.padding = "12px";
-        detailsCell.style.borderBottom = "1px solid #eee";
-
-        const details = document.createElement("pre");
-        details.style.whiteSpace = "pre-wrap";
-        details.style.margin = "0";
-        details.textContent = JSON.stringify(
-            log.details || {},
-            null,
-            2
+        const totalRecords = count || 0;
+        const totalPages = Math.max(
+            1,
+            Math.ceil(totalRecords / ADMIN_ACTIVITY_PAGE_SIZE)
         );
 
-        detailsCell.appendChild(details);
-        row.appendChild(detailsCell);
+        if (adminActivityPage > totalPages) {
+            adminActivityPage = totalPages;
 
-        tableBody.appendChild(row);
-    });
+            from = (adminActivityPage - 1) * ADMIN_ACTIVITY_PAGE_SIZE;
+            to = from + ADMIN_ACTIVITY_PAGE_SIZE - 1;
 
-    message.textContent =
-        "Showing " + logs.length + " recent activity record(s).";
+            const result = await supabaseClient
+                .from("admin_activity_logs")
+                .select(
+                    "id, admin_user_id, action, target_type, target_id, details, created_at",
+                    { count: "exact" }
+                )
+                .order("created_at", { ascending: false })
+                .range(from, to);
 
-} catch (error) {
-    console.error("Unable to load admin activity:", error);
+            if (result.error) throw result.error;
 
-    message.textContent =
-        "Could not load activity. Check the browser console.";
-}
+            logs = result.data;
+        }
 
+        if (!logs || logs.length === 0) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.colSpan = 4;
+            cell.style.padding = "12px";
+            cell.textContent = "No activity recorded yet.";
+
+            row.appendChild(cell);
+            tableBody.appendChild(row);
+
+            message.textContent = "No activity recorded yet.";
+            return;
+        }
+
+        logs.forEach(function (log) {
+            const row = document.createElement("tr");
+
+            const dateCell = document.createElement("td");
+            dateCell.style.padding = "12px";
+            dateCell.style.borderBottom = "1px solid #eee";
+            dateCell.textContent = new Date(
+                log.created_at
+            ).toLocaleString();
+            row.appendChild(dateCell);
+
+            const actionCell = document.createElement("td");
+            actionCell.style.padding = "12px";
+            actionCell.style.borderBottom = "1px solid #eee";
+            actionCell.textContent = log.action;
+            row.appendChild(actionCell);
+
+            const targetCell = document.createElement("td");
+            targetCell.style.padding = "12px";
+            targetCell.style.borderBottom = "1px solid #eee";
+            targetCell.textContent =
+                log.target_type +
+                (log.target_id ? " (" + log.target_id + ")" : "");
+            row.appendChild(targetCell);
+
+            const detailsCell = document.createElement("td");
+            detailsCell.style.padding = "12px";
+            detailsCell.style.borderBottom = "1px solid #eee";
+
+            const details = document.createElement("pre");
+            details.style.whiteSpace = "pre-wrap";
+            details.style.margin = "0";
+            details.textContent = JSON.stringify(
+                log.details || {},
+                null,
+                2
+            );
+
+            detailsCell.appendChild(details);
+            row.appendChild(detailsCell);
+
+            tableBody.appendChild(row);
+        });
+
+        const firstRecord =
+            (adminActivityPage - 1) * ADMIN_ACTIVITY_PAGE_SIZE + 1;
+
+        const lastRecord = Math.min(
+            firstRecord + logs.length - 1,
+            totalRecords
+        );
+
+        message.textContent =
+            "Showing " + firstRecord + "–" + lastRecord +
+            " of " + totalRecords +
+            " activity record(s). Page " +
+            adminActivityPage + " of " + totalPages + ".";
+
+        function createPageButton(label, targetPage, disabled, active) {
+            const button = document.createElement("button");
+
+            button.type = "button";
+            button.className = "activity-page-button";
+            button.textContent = label;
+            button.dataset.page = targetPage;
+            button.disabled = disabled;
+
+            if (active) {
+                button.classList.add("active");
+                button.setAttribute("aria-current", "page");
+            }
+
+            pagination.appendChild(button);
+        }
+
+        createPageButton(
+            "Previous",
+            adminActivityPage - 1,
+            adminActivityPage === 1,
+            false
+        );
+
+        for (let i = 1; i <= totalPages; i++) {
+            createPageButton(
+                String(i),
+                i,
+                false,
+                i === adminActivityPage
+            );
+        }
+
+        createPageButton(
+            "Next",
+            adminActivityPage + 1,
+            adminActivityPage === totalPages,
+            false
+        );
+
+    } catch (error) {
+        console.error("Unable to load admin activity:", error);
+
+        message.textContent =
+            "Could not load activity. Check the browser console.";
+    }
 }
 
 const refreshActivityButton =
-document.getElementById("refresh-activity");
+    document.getElementById("refresh-activity");
 
 if (refreshActivityButton) {
-refreshActivityButton.addEventListener(
-"click",
-loadAdminActivity
-);
+    refreshActivityButton.addEventListener("click", function () {
+        loadAdminActivity(1);
+    });
+}
+
+const activityPagination =
+    document.getElementById("activity-pagination");
+
+if (activityPagination) {
+    activityPagination.addEventListener("click", function (event) {
+        const button = event.target.closest("button[data-page]");
+
+        if (!button || button.disabled) return;
+
+        loadAdminActivity(Number(button.dataset.page));
+    });
 }
 
 loadAdminActivity();
+
 
 
 /* =================================
@@ -7759,6 +9066,21 @@ loadAdminActivity();
     const premiumNote = premiumSection.querySelector(
         ".worker-premium-note"
     );
+    const premiumPlans = premiumSection.querySelector(
+    ".worker-premium-plans"
+);
+
+const activeMembership = document.getElementById(
+    "worker-active-membership"
+);
+
+const activePlanName = document.getElementById(
+    "worker-active-plan-name"
+);
+
+const activePlanDetails = document.getElementById(
+    "worker-active-plan-details"
+);
 
     const planButtons = premiumSection.querySelectorAll(
         "[data-premium-plan]"
@@ -7832,7 +9154,7 @@ loadAdminActivity();
             return;
         }
 
-        
+ 
 const subscriptionIsActive =
     subscription &&
     subscription.status === "active" &&
@@ -7844,7 +9166,7 @@ const subscriptionIsActive =
               new Date(subscription.expires_at).getTime() > Date.now()
     );
 
-            // Update the separate Worker Plan badge on the dashboard.
+// Update the Worker Plan badge.
 const workerAccountPlan = document.getElementById(
     "worker-account-plan"
 );
@@ -7853,48 +9175,81 @@ const workerAccountPlanBadge = document.getElementById(
     "worker-account-plan-badge"
 );
 
-if (workerAccountPlan && workerAccountPlanBadge) {
-    if (subscriptionIsActive) {
-        const workerPlanNames = {
-            monthly: "Worker Premium Monthly",
-            yearly: "Worker Premium Yearly",
-            lifetime: "Worker Premium Lifetime"
-        };
+if (subscriptionIsActive) {
+    const workerPlanNames = {
+        monthly: "Worker Premium Monthly",
+        yearly: "Worker Premium Yearly",
+        lifetime: "Worker Premium Lifetime"
+    };
 
+    if (workerAccountPlan && workerAccountPlanBadge) {
         workerAccountPlanBadge.textContent =
-            workerPlanNames[subscription.plan_type] ||
-            "Worker Premium";
+            workerPlanNames[subscription.plan_type];
 
         workerAccountPlan.hidden = false;
-    } else {
+    }
+
+    // Hide purchase cards for active members.
+    if (premiumPlans) {
+        premiumPlans.hidden = true;
+    }
+
+    // Show current membership.
+    if (activeMembership) {
+        activeMembership.hidden = false;
+    }
+
+    if (activePlanName) {
+        const names = {
+            monthly: "Monthly Premium Membership",
+            yearly: "Yearly Premium Membership",
+            lifetime: "Lifetime Premium Membership"
+        };
+
+        activePlanName.textContent =
+            names[subscription.plan_type];
+    }
+
+    if (activePlanDetails) {
+        activePlanDetails.textContent =
+            subscription.plan_type === "lifetime"
+                ? "Your Lifetime Premium access is active. You have no subscription expiry date."
+                : "Your Premium membership is active until " +
+                  new Date(subscription.expires_at).toLocaleDateString(
+                      "en-NG",
+                      {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric"
+                      }
+                  ) + ".";
+    }
+
+    if (premiumNote) {
+        premiumNote.textContent =
+            "Thank you for being a NaijaJobs Premium member. Enjoy your membership benefits.";
+    }
+
+} else {
+    // Free or expired membership.
+    if (workerAccountPlan) {
         workerAccountPlan.hidden = true;
+    }
+
+    if (premiumPlans) {
+        premiumPlans.hidden = false;
+    }
+
+    if (activeMembership) {
+        activeMembership.hidden = true;
+    }
+
+    if (premiumNote) {
+        premiumNote.textContent =
+            "Browsing jobs and applying remain free. Choose a Premium plan to unlock additional benefits.";
     }
 }
 
-        if (subscriptionIsActive) {
-            if (premiumNote) {
-                premiumNote.textContent =
-                    subscription.plan_type === "lifetime"
-                        ? "Your Lifetime Premium access is active."
-                        : "Your Premium access is active until " +
-                          new Date(subscription.expires_at).toLocaleDateString("en-NG") +
-                          ".";
-            }
-
-            // Lifetime users should not be offered another purchase.
-            if (subscription.plan_type === "lifetime") {
-                planButtons.forEach(button => {
-                    button.disabled = true;
-                    button.textContent = "Lifetime Premium Active";
-                });
-                return;
-            }
-
-            if (premiumNote) {
-                premiumNote.textContent +=
-                    " You can choose a plan below to renew or extend your access.";
-            }
-        }
 
         planButtons.forEach(button => {
             button.addEventListener("click", async function () {
@@ -8275,6 +9630,7 @@ function displayPlan(plan, subscription = null) {
             statusMessage.textContent = "Loading your subscription...";
         }
 
+        
         // Verify Paystack callback first, if present.
         const params = new URLSearchParams(window.location.search);
         const verifyRequested =
@@ -8315,6 +9671,18 @@ function displayPlan(plan, subscription = null) {
                             ? "Your payment was already verified successfully."
                             : "Your subscription payment was verified successfully."
                     );
+
+                    // Remove callback parameters only after successful verification.
+                    params.delete("client_subscription");
+                    params.delete("reference");
+                    params.delete("trxref");
+
+                    const cleanUrl =
+                        window.location.pathname +
+                        (params.toString() ? `?${params.toString()}` : "") +
+                        window.location.hash;
+
+                    window.history.replaceState({}, "", cleanUrl);
                 }
             } catch (verificationError) {
                 console.error(
@@ -8326,24 +9694,15 @@ function displayPlan(plan, subscription = null) {
                     "We couldn't verify the payment right now. Please contact support before trying to pay again.",
                     true
                 );
-            } finally {
-                // Remove callback parameters after the verification attempt.
-                params.delete("client_subscription");
-                params.delete("reference");
-                params.delete("trxref");
-
-                const cleanUrl =
-                    window.location.pathname +
-                    (params.toString() ? `?${params.toString()}` : "") +
-                    window.location.hash;
-
-                window.history.replaceState({}, "", cleanUrl);
             }
+
             setButtonsDisabled(false);
         }
 
         // Always load the current database subscription.
-const subscription = await loadSubscription(user.id);
+        const subscription = await loadSubscription(user.id);
+            
+
 
 if (subscription?.lookupFailed) {
     section.hidden = false;
@@ -8943,4 +10302,423 @@ function showActivity(container, items, emptyMessage, getDetails) {
                 "We couldn't load your dashboard information. Please refresh and try again.";
         }
     }
+})();
+// =========================================
+// SIGN OUT OF ALL DEVICES
+// =========================================
+
+const signOutAllButton = document.getElementById("sign-out-all-devices");
+const signOutAllMessage = document.getElementById("sign-out-all-message");
+
+if (signOutAllButton) {
+    signOutAllButton.addEventListener("click", async function () {
+        const confirmed = confirm(
+            "Are you sure? This will sign out your account from all devices, including this one."
+        );
+
+        if (!confirmed) return;
+
+        signOutAllButton.disabled = true;
+        signOutAllMessage.textContent = "Signing out of all devices...";
+
+        try {
+            const { error } = await supabaseClient.auth.signOut({
+                scope: "global"
+            });
+
+            if (error) throw error;
+
+            signOutAllMessage.textContent =
+                "You have been signed out of all devices.";
+
+            window.location.replace("login.html");
+
+        } catch (error) {
+            console.error("Global sign-out error:", error);
+
+            signOutAllMessage.textContent =
+                "Could not sign out of all devices. Please try again.";
+
+            signOutAllButton.disabled = false;
+        }
+    });
+}
+
+
+/* ========================================
+   CHANGE USERNAME
+======================================== */
+
+const changeUsernameForm = document.getElementById("change-username-form");
+
+if (changeUsernameForm) {
+        async function loadCurrentUsername() {
+        const currentUsernameInput =
+            document.getElementById("current-username");
+
+        if (!currentUsernameInput) return;
+
+        const {
+            data: { user },
+            error: authError
+        } = await supabaseClient.auth.getUser();
+
+        if (authError || !user) return;
+
+        const { data: profile, error } = await supabaseClient
+            .from("profiles")
+            .select("username")
+            .eq("id", user.id)
+            .maybeSingle();
+
+        if (error) {
+            console.error("Could not load current username:", error);
+            return;
+        }
+
+        if (profile) {
+            currentUsernameInput.value = profile.username || "";
+        }
+    }
+
+    loadCurrentUsername();
+    changeUsernameForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const currentUsernameInput =
+            document.getElementById("current-username");
+
+        const newUsernameInput =
+            document.getElementById("new-username");
+
+        const message =
+            document.getElementById("username-change-message");
+
+        const submitButton =
+            changeUsernameForm.querySelector('button[type="submit"]');
+
+        const newUsername = newUsernameInput.value.trim();
+
+        // Validate username format.
+        if (!/^[a-zA-Z0-9_]{3,30}$/.test(newUsername)) {
+            message.textContent =
+                "Username must be 3–30 characters and contain only letters, numbers, and underscores.";
+            return;
+        }
+
+        const {
+            data: { user },
+            error: authError
+        } = await supabaseClient.auth.getUser();
+
+        if (authError || !user) {
+            message.textContent =
+                "Please log in again before changing your username.";
+            return;
+        }
+
+        const currentUsername = currentUsernameInput.value.trim();
+
+        if (newUsername.toLowerCase() === currentUsername.toLowerCase()) {
+            message.textContent =
+                "This is already your current username.";
+            return;
+        }
+
+        submitButton.disabled = true;
+        message.textContent = "Updating username...";
+
+        try {
+            const { data, error } = await supabaseClient
+                .from("profiles")
+                .update({ username: newUsername })
+                .eq("id", user.id)
+                .select("username")
+                .maybeSingle();
+
+            if (error) {
+                console.error("Username update error:", error);
+
+                if (error.code === "23505") {
+                    message.textContent =
+                        "That username is already taken. Please choose another.";
+                } else {
+                    message.textContent =
+                        "Could not update your username. Please try again.";
+                }
+
+                return;
+            }
+
+            if (!data) {
+                message.textContent =
+                    "Your username was not updated. Please refresh and try again.";
+                return;
+            }
+
+            currentUsernameInput.value = data.username;
+            newUsernameInput.value = "";
+
+            message.textContent =
+                "Username updated successfully! You can now log in with your new username.";
+
+        } catch (error) {
+            console.error("Unexpected username update error:", error);
+
+            message.textContent =
+                "Something went wrong. Please try again.";
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+}
+// =========================================
+// SIGN OUT OF THIS DEVICE
+// =========================================
+
+const signOutThisButton = document.getElementById("sign-out-this-device");
+const signOutThisMessage = document.getElementById("sign-out-this-device-message");
+
+if (signOutThisButton) {
+    signOutThisButton.addEventListener("click", async function () {
+        const confirmed = confirm(
+            "Are you sure you want to sign out of this device?"
+        );
+
+        if (!confirmed) return;
+
+        signOutThisButton.disabled = true;
+        signOutThisMessage.textContent = "Signing out...";
+
+        try {
+            const { error } = await supabaseClient.auth.signOut({
+                scope: "local"
+            });
+
+            if (error) throw error;
+
+            window.location.replace("login.html");
+
+        } catch (error) {
+            console.error("Local sign-out error:", error);
+
+            signOutThisMessage.textContent =
+                "Could not sign out. Please try again.";
+
+            signOutThisButton.disabled = false;
+        }
+    });
+}
+// =========================================
+// CURRENT SESSION INFORMATION
+// =========================================
+
+async function loadCurrentSessionInfo() {
+    const statusElement = document.getElementById("current-session-status");
+    const emailElement = document.getElementById("current-session-email");
+    const signInElement = document.getElementById("current-session-last-signin");
+
+    if (!statusElement || !emailElement || !signInElement) return;
+
+    try {
+        const { data, error } = await supabaseClient.auth.getUser();
+
+        if (error) throw error;
+
+        const user = data.user;
+
+        if (!user) {
+            statusElement.textContent = "Not signed in";
+            emailElement.textContent = "Unavailable";
+            signInElement.textContent = "Unavailable";
+            return;
+        }
+
+        statusElement.textContent = "Active";
+        emailElement.textContent = user.email || "Unavailable";
+
+        signInElement.textContent = user.last_sign_in_at
+            ? new Date(user.last_sign_in_at).toLocaleString()
+            : "Unavailable";
+
+    } catch (error) {
+        console.error("Could not load current session:", error);
+
+        statusElement.textContent = "Unable to verify";
+        emailElement.textContent = "Unavailable";
+        signInElement.textContent = "Unavailable";
+    }
+}
+
+loadCurrentSessionInfo();
+
+
+// ========================================
+// SELF-SERVICE ACCOUNT DELETION
+// ========================================
+
+(function setupSelfServiceAccountDeletion() {
+    const form = document.getElementById("delete-account-form");
+
+    if (!form) return;
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const passwordInput = document.getElementById("delete-account-password");
+        const confirmationInput = document.getElementById("delete-account-confirmation");
+        const button = document.getElementById("delete-account-button");
+        const message = document.getElementById("delete-account-message");
+
+        const password = passwordInput.value;
+        const confirmation = confirmationInput.value.trim();
+
+        if (!password) {
+            message.textContent = "Please enter your password.";
+            return;
+        }
+
+        if (confirmation !== "DELETE") {
+            message.textContent = 'Please type DELETE exactly to confirm.';
+            return;
+        }
+
+        const originalButtonText = button.textContent;
+
+        button.disabled = true;
+        button.textContent = "Verifying...";
+        message.textContent = "Verifying your account...";
+
+        try {
+            // Confirm the currently signed-in user.
+            const {
+                data: { user },
+                error: userError
+            } = await supabaseClient.auth.getUser();
+
+            if (userError || !user) {
+                throw new Error("Your session could not be verified. Please log in again.");
+            }
+
+            if (!user.email) {
+                throw new Error(
+                    "We could not find an email address for password verification. Please contact support."
+                );
+            }
+
+            // Protect administrator accounts.
+            const {
+                data: admin,
+                error: adminError
+            } = await supabaseClient
+                .from("admin_users")
+                .select("user_id")
+                .eq("user_id", user.id)
+                .maybeSingle();
+
+            if (adminError) {
+                throw new Error("We could not verify your account permissions. Please try again.");
+            }
+
+            if (admin) {
+                throw new Error(
+                    "Administrator accounts cannot be deleted through this page. Please contact support."
+                );
+            }
+
+            // Verify the user's password before deletion.
+            button.textContent = "Checking password...";
+
+            const { error: passwordError } =
+                await supabaseClient.auth.signInWithPassword({
+                    email: user.email,
+                    password: password
+                });
+
+            if (passwordError) {
+                throw new Error("Your password is incorrect. Please check it and try again.");
+            }
+
+            
+// Request permanent account deletion.
+button.textContent = "Deleting account...";
+message.textContent =
+    "Deleting your account and associated data. Please do not close this page.";
+
+// Retrieve the fresh session created by password verification.
+const { data: sessionData, error: sessionError } =
+    await supabaseClient.auth.getSession();
+
+const freshSession = sessionData?.session;
+
+if (sessionError || !freshSession?.access_token) {
+    throw new Error(
+        "Could not verify your fresh login session. Please sign in again."
+    );
+}
+
+// Explicitly send the fresh access token to the Edge Function.
+const { data, error } =
+    await supabaseClient.functions.invoke(
+        "delete-my-account",
+        {
+            body: {
+                confirmation: "DELETE",
+                password: password
+            },
+            headers: {
+                Authorization: `Bearer ${freshSession.access_token}`
+            }
+        }
+    );
+
+
+            if (error) {
+                let errorMessage = error.message || "Account deletion failed.";
+
+                try {
+                    const response = error.context;
+
+                    if (response && typeof response.clone === "function") {
+                        const responseBody = await response.clone().json();
+
+                        if (responseBody?.error) {
+                            errorMessage = responseBody.error;
+                        }
+                    }
+                } catch (readError) {
+                    console.warn("Could not read deletion error response:", readError);
+                }
+
+                throw new Error(errorMessage);
+            }
+
+            if (data?.success !== true) {
+                throw new Error(
+                    data?.error || "The server did not confirm account deletion. Please contact support before trying again."
+                );
+            }
+
+            // Only clear the app's first-login marker after confirmed deletion.
+            localStorage.removeItem("naijajobs_app_has_logged_in");
+
+            passwordInput.value = "";
+            confirmationInput.value = "";
+
+            message.textContent = "Your account has been deleted successfully.";
+
+            setTimeout(function () {
+                window.location.replace("index.html");
+            }, 1500);
+
+        } catch (error) {
+            console.error("Self-service account deletion error:", error);
+
+            message.textContent =
+                error.message || "Account deletion failed. Please contact support if the problem continues.";
+
+            button.disabled = false;
+            button.textContent = originalButtonText;
+        }
+    });
 })();

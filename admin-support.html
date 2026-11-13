@@ -209,6 +209,7 @@
     <meta name="apple-mobile-web-app-title" content="NaijaJobs">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/admin-control-center.css">
 </head>
 
 <body class="admin">
@@ -278,9 +279,9 @@
         Checking administrator access...
     </p>
 
-        <div id="admin-support-content" hidden>
-            <div class="support-admin-layout">
-                    <section class="support-admin-panel">
+        <div id="admin-support-content" class="admin-support-content" hidden>
+            <div class="support-admin-layout admin-grid">
+                    <section class="support-admin-panel admin-card">
                         <h2>Support tickets</h2>
 
                         <button
@@ -305,7 +306,7 @@
                         </div>
                     </section>
 
-                    <section class="support-admin-panel">
+                    <section class="support-admin-panel admin-card">
                         <h2 id="selected-ticket-title">Ticket conversation</h2>
 
                         <p id="selected-ticket-meta" class="admin-ticket-meta">

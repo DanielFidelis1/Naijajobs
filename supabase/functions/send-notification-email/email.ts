@@ -30,7 +30,7 @@ export function buildEmail(record: NotificationRecord, siteUrl: string) {
   const link = safeLink(record.link, siteUrl);
   const title = escapeHtml(record.title);
   const body = escapeHtml(record.body);
-  const settings = `${siteUrl.replace(/\/+$/, "")}/profile.html`;
+  const settings = `${siteUrl.replace(/\/+$/, "")}/settings.html`;
 
   const html = `<!doctype html>
 <html><body style="margin:0;background:#f3f5f1;font-family:Arial,Helvetica,sans-serif;color:#0f1f18">
@@ -42,7 +42,7 @@ export function buildEmail(record: NotificationRecord, siteUrl: string) {
       <a href="${escapeHtml(link)}" style="display:inline-block;background:#0e3b2c;color:#ffffff;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:8px">Open NaijaJobs</a>
     </div>
     <p style="font-size:13px;color:#55655c;margin:16px 0 0">You get this email because email alerts are on.
-      <a href="${escapeHtml(settings)}" style="color:#55655c">Turn them off in your profile</a>.</p>
+      <a href="${escapeHtml(settings)}" style="color:#55655c">Manage your email preferences in Settings</a>.</p>
   </div>
 </body></html>`;
 

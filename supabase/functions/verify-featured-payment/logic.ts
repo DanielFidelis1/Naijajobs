@@ -2,7 +2,7 @@
 
 // The server decides prices. The website can never choose its own price.
 export const PLANS: Record<number, { priceNaira: number }> = {
-  7: { priceNaira: 2000 },
+  7: { priceNaira: 1500 },
   14: { priceNaira: 3500 },
   30: { priceNaira: 6000 },
 };

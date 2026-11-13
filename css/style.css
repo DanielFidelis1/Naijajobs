@@ -551,7 +551,34 @@ body.chat { padding: 0; height: 100vh; height: 100dvh; display: flex; flex-direc
 .nj-chat-form { display: flex; gap: 10px; padding: 12px 14px calc(12px + env(safe-area-inset-bottom, 0px)); background: var(--card); border-top: 1.5px solid var(--line); align-items: flex-end; }
 .nj-chat-form textarea { min-height: 46px; max-height: 140px; flex: 1; resize: none; }
 .nj-chat-form button { background: var(--forest); color: #fff; border: 0; border-radius: var(--radius-sm); padding: 0 22px; min-height: 46px; font: 600 1rem var(--body); cursor: pointer; }
+.nj-chat-form textarea:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
 
+.nj-chat-form button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+/* Messaging trial and membership status */
+.nj-chat-trial-status {
+    margin: 12px 14px 0;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    background: var(--card);
+    color: var(--text);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    font-size: 0.95rem;
+}
+
+.nj-chat-trial-status[hidden] {
+    display: none;
+    text-align: center;
+}
 /* =====================================================
    PROFILE HEADER AND PROFILE PICTURE
    ===================================================== */
@@ -1053,7 +1080,17 @@ body.admin { padding: 0; }
     font-weight: 800;
 }
 .job-card-featured { border: 2px solid var(--yellow); background: linear-gradient(180deg, var(--yellow-soft), var(--card) 55%); }
-
+/* ---------- recommended jobs ---------- */
+.recommended-badge {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 3px 11px;
+    border-radius: 999px;
+    background: #e1f3e9;
+    color: #0e5b38;
+    font-size: .78rem;
+    font-weight: 800;
+}
 /* ---------- job card actions + share ---------- */
 .job-card-actions { margin-top: auto; display: flex; gap: 8px; }
 .job-card .job-card-actions .job-button { margin-top: 0; width: auto; flex: 1; }
@@ -1919,5 +1956,139 @@ body.public-view .main { padding-top: 28px; }
 
     .client-active-membership .client-plan-button {
         width: 100%;
+    }
+}
+
+/* Admin Activity Log Pagination */
+.activity-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 20px;
+    padding: 8px 0;
+}
+
+.activity-page-button {
+    min-width: 40px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--card);
+    color: var(--forest);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+.activity-page-button:hover:not(:disabled):not(.active) {
+    background: var(--line);
+}
+
+.activity-page-button.active {
+    background: var(--forest);
+    color: #ffffff;
+    border-color: var(--forest);
+}
+
+.activity-page-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.activity-page-button:focus-visible {
+    outline: 3px solid var(--forest);
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .activity-pagination {
+        gap: 6px;
+    }
+
+    .activity-page-button {
+        min-width: 38px;
+        min-height: 42px;
+        padding: 8px 10px;
+    }
+}
+/* =====================================
+   SETTINGS ACCORDION DESIGN
+===================================== */
+
+.settings-accordion {
+    margin-bottom: 14px;
+    border: 1px solid var(--border-color, #e5e9e6);
+    border-radius: 16px;
+    background: var(--card-bg, #ffffff);
+    overflow: hidden;
+}
+
+.settings-accordion-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 20px;
+    cursor: pointer;
+    list-style: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.settings-accordion-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.settings-accordion-trigger::after {
+    content: "⌄";
+    font-size: 1.4rem;
+    transition: transform 0.3s ease;
+}
+
+.settings-accordion[open] .settings-accordion-trigger::after {
+    transform: rotate(180deg);
+}
+
+.settings-accordion-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s ease;
+}
+
+.settings-accordion[open] .settings-accordion-content {
+    grid-template-rows: 1fr;
+}
+
+.settings-accordion-inner {
+    overflow: hidden;
+    min-height: 0;
+    padding: 0 20px;
+}
+
+.settings-accordion[open] .settings-accordion-inner {
+    padding-bottom: 20px;
+}
+
+.settings-accordion-content .settings-section {
+    margin-bottom: 0;
+}
+
+.settings-accordion-content .settings-section > h2 {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .settings-accordion-trigger {
+        padding: 17px;
+    }
+
+    .settings-accordion-inner {
+        padding-left: 15px;
+        padding-right: 15px;
     }
 }

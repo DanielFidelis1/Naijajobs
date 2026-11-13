@@ -339,7 +339,22 @@ if (
       }
     }
     
-    
+    const requestOrigin = req.headers.get("Origin");
+
+    const allowedOrigins = [
+      "https://danielfidelis1.github.io",
+      "http://127.0.0.1:5500",
+      "http://localhost:5500",
+    ];
+
+    if (!requestOrigin || !allowedOrigins.includes(requestOrigin)) {
+      return json({ error: "Unrecognized website address." }, 403);
+    }
+
+    const callbackUrl =
+      requestOrigin === "https://danielfidelis1.github.io"
+        ? `${requestOrigin}/Naijajobs/dashboard.html?client_subscription=verify`
+        : `${requestOrigin}/dashboard.html?client_subscription=verify`;
 
     const reference = `client_${crypto.randomUUID().replaceAll("-", "")}`;
 
@@ -386,8 +401,7 @@ if (insertError) {
           amount: selectedPlan.amount,
           currency: "NGN",
           reference,
-          callback_url:
-            "https://naijajobs.netlify.app/dashboard.html?client_subscription=verify",
+          callback_url: callbackUrl,
           metadata: {
             user_id: user.id,
             plan_type: plan,

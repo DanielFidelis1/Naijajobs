@@ -322,11 +322,12 @@
     <meta name="apple-mobile-web-app-title" content="NaijaJobs">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/admin-control-center.css">
 </head>
 
-<body>
-    <main class="account-management">
-        <header class="account-header">
+<body class="admin">
+    <main class="account-management admin-page">
+        <header class="account-header admin-header">
             <div>
                 <a class="logo">Naija<span>Jobs</span></a>
                 <p>Account Management</p>
@@ -393,24 +394,24 @@
             have been implemented and tested.
         </div>
 
-        <section class="account-summary" aria-label="Account totals">
-            <div class="account-summary-card">
+        <section class="account-summary admin-grid" aria-label="Account totals">
+            <div class="account-summary-card admin-card">
                 <span>Total accounts</span>
                 <strong id="total-accounts">—</strong>
             </div>
 
-            <div class="account-summary-card">
+            <div class="account-summary-card admin-card">
                 <span>Premium accounts</span>
                 <strong id="premium-accounts">—</strong>
             </div>
 
-            <div class="account-summary-card">
+            <div class="account-summary-card admin-card">
                 <span>Free accounts</span>
                 <strong id="free-accounts">—</strong>
             </div>
         </section>
 
-        <section class="account-toolbar" aria-label="Account filters">
+        <section class="account-toolbar admin-toolbar" aria-label="Account filters">
             <input
                 type="search"
                 id="account-search"
@@ -436,8 +437,8 @@
             </button>
         </section>
 
-        <section class="account-table-card">
-            <div class="account-table-heading">
+        <section class="account-table-card admin-section">
+            <div class="account-table-heading admin-section-header">
                 <h2>Registered accounts</h2>
                 <p id="account-result-count">Loading accounts…</p>
             </div>
