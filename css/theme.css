@@ -1001,3 +1001,28 @@ html[data-theme="dark"] #selected-ticket-subject {
 html[data-theme="dark"] #selected-ticket-status {
     color: #AEB5C0 !important;
 }
+/* Messages page - mobile width fix */
+@media (max-width: 768px) {
+    body.app .main {
+        width: 100%;
+        min-width: 0;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
+    body.app .page {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .messages-container {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .nj-conversation-card {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+    }
+}
